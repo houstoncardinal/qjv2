@@ -52,7 +52,7 @@ function Craftsmanship() {
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <main>
+      <main id="main-content">
         <section className="mx-auto max-w-4xl px-6 pb-16 pt-20 text-center">
           <p className="eyebrow">The Atelier</p>
           <h1 className="mt-5 font-display text-5xl leading-[1.05] md:text-6xl">
@@ -75,7 +75,7 @@ function Craftsmanship() {
           ))}
         </section>
 
-        <section className="mx-auto max-w-3xl px-6 py-24 text-center">
+        <section className="mx-auto max-w-3xl px-6 py-16 text-center">
           <p className="eyebrow">Our standard</p>
           <blockquote className="mt-6 font-display text-3xl leading-snug md:text-4xl">
             “If it would not pass as an heirloom in thirty years, it does not leave the bench.”

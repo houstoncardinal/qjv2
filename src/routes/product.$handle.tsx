@@ -108,7 +108,7 @@ function ProductDetail() {
     return (
       <div className="min-h-screen">
         <SiteHeader />
-        <main className="mx-auto grid max-w-[1400px] gap-12 px-5 py-14 sm:px-8 lg:grid-cols-2">
+        <main id="main-content" className="mx-auto grid max-w-[1400px] gap-12 px-5 py-14 sm:px-8 lg:grid-cols-2">
           <Skeleton className="aspect-square w-full" />
           <div className="space-y-5">
             <Skeleton className="h-12 w-3/4" />
@@ -125,7 +125,7 @@ function ProductDetail() {
     return (
       <div className="min-h-screen">
         <SiteHeader />
-        <main className="mx-auto max-w-3xl px-6 py-32 text-center">
+        <main id="main-content" className="mx-auto max-w-3xl px-6 py-32 text-center">
           <p className="eyebrow">Not found</p>
           <h1 className="mt-4 font-display text-4xl">This piece is no longer available</h1>
           <Button asChild variant="gold" className="mt-8">
@@ -184,7 +184,7 @@ function ProductDetail() {
     <div className="min-h-screen">
       <SiteHeader />
 
-      <main>
+      <main id="main-content">
         <div className="mx-auto max-w-[1400px] px-5 pt-6 sm:px-8">
           <nav className="text-[9px] uppercase tracking-[0.24em] text-muted-foreground">
             <Link to="/" className="transition-colors hover:text-foreground">
@@ -404,7 +404,7 @@ function ProductDetail() {
         </div>
 
         {/* Details */}
-        <section className="border-t border-border bg-secondary/50 py-16">
+        <section className="border-t border-border bg-secondary/50 py-12">
           <div className="mx-auto max-w-3xl px-5 sm:px-8">
             <div className="border border-border bg-card">
               <p className="border-b border-border px-6 py-4 text-[10px] uppercase tracking-[0.26em] text-foreground">
@@ -470,7 +470,7 @@ function ProductDetail() {
         </section>
 
         {relatedProducts.length > 0 && (
-          <section className="mx-auto max-w-[1400px] px-5 py-16 sm:px-8">
+          <section className="mx-auto max-w-[1400px] px-5 py-12 sm:px-8">
             <div className="flex items-end justify-between gap-4">
               <div>
                 <p className="text-[9px] uppercase tracking-[0.34em] text-muted-foreground">

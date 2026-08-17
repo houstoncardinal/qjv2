@@ -78,7 +78,7 @@ function ProductRow({
 
   return (
     <section className={cn("bg-card", tone === "porcelain" && "bg-background")}>
-      <div className="mx-auto max-w-[1560px] px-6 py-24 sm:px-10 lg:py-28">
+      <div className="mx-auto max-w-[1560px] px-6 py-14 sm:px-10 lg:py-20">
         <div className="flex flex-wrap items-end justify-between gap-6 border-b border-border pb-8">
           <div>
             <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">{eyebrow}</p>
@@ -101,7 +101,7 @@ function ProductRow({
           </Link>
         </div>
 
-        <div className="mt-12 grid grid-cols-2 gap-5 lg:grid-cols-4 lg:gap-7">
+        <div className="mt-9 grid grid-cols-2 gap-5 lg:grid-cols-4 lg:gap-7">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="border border-border bg-card">
@@ -116,7 +116,7 @@ function ProductRow({
             : products.slice(0, 4).map((p) => <ProductCard key={p.node.id} product={p} />)}
         </div>
 
-        <div className="mt-14 flex flex-wrap justify-center gap-4">
+        <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Link
             to="/shop"
             search={ctaQuery ? { q: ctaQuery } : {}}
@@ -151,71 +151,83 @@ function Home() {
     <div className="min-h-screen bg-card">
       <SiteHeader />
 
-      <main>
-        {/* Hero */}
-        <section className="relative isolate min-h-[86vh] overflow-hidden bg-foreground text-background">
+      <main id="main-content">
+        {/* Hero — compact editorial split */}
+        <section
+          aria-labelledby="hero-heading"
+          className="relative isolate overflow-hidden bg-foreground text-background"
+        >
           <img
             src={heroImage}
-            alt="VVS1 moissanite rings in 18K gold and rose gold on silk"
+            alt=""
+            aria-hidden="true"
             width={1920}
             height={1200}
-            className="absolute inset-0 h-full w-full object-cover opacity-50 mix-blend-luminosity"
+            className="absolute inset-0 h-full w-full object-cover opacity-45 mix-blend-luminosity"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(100deg,oklch(0.13_0.004_60/0.96)_0%,oklch(0.13_0.004_60/0.86)_42%,oklch(0.13_0.004_60/0.42)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(to_top,oklch(0.13_0.004_60/0.9),transparent)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(100deg,oklch(0.13_0.004_60/0.97)_0%,oklch(0.13_0.004_60/0.82)_46%,oklch(0.13_0.004_60/0.35)_100%)]" />
 
-          <div className="relative mx-auto flex min-h-[86vh] max-w-[1560px] flex-col justify-center px-6 py-28 sm:px-10">
-            <div className="max-w-3xl rise-in">
-              <p className="text-[10px] uppercase tracking-[0.48em] text-[var(--gold)]">
-                GRA Certified · D Colour · VVS1
-              </p>
-              <div className="mt-7 h-px w-24 shimmer-line" />
-              <h1 className="mt-8 font-display text-[3.4rem] leading-[0.98] sm:text-7xl lg:text-[6.2rem]">
-                VVS1 Moissanite
-                <br />
-                <span className="italic">Hand-Set</span> in 18K Gold
-              </h1>
-              <p className="mt-8 max-w-xl text-base leading-relaxed text-background/70">
-                Expertly crafted VVS1 moissanite set in precious 18K gold over solid S925 sterling
-                silver. Independently certified, hand-finished, and guaranteed for life.
-              </p>
-
-              <div className="mt-11 flex flex-wrap gap-4">
-                <Link
-                  to="/shop"
-                  className="group flex items-center gap-3 bg-background px-11 py-5 text-[10px] uppercase tracking-[0.28em] text-foreground transition-opacity hover:opacity-85"
+          <div className="relative mx-auto max-w-[1560px] px-6 py-14 sm:px-10 lg:py-20">
+            <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_auto]">
+              <div className="max-w-2xl rise-in">
+                <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">
+                  GRA Certified · D Colour · VVS1
+                </p>
+                <div className="mt-4 h-px w-20 shimmer-line" />
+                <h1
+                  id="hero-heading"
+                  className="mt-5 font-display text-[2.75rem] leading-[0.98] sm:text-6xl lg:text-[4.6rem]"
                 >
-                  Shop the collection{" "}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-                <Link
-                  to="/craftsmanship"
-                  className="border border-background/30 px-11 py-5 text-[10px] uppercase tracking-[0.28em] text-background/85 transition-colors hover:border-background hover:text-background"
-                >
-                  Our craftsmanship
-                </Link>
-              </div>
-            </div>
+                  VVS1 Moissanite
+                  <br />
+                  <span className="italic">Hand-Set</span> in 18K Gold
+                </h1>
+                <p className="mt-5 max-w-lg text-sm leading-relaxed text-background/75 sm:text-base">
+                  Hand-set in 18K gold over solid S925 sterling silver. Independently certified,
+                  finished by bench jewelers, guaranteed for life.
+                </p>
 
-            <div className="mt-20 grid max-w-4xl gap-8 border-t border-background/15 pt-8 sm:grid-cols-3">
-              {[
-                { icon: BadgeCheck, label: "GRA Certified", sub: "Every single stone" },
-                { icon: Truck, label: "Free Insured Shipping", sub: "Tracked worldwide" },
-                { icon: ShieldCheck, label: "Lifetime Warranty", sub: "Craftsmanship guaranteed" },
-              ].map((t) => (
-                <div key={t.label} className="flex items-start gap-3">
-                  <t.icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--gold)]" />
-                  <div>
-                    <p className="text-[10px] uppercase tracking-[0.26em] text-background">
-                      {t.label}
-                    </p>
-                    <p className="mt-1 text-[11px] text-background/55">{t.sub}</p>
-                  </div>
+                <div className="mt-7 flex flex-wrap gap-3">
+                  <Link
+                    to="/shop"
+                    className="group flex min-h-11 items-center gap-3 bg-background px-8 py-4 text-[10px] uppercase tracking-[0.26em] text-foreground transition-opacity hover:opacity-85"
+                  >
+                    Shop the collection{" "}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                  <Link
+                    to="/craftsmanship"
+                    className="flex min-h-11 items-center border border-background/30 px-8 py-4 text-[10px] uppercase tracking-[0.26em] text-background/85 transition-colors hover:border-background hover:text-background"
+                  >
+                    Our craftsmanship
+                  </Link>
                 </div>
-              ))}
+              </div>
+
+              <ul className="grid gap-px bg-background/15 sm:grid-cols-3 lg:w-[300px] lg:grid-cols-1">
+                {[
+                  { icon: BadgeCheck, label: "GRA Certified", sub: "Every single stone" },
+                  { icon: Truck, label: "Free Insured Shipping", sub: "Tracked worldwide" },
+                  { icon: ShieldCheck, label: "Lifetime Warranty", sub: "Craftsmanship guaranteed" },
+                ].map((t) => (
+                  <li
+                    key={t.label}
+                    className="flex items-start gap-3 bg-foreground/85 p-4 backdrop-blur-sm"
+                  >
+                    <t.icon aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--gold)]" />
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.24em] text-background">
+                        {t.label}
+                      </p>
+                      <p className="mt-1 text-[11px] text-background/60">{t.sub}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </section>
+
 
         <ProductRow
           eyebrow="Curated Collection"
@@ -239,7 +251,7 @@ function Home() {
         />
 
         {/* Why choose */}
-        <section className="border-y border-border bg-foreground py-24 text-background">
+        <section className="border-y border-border bg-foreground py-14 text-background lg:py-20">
           <div className="mx-auto max-w-[1560px] px-6 sm:px-10">
             <div className="max-w-2xl">
               <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">
@@ -254,7 +266,7 @@ function Home() {
               </p>
             </div>
 
-            <div className="mt-14 grid gap-px bg-background/15 md:grid-cols-3">
+            <div className="mt-10 grid gap-px bg-background/15 md:grid-cols-3">
               {[
                 {
                   icon: Heart,
@@ -272,7 +284,7 @@ function Home() {
                   copy: "Solid S925 sterling silver with 5 layers of 18K plating and a protective e-coat that resists tarnish.",
                 },
               ].map((c) => (
-                <div key={c.title} className="bg-foreground p-10">
+                <div key={c.title} className="bg-foreground p-8">
                   <c.icon className="h-5 w-5 text-[var(--gold)]" />
                   <h3 className="mt-6 font-display text-2xl">{c.title}</h3>
                   <p className="mt-4 text-xs leading-relaxed text-background/60">{c.copy}</p>
@@ -307,7 +319,7 @@ function Home() {
         />
 
         {/* Sustainability panel */}
-        <section className="bg-background py-24">
+        <section className="bg-background py-14 lg:py-20">
           <div className="mx-auto max-w-4xl px-6 text-center sm:px-10">
             <span className="inline-flex items-center gap-2 border border-border bg-card px-5 py-2 text-[9px] uppercase tracking-[0.3em] text-muted-foreground">
               <Leaf className="h-3 w-3 text-[var(--gold)]" /> Sustainably created
@@ -320,13 +332,13 @@ function Home() {
               the mining impact — and it is independently verified, not just claimed.
             </p>
 
-            <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-3">
+            <div className="mt-9 grid gap-px border border-border bg-border sm:grid-cols-3">
               {[
                 { stat: "0", label: "Carats mined" },
                 { stat: "100%", label: "Lab created" },
                 { stat: "~97%", label: "Lower footprint" },
               ].map((s) => (
-                <div key={s.label} className="bg-card p-8 text-left">
+                <div key={s.label} className="bg-card p-6 text-left">
                   <p className="font-display text-4xl">{s.stat}</p>
                   <p className="mt-2 text-[9px] uppercase tracking-[0.24em] text-muted-foreground">
                     {s.label}
@@ -354,7 +366,7 @@ function Home() {
 
         {/* Trust row */}
         <section className="border-y border-border bg-card">
-          <div className="mx-auto grid max-w-[1560px] gap-10 px-6 py-16 text-center sm:grid-cols-2 sm:px-10 lg:grid-cols-4">
+          <div className="mx-auto grid max-w-[1560px] gap-10 px-6 py-10 text-center sm:grid-cols-2 sm:px-10 lg:grid-cols-4">
             {[
               { icon: BadgeCheck, title: "GRA Certified", copy: "Certificate with every order" },
               { icon: Sparkles, title: "VVS1 · D Colour", copy: "Eye-clean, maximum fire" },
@@ -374,11 +386,11 @@ function Home() {
 
         {/* Shop by category */}
         <section className="bg-card">
-          <div className="mx-auto max-w-[1560px] px-6 py-24 sm:px-10">
+          <div className="mx-auto max-w-[1560px] px-6 py-14 sm:px-10 lg:py-20">
             <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">Browse</p>
             <h2 className="mt-4 font-display text-4xl sm:text-5xl lg:text-6xl">Shop by Category</h2>
 
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {categoryTiles.map((c, i) => {
                 const img =
                   allProducts.filter((p) =>

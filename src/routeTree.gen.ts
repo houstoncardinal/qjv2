@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccessibilityRouteImport } from './routes/accessibility'
 import { Route as CraftsmanshipRouteImport } from './routes/craftsmanship'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
@@ -17,6 +18,11 @@ import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccessibilityRoute = AccessibilityRouteImport.update({
+  id: '/accessibility',
+  path: '/accessibility',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CraftsmanshipRoute = CraftsmanshipRouteImport.update({
@@ -37,12 +43,14 @@ const ProductHandleRoute = ProductHandleRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/accessibility': typeof AccessibilityRoute
   '/craftsmanship': typeof CraftsmanshipRoute
   '/shop': typeof ShopRoute
   '/product/$handle': typeof ProductHandleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/accessibility': typeof AccessibilityRoute
   '/craftsmanship': typeof CraftsmanshipRoute
   '/shop': typeof ShopRoute
   '/product/$handle': typeof ProductHandleRoute
@@ -50,20 +58,29 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/accessibility': typeof AccessibilityRoute
   '/craftsmanship': typeof CraftsmanshipRoute
   '/shop': typeof ShopRoute
   '/product/$handle': typeof ProductHandleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/craftsmanship' | '/shop' | '/product/$handle'
+  fullPaths:
+    '/' | '/accessibility' | '/craftsmanship' | '/shop' | '/product/$handle'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/craftsmanship' | '/shop' | '/product/$handle'
-  id: '__root__' | '/' | '/craftsmanship' | '/shop' | '/product/$handle'
+  to: '/' | '/accessibility' | '/craftsmanship' | '/shop' | '/product/$handle'
+  id:
+    | '__root__'
+    | '/'
+    | '/accessibility'
+    | '/craftsmanship'
+    | '/shop'
+    | '/product/$handle'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccessibilityRoute: typeof AccessibilityRoute
   CraftsmanshipRoute: typeof CraftsmanshipRoute
   ShopRoute: typeof ShopRoute
   ProductHandleRoute: typeof ProductHandleRoute
@@ -76,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accessibility': {
+      id: '/accessibility'
+      path: '/accessibility'
+      fullPath: '/accessibility'
+      preLoaderRoute: typeof AccessibilityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/craftsmanship': {
@@ -104,6 +128,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccessibilityRoute: AccessibilityRoute,
   CraftsmanshipRoute: CraftsmanshipRoute,
   ShopRoute: ShopRoute,
   ProductHandleRoute: ProductHandleRoute,

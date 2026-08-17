@@ -56,7 +56,7 @@ function Shop() {
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <main className="mx-auto max-w-7xl px-6 pb-24 pt-16">
+      <main id="main-content" className="mx-auto max-w-7xl px-6 pb-16 pt-10">
         <p className="eyebrow">The Collection</p>
         <h1 className="mt-3 font-display text-5xl sm:text-6xl">Every piece, certified</h1>
         <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
@@ -64,7 +64,7 @@ function Shop() {
           gold plating over S925 sterling silver.
         </p>
 
-        <div className="mt-10 flex flex-wrap gap-2">
+        <div className="mt-7 flex flex-wrap gap-2">
           {filters.map((f) => {
             const active = (f.query ?? undefined) === q;
             return (
@@ -84,10 +84,10 @@ function Shop() {
           })}
         </div>
 
-        <div className="mt-8 hairline" />
+        <div className="mt-6 hairline" />
 
 
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {isLoading &&
             Array.from({ length: 6 }).map((_, i) => (
               <div key={i}>
@@ -99,7 +99,7 @@ function Shop() {
         </div>
 
         {!isLoading && products.length === 0 && (
-          <p className="py-24 text-center text-muted-foreground">
+          <p className="py-16 text-center text-muted-foreground">
             {isError ? "Unable to load products right now." : "No products found."}
           </p>
         )}
