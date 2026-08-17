@@ -116,11 +116,17 @@ export function SiteFooter() {
             ))}
           </div>
 
-          <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 sm:flex-row">
+          <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 sm:flex-row">
             <p className="text-[9px] uppercase tracking-[0.24em] text-muted-foreground">
               © {new Date().getFullYear()} Qureshi Jewelers · All rights reserved
             </p>
-            <div className="flex gap-6">
+            <div className="flex flex-wrap items-center justify-center gap-6">
+              <Link
+                to="/accessibility"
+                className="text-[9px] uppercase tracking-[0.24em] text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Accessibility
+              </Link>
               {["Privacy Policy", "Terms & Conditions", "GRA Certificate"].map((t) => (
                 <span
                   key={t}
@@ -131,6 +137,7 @@ export function SiteFooter() {
               ))}
             </div>
           </div>
+
         </div>
       </footer>
     </>
