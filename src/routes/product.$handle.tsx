@@ -13,7 +13,6 @@ import {
   RotateCcw,
   ShieldCheck,
   ShoppingBag,
-  Star,
   Truck,
 } from "lucide-react";
 import { toast } from "sonner";
