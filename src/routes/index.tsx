@@ -66,7 +66,7 @@ function Home() {
             height={1200}
             className="absolute inset-0 h-full w-full object-cover object-right"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(100deg,oklch(1_0_0/0.96)_0%,oklch(1_0_0/0.8)_38%,oklch(1_0_0/0.1)_66%,transparent_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(100deg,oklch(1_0_0/0.98)_0%,oklch(1_0_0/0.94)_34%,oklch(1_0_0/0.55)_52%,oklch(1_0_0/0.05)_72%,transparent_100%)]" />
           <div className="relative mx-auto flex min-h-[82vh] max-w-7xl items-center px-6 py-24">
             <div className="max-w-xl rise-in">
               <p className="eyebrow">GRA Certified · D Colour · VVS1</p>
