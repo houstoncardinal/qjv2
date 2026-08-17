@@ -364,69 +364,56 @@ function Home() {
           </div>
         </section>
 
-        {/* Trust row */}
-        <section className="border-y border-border bg-card">
-          <div className="mx-auto grid max-w-[1560px] gap-10 px-6 py-10 text-center sm:grid-cols-2 sm:px-10 lg:grid-cols-4">
-            {[
-              { icon: BadgeCheck, title: "GRA Certified", copy: "Certificate with every order" },
-              { icon: Sparkles, title: "VVS1 · D Colour", copy: "Eye-clean, maximum fire" },
-              { icon: Truck, title: "Free Shipping", copy: "Insured and tracked worldwide" },
-              { icon: ShieldCheck, title: "Lifetime Warranty", copy: "Craftsmanship guaranteed" },
-            ].map((t) => (
-              <div key={t.title} className="flex flex-col items-center">
-                <t.icon className="h-5 w-5 text-[var(--gold)]" />
-                <p className="mt-4 text-[10px] uppercase tracking-[0.28em] text-foreground">
-                  {t.title}
-                </p>
-                <p className="mt-1.5 text-[11px] text-muted-foreground">{t.copy}</p>
+        {/* Closing conversion band */}
+        <section className="relative overflow-hidden bg-foreground py-16 text-background lg:py-20">
+          <div className="mx-auto grid max-w-[1560px] items-center gap-10 px-6 sm:px-10 lg:grid-cols-[1.2fr_1fr]">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">
+                Start earning today
+              </p>
+              <h2 className="mt-4 font-display text-4xl leading-[1.03] sm:text-5xl lg:text-6xl">
+                Every piece you buy <span className="italic">pays you back.</span>
+              </h2>
+              <p className="mt-5 max-w-lg text-sm leading-relaxed text-background/70">
+                Join the Qureshi Circle free, collect 100 points instantly and earn on every order —
+                redeemable as store credit on your next piece.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  to="/account"
+                  className="group flex min-h-11 items-center gap-3 bg-background px-9 py-4 text-[10px] uppercase tracking-[0.26em] text-foreground transition-opacity hover:opacity-85"
+                >
+                  Join the Circle{" "}
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+                <Link
+                  to="/shop"
+                  className="flex min-h-11 items-center border border-background/30 px-9 py-4 text-[10px] uppercase tracking-[0.26em] text-background/85 transition-colors hover:border-background"
+                >
+                  Shop the collection
+                </Link>
               </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Shop by category */}
-        <section className="bg-card">
-          <div className="mx-auto max-w-[1560px] px-6 py-14 sm:px-10 lg:py-20">
-            <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">Browse</p>
-            <h2 className="mt-4 font-display text-4xl sm:text-5xl lg:text-6xl">Shop by Category</h2>
-
-            <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {categoryTiles.map((c, i) => {
-                const img =
-                  allProducts.filter((p) =>
-                    new RegExp(c.label.slice(0, 4), "i").test(p.node.productType ?? ""),
-                  )[0]?.node.images.edges[0]?.node ?? allProducts[i]?.node.images.edges[0]?.node;
-                return (
-                  <Link
-                    key={c.label}
-                    to="/shop"
-                    search={{ q: c.q }}
-                    className="group relative aspect-[3/4] overflow-hidden bg-secondary"
-                  >
-                    {img && (
-                      <img
-                        src={img.url}
-                        alt={`${c.label} collection`}
-                        loading="lazy"
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07]"
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-[linear-gradient(to_top,oklch(0.13_0.004_60/0.82),transparent_58%)]" />
-                    <div className="absolute bottom-6 left-6 right-6">
-                      <p className="font-display text-3xl text-background">{c.label}</p>
-                      <p className="mt-1 text-[9px] uppercase tracking-[0.26em] text-background/70">
-                        {c.sub}
-                      </p>
-                      <span className="mt-4 inline-flex items-center gap-2 text-[9px] uppercase tracking-[0.26em] text-[var(--gold)] opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                        Shop now <ArrowRight className="h-3 w-3" />
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
             </div>
+
+            <ul className="grid gap-px bg-background/15 sm:grid-cols-2">
+              {[
+                { icon: BadgeCheck, title: "GRA Certified", copy: "Certificate with every order" },
+                { icon: Sparkles, title: "VVS1 · D Colour", copy: "Eye-clean, maximum fire" },
+                { icon: Truck, title: "Free Shipping", copy: "Insured and tracked worldwide" },
+                { icon: ShieldCheck, title: "Lifetime Warranty", copy: "Craftsmanship guaranteed" },
+              ].map((t) => (
+                <li key={t.title} className="bg-foreground p-6">
+                  <t.icon aria-hidden="true" className="h-5 w-5 text-[var(--gold)]" />
+                  <p className="mt-4 text-[10px] uppercase tracking-[0.24em] text-background">
+                    {t.title}
+                  </p>
+                  <p className="mt-1.5 text-[11px] text-background/60">{t.copy}</p>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
+
       </main>
 
       <SiteFooter />
