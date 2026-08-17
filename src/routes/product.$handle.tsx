@@ -19,7 +19,9 @@ import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
-import { VariantSelector, metalSwatch, prettyValue } from "@/components/VariantSelector";
+import { VariantSelector, prettyValue } from "@/components/VariantSelector";
+import { MetalSwatch } from "@/components/MetalSwatch";
+
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
