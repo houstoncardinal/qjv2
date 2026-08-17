@@ -1,43 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { ShopifyProduct } from "@/lib/shopify";
+import {
+  MetalSwatch,
+  METAL_SUBTITLE,
+  metalKey,
+  isMetalOptionName,
+} from "@/components/MetalSwatch";
 
 type Variant = ShopifyProduct["node"]["variants"]["edges"][number]["node"];
 
-function metalSwatch(value: string): string | null {
-  const v = value.toLowerCase();
-  if (/rose|pink/.test(v)) return "swatch-rose";
-  if (/yellow gold|gold|champagne|brass/.test(v) && !/white/.test(v)) return "swatch-gold";
-  if (/silver|white|platinum|rhodium|steel|s925|sterling/.test(v)) return "swatch-silver";
-  if (/black|onyx|gunmetal|noir/.test(v)) return "swatch-ink";
-  return null;
-}
-
 function metalSub(value: string): string {
-  const v = value.toLowerCase();
-  if (/rose/.test(v)) return "Warm blush";
-  if (/white/.test(v)) return "Rhodium finish";
-  if (/gold/.test(v)) return "5× 18K plated";
-  if (/silver|sterling|s925/.test(v)) return "Solid S925";
-  if (/black/.test(v)) return "Black rhodium";
-  return "Premium finish";
+  return METAL_SUBTITLE[metalKey(value)];
 }
 
 function optionKind(name: string): "metal" | "size" | "measure" | "plain" {
   const n = name.toLowerCase();
-  if (/colou?r|metal|plating|finish|tone/.test(n)) return "metal";
+  if (isMetalOptionName(n)) return "metal";
   if (/size/.test(n)) return "size";
   if (/length|width|carat|ct|inch|chain|diameter|mm/.test(n)) return "measure";
   return "plain";
 }
 
 export function prettyValue(value: string) {
-  return value
-    .replace(/[_-]+/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return value.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export { metalSwatch };
 
 export interface VariantSelectorProps {
   product: ShopifyProduct;
