@@ -66,6 +66,13 @@ export function SiteHeader() {
             >
               Our Craft
             </Link>
+            <Link
+              to="/rewards"
+              className="flex items-center gap-1.5 py-2 text-[10px] uppercase tracking-[0.22em] text-[var(--gold)] transition-opacity hover:opacity-75"
+              activeProps={{ className: "opacity-100" }}
+            >
+              <Sparkles aria-hidden="true" className="h-3 w-3" /> Rewards
+            </Link>
           </nav>
 
           <div className="ml-auto flex items-center gap-1">
@@ -76,12 +83,19 @@ export function SiteHeader() {
             >
               <Search aria-hidden="true" className="h-[18px] w-[18px]" />
             </Link>
-            <span
-              aria-hidden="true"
-              className="hidden h-11 w-11 place-items-center text-foreground/70 sm:grid"
+            <Link
+              to="/account"
+              aria-label={signedIn ? "Your account and rewards" : "Sign in to your account"}
+              className="relative hidden h-11 w-11 place-items-center text-foreground/70 transition-colors hover:text-foreground sm:grid"
             >
-              <User className="h-[18px] w-[18px]" />
-            </span>
+              <User aria-hidden="true" className="h-[18px] w-[18px]" />
+              {signedIn && (
+                <span
+                  aria-hidden="true"
+                  className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-[var(--gold)]"
+                />
+              )}
+            </Link>
             <CartDrawer />
           </div>
         </div>
@@ -91,19 +105,40 @@ export function SiteHeader() {
           className={cn("border-t border-border lg:hidden", open ? "block" : "hidden")}
         >
           <nav aria-label="Mobile" className="mx-auto flex max-w-[1400px] flex-col px-5 py-2">
-
-            {[...navLinks, { label: "Our Craft" }].map((l) => (
+            {navLinks.map((l) => (
               <Link
                 key={l.label}
-                to={l.label === "Our Craft" ? "/craftsmanship" : "/shop"}
-                search={"q" in l && l.q ? { q: l.q } : {}}
+                to="/shop"
+                search={l.q ? { q: l.q } : {}}
                 onClick={() => setOpen(false)}
-                className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground last:border-0"
+                className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
               >
                 {l.label}
               </Link>
             ))}
+            <Link
+              to="/craftsmanship"
+              onClick={() => setOpen(false)}
+              className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
+            >
+              Our Craft
+            </Link>
+            <Link
+              to="/rewards"
+              onClick={() => setOpen(false)}
+              className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-[var(--gold)]"
+            >
+              Rewards
+            </Link>
+            <Link
+              to="/account"
+              onClick={() => setOpen(false)}
+              className="py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
+            >
+              {signedIn ? "My account" : "Sign in"}
+            </Link>
           </nav>
+
 
         </div>
       </div>
