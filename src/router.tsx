@@ -3,7 +3,19 @@ import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
-  const queryClient = new QueryClient();
+  // Live Shopify sync: catalog edits in Shopify propagate to the storefront
+  // on refocus/reconnect and after a short staleness window.
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 30_000,
+        gcTime: 5 * 60_000,
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
+        retry: 2,
+      },
+    },
+  });
 
   const router = createRouter({
     routeTree,
