@@ -31,6 +31,14 @@ function optionKind(name: string): "metal" | "size" | "measure" | "plain" {
   return "plain";
 }
 
+export function prettyValue(value: string) {
+  return value
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+export { metalSwatch };
+
 export interface VariantSelectorProps {
   product: ShopifyProduct;
   onVariantChange: (variant: Variant | undefined) => void;
@@ -101,7 +109,7 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
               </p>
               {active && (
                 <p className="text-[10px] uppercase tracking-[0.16em] text-foreground/70">
-                  {active}
+                  {prettyValue(active)}
                 </p>
               )}
             </div>
@@ -132,7 +140,7 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
                           swatch ?? "bg-secondary",
                         )}
                       />
-                      <span className="text-[9px] uppercase tracking-[0.14em]">{value}</span>
+                      <span className="text-[9px] uppercase tracking-[0.14em]">{prettyValue(value)}</span>
                       <span
                         className={cn(
                           "text-[8px] tracking-wide",
@@ -164,7 +172,7 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
                         !available && "text-muted-foreground line-through opacity-45",
                       )}
                     >
-                      <span className="text-xs tracking-wide">{value}</span>
+                      <span className="text-xs tracking-wide">{prettyValue(value)}</span>
                       <span
                         className={cn(
                           "text-[7px] uppercase tracking-[0.18em]",
@@ -196,7 +204,7 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
                         !available && "text-muted-foreground line-through opacity-45",
                       )}
                     >
-                      {value}
+                      {prettyValue(value)}
                     </button>
                   );
                 })}

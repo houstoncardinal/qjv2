@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
-import { VariantSelector } from "@/components/VariantSelector";
+import { VariantSelector, metalSwatch, prettyValue } from "@/components/VariantSelector";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -174,7 +174,7 @@ function ProductDetail() {
 
   const specs: Array<[string, string]> = [
     ["Base Metal", "Solid S925 Sterling Silver"],
-    ["Plating", metalValue ? `5× ${metalValue}` : "5× 18K Gold · Rose Gold · White Gold"],
+    ["Plating", metalValue ? `5× ${prettyValue(metalValue)}` : "5× 18K Gold · Rose Gold · White Gold"],
     ["Stone", "VVS1 Moissanite · D Colour"],
     ["Setting", "Classic prong solitaire"],
     ["Finish", "Tarnish-resistant e-coat"],
@@ -217,8 +217,13 @@ function ProductDetail() {
               )}
               {metalValue && (
                 <span className="absolute left-4 top-4 flex items-center gap-2 bg-background/90 px-3 py-1.5 text-[8px] uppercase tracking-[0.2em] text-foreground backdrop-blur">
-                  <span className="h-2.5 w-2.5 rounded-full swatch-gold" />
-                  {metalValue}
+                  <span
+                    className={cn(
+                      "h-2.5 w-2.5 rounded-full",
+                      metalSwatch(metalValue) ?? "bg-secondary",
+                    )}
+                  />
+                  {prettyValue(metalValue)}
                 </span>
               )}
               {images.length > 1 && (
