@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, Search, User } from "lucide-react";
-import { useState } from "react";
+import { Menu, Search, Sparkles, User } from "lucide-react";
+import { useEffect, useState } from "react";
 import { CartDrawer } from "@/components/CartDrawer";
+import { useAuthStore } from "@/stores/authStore";
 import { cn } from "@/lib/utils";
 
 export const navLinks: Array<{ label: string; q?: string }> = [
@@ -14,6 +15,14 @@ export const navLinks: Array<{ label: string; q?: string }> = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
+  const token = useAuthStore((s) => s.token);
+
+  // Read persisted auth after hydration to avoid SSR mismatch.
+  useEffect(() => {
+    setSignedIn(useAuthStore.getState().isAuthenticated());
+  }, [token]);
+
 
   return (
     <header className="sticky top-0 z-50">
