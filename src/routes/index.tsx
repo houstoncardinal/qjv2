@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Award,
   BadgeCheck,
+  Crown,
   Gem,
   Heart,
   Leaf,
@@ -15,9 +16,12 @@ import heroImage from "@/assets/hero-light.jpg";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
+import { MetalSwatch } from "@/components/MetalSwatch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
+import { TIERS } from "@/lib/rewards";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
