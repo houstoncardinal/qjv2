@@ -184,7 +184,7 @@ function ProductDetail() {
     <div className="min-h-screen">
       <SiteHeader />
 
-      <main>
+      <main id="main-content">
         <div className="mx-auto max-w-[1400px] px-5 pt-6 sm:px-8">
           <nav className="text-[9px] uppercase tracking-[0.24em] text-muted-foreground">
             <Link to="/" className="transition-colors hover:text-foreground">
