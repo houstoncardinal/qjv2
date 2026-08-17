@@ -60,8 +60,8 @@ function Shop() {
         <p className="eyebrow">The Collection</p>
         <h1 className="mt-3 font-display text-5xl sm:text-6xl">Every piece, certified</h1>
         <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          Moissanite graded D colour and VVS1 clarity, hand-set in 18K gold plating over S925
-          sterling silver.
+          Moissanite graded D colour and VVS1 clarity, hand-set in 18K gold, rhodium silver and rose
+          gold plating over S925 sterling silver.
         </p>
 
         <div className="mt-10 flex flex-wrap gap-2">
@@ -72,10 +72,10 @@ function Shop() {
                 key={f.label}
                 onClick={() => navigate({ search: { q: f.query } })}
                 className={cn(
-                  "border px-5 py-2 text-[10px] uppercase tracking-[0.25em] transition-colors",
+                  "rounded-full border px-6 py-2.5 text-[10px] uppercase tracking-[0.28em] transition-all duration-300",
                   active
-                    ? "border-primary text-primary"
-                    : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground",
+                    ? "border-foreground bg-foreground text-background"
+                    : "border-border bg-[var(--glass-bg)] text-muted-foreground backdrop-blur hover:border-foreground/40 hover:text-foreground",
                 )}
               >
                 {f.label}
@@ -84,7 +84,8 @@ function Shop() {
           })}
         </div>
 
-        <div className="mt-6 hairline" />
+        <div className="mt-8 hairline" />
+
 
         <div className="mt-12 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading &&
