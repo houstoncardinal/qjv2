@@ -78,7 +78,7 @@ function ProductRow({
 
   return (
     <section className={cn("bg-card", tone === "porcelain" && "bg-background")}>
-      <div className="mx-auto max-w-[1560px] px-6 py-24 sm:px-10 lg:py-28">
+      <div className="mx-auto max-w-[1560px] px-6 py-14 sm:px-10 lg:py-20">
         <div className="flex flex-wrap items-end justify-between gap-6 border-b border-border pb-8">
           <div>
             <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">{eyebrow}</p>
@@ -101,7 +101,7 @@ function ProductRow({
           </Link>
         </div>
 
-        <div className="mt-12 grid grid-cols-2 gap-5 lg:grid-cols-4 lg:gap-7">
+        <div className="mt-9 grid grid-cols-2 gap-5 lg:grid-cols-4 lg:gap-7">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="border border-border bg-card">
@@ -116,7 +116,7 @@ function ProductRow({
             : products.slice(0, 4).map((p) => <ProductCard key={p.node.id} product={p} />)}
         </div>
 
-        <div className="mt-14 flex flex-wrap justify-center gap-4">
+        <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Link
             to="/shop"
             search={ctaQuery ? { q: ctaQuery } : {}}
@@ -251,7 +251,7 @@ function Home() {
         />
 
         {/* Why choose */}
-        <section className="border-y border-border bg-foreground py-24 text-background">
+        <section className="border-y border-border bg-foreground py-14 text-background lg:py-20">
           <div className="mx-auto max-w-[1560px] px-6 sm:px-10">
             <div className="max-w-2xl">
               <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">
@@ -266,7 +266,7 @@ function Home() {
               </p>
             </div>
 
-            <div className="mt-14 grid gap-px bg-background/15 md:grid-cols-3">
+            <div className="mt-10 grid gap-px bg-background/15 md:grid-cols-3">
               {[
                 {
                   icon: Heart,
@@ -319,7 +319,7 @@ function Home() {
         />
 
         {/* Sustainability panel */}
-        <section className="bg-background py-24">
+        <section className="bg-background py-14 lg:py-20">
           <div className="mx-auto max-w-4xl px-6 text-center sm:px-10">
             <span className="inline-flex items-center gap-2 border border-border bg-card px-5 py-2 text-[9px] uppercase tracking-[0.3em] text-muted-foreground">
               <Leaf className="h-3 w-3 text-[var(--gold)]" /> Sustainably created
@@ -332,7 +332,7 @@ function Home() {
               the mining impact — and it is independently verified, not just claimed.
             </p>
 
-            <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-3">
+            <div className="mt-9 grid gap-px border border-border bg-border sm:grid-cols-3">
               {[
                 { stat: "0", label: "Carats mined" },
                 { stat: "100%", label: "Lab created" },
@@ -366,7 +366,7 @@ function Home() {
 
         {/* Trust row */}
         <section className="border-y border-border bg-card">
-          <div className="mx-auto grid max-w-[1560px] gap-10 px-6 py-16 text-center sm:grid-cols-2 sm:px-10 lg:grid-cols-4">
+          <div className="mx-auto grid max-w-[1560px] gap-10 px-6 py-10 text-center sm:grid-cols-2 sm:px-10 lg:grid-cols-4">
             {[
               { icon: BadgeCheck, title: "GRA Certified", copy: "Certificate with every order" },
               { icon: Sparkles, title: "VVS1 · D Colour", copy: "Eye-clean, maximum fire" },
@@ -386,11 +386,11 @@ function Home() {
 
         {/* Shop by category */}
         <section className="bg-card">
-          <div className="mx-auto max-w-[1560px] px-6 py-24 sm:px-10">
+          <div className="mx-auto max-w-[1560px] px-6 py-14 sm:px-10 lg:py-20">
             <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">Browse</p>
             <h2 className="mt-4 font-display text-4xl sm:text-5xl lg:text-6xl">Shop by Category</h2>
 
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {categoryTiles.map((c, i) => {
                 const img =
                   allProducts.filter((p) =>
