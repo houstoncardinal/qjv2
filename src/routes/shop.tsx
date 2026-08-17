@@ -87,7 +87,7 @@ function Shop() {
         <div className="mt-8 hairline" />
 
 
-        <div className="mt-12 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {isLoading &&
             Array.from({ length: 6 }).map((_, i) => (
               <div key={i}>
