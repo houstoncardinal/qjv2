@@ -242,16 +242,12 @@ function ProductDetail() {
                   />
                 )}
                 {metalValue && (
-                  <span className="absolute left-5 top-5 flex items-center gap-2 bg-background/90 px-3.5 py-2 text-[8px] uppercase tracking-[0.22em] text-foreground backdrop-blur">
-                    <span
-                      className={cn(
-                        "h-2.5 w-2.5 rounded-full",
-                        metalSwatch(metalValue) ?? "bg-secondary",
-                      )}
-                    />
+                  <span className="glass-strong absolute left-5 top-5 flex items-center gap-2.5 px-3.5 py-2 text-[8px] uppercase tracking-[0.22em] text-foreground">
+                    <MetalSwatch value={metalValue} size="xs" />
                     {prettyValue(metalValue)}
                   </span>
                 )}
+
                 {images.length > 1 && (
                   <>
                     <button
