@@ -98,12 +98,13 @@ export function SiteHeader() {
                 to={l.label === "Our Craft" ? "/craftsmanship" : "/shop"}
                 search={"q" in l && l.q ? { q: l.q } : {}}
                 onClick={() => setOpen(false)}
-                className="border-b border-border/60 py-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground last:border-0"
+                className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground last:border-0"
               >
                 {l.label}
               </Link>
             ))}
-          </div>
+          </nav>
+
         </div>
       </div>
     </header>
