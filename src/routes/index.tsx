@@ -284,7 +284,7 @@ function Home() {
                   copy: "Solid S925 sterling silver with 5 layers of 18K plating and a protective e-coat that resists tarnish.",
                 },
               ].map((c) => (
-                <div key={c.title} className="bg-foreground p-10">
+                <div key={c.title} className="bg-foreground p-8">
                   <c.icon className="h-5 w-5 text-[var(--gold)]" />
                   <h3 className="mt-6 font-display text-2xl">{c.title}</h3>
                   <p className="mt-4 text-xs leading-relaxed text-background/60">{c.copy}</p>
@@ -338,7 +338,7 @@ function Home() {
                 { stat: "100%", label: "Lab created" },
                 { stat: "~97%", label: "Lower footprint" },
               ].map((s) => (
-                <div key={s.label} className="bg-card p-8 text-left">
+                <div key={s.label} className="bg-card p-6 text-left">
                   <p className="font-display text-4xl">{s.stat}</p>
                   <p className="mt-2 text-[9px] uppercase tracking-[0.24em] text-muted-foreground">
                     {s.label}
