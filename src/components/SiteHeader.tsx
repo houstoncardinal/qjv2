@@ -17,6 +17,10 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50">
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+
       <div className="bg-foreground py-2 text-center">
         <p className="text-[9px] uppercase tracking-[0.32em] text-background/90">
           Free shipping on orders over $250 · GRA certified moissanite
@@ -27,12 +31,15 @@ export function SiteHeader() {
         <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-4 px-5 sm:px-8">
           <button
             type="button"
-            aria-label="Open menu"
+            aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={open}
+            aria-controls="mobile-nav"
             onClick={() => setOpen((o) => !o)}
-            className="-ml-1 grid h-9 w-9 place-items-center text-foreground lg:hidden"
+            className="-ml-1 grid h-11 w-11 place-items-center text-foreground lg:hidden"
           >
-            <Menu className="h-5 w-5" />
+            <Menu aria-hidden="true" className="h-5 w-5" />
           </button>
+
 
           <Link to="/" className="flex shrink-0 flex-col leading-none">
             <span className="font-display text-2xl tracking-[0.02em] text-foreground">Qureshi</span>
