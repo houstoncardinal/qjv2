@@ -228,6 +228,135 @@ function Home() {
           </div>
         </section>
 
+        {/* Marquee assurance strip */}
+        <section aria-label="Service promises" className="border-b border-border bg-card">
+          <div className="mx-auto grid max-w-[1560px] grid-cols-2 gap-px bg-border px-0 sm:grid-cols-4">
+            {[
+              { icon: BadgeCheck, label: "GRA certified stones" },
+              { icon: Truck, label: "Free insured shipping" },
+              { icon: ShieldCheck, label: "Lifetime warranty" },
+              { icon: Sparkles, label: "Points on every order" },
+            ].map((t) => (
+              <div
+                key={t.label}
+                className="flex items-center justify-center gap-2.5 bg-card px-4 py-4 text-center"
+              >
+                <t.icon aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-[var(--gold)]" />
+                <p className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
+                  {t.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Shop by category — high in the funnel */}
+        <section className="bg-card">
+          <div className="mx-auto max-w-[1560px] px-6 py-14 sm:px-10 lg:py-16">
+            <div className="flex flex-wrap items-end justify-between gap-6">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">Browse</p>
+                <h2 className="mt-3 font-display text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
+                  Shop by Category
+                </h2>
+              </div>
+              <Link
+                to="/shop"
+                className="group flex items-center gap-2.5 border-b border-foreground/25 pb-1.5 text-[10px] uppercase tracking-[0.3em] transition-colors hover:border-[var(--gold)] hover:text-[var(--gold)]"
+              >
+                View all{" "}
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
+
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+              {categoryTiles.map((c, i) => {
+                const img =
+                  allProducts.filter((p) =>
+                    new RegExp(c.label.slice(0, 4), "i").test(p.node.productType ?? ""),
+                  )[0]?.node.images.edges[0]?.node ?? allProducts[i]?.node.images.edges[0]?.node;
+                return (
+                  <Link
+                    key={c.label}
+                    to="/shop"
+                    search={{ q: c.q }}
+                    className="group relative aspect-[4/5] overflow-hidden bg-secondary"
+                  >
+                    {img && (
+                      <img
+                        src={img.url}
+                        alt={`${c.label} collection`}
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07]"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-[linear-gradient(to_top,oklch(0.13_0.004_60/0.85),transparent_58%)]" />
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <p className="font-display text-3xl text-background">{c.label}</p>
+                      <p className="mt-1 text-[9px] uppercase tracking-[0.26em] text-background/70">
+                        {c.sub}
+                      </p>
+                      <span className="mt-4 inline-flex items-center gap-2 text-[9px] uppercase tracking-[0.26em] text-[var(--gold)] transition-transform duration-500 group-hover:translate-x-1">
+                        Shop now <ArrowRight className="h-3 w-3" />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* Rewards / gamification band */}
+        <section className="border-y border-border bg-background">
+          <div className="mx-auto grid max-w-[1560px] gap-px bg-border px-0 lg:grid-cols-[1.1fr_1.4fr]">
+            <div className="bg-card p-8 sm:p-10">
+              <div className="flex items-center gap-3">
+                <Crown aria-hidden="true" className="h-4 w-4 text-[var(--gold)]" />
+                <p className="text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+                  The Qureshi Circle
+                </p>
+              </div>
+              <h2 className="mt-5 font-display text-4xl leading-[1.05] sm:text-5xl">
+                Earn points, <span className="italic">unlock metal tiers</span>
+              </h2>
+              <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
+                1 point per $1, bonus points for milestones, and 20 points equals $1 of store credit.
+                Free to join — members start with 100 points.
+              </p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Link
+                  to="/account"
+                  className="min-h-11 bg-foreground px-8 py-4 text-[10px] uppercase tracking-[0.26em] text-background transition-opacity hover:opacity-85"
+                >
+                  Join free · +100 pts
+                </Link>
+                <Link
+                  to="/rewards"
+                  className="min-h-11 border border-border px-8 py-4 text-[10px] uppercase tracking-[0.26em] text-foreground/75 transition-colors hover:border-foreground hover:text-foreground"
+                >
+                  How it works
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
+              {TIERS.map((t) => (
+                <div key={t.key} className="flex flex-col bg-card p-6">
+                  <MetalSwatch value={t.swatch} size="md" />
+                  <p className="mt-5 font-display text-xl leading-tight">{t.name}</p>
+                  <p className="mt-1.5 text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
+                    {t.threshold}+ pts · {t.multiplier}×
+                  </p>
+                  <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+                    {t.perks[1] ?? t.perks[0]}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
 
         <ProductRow
           eyebrow="Curated Collection"
