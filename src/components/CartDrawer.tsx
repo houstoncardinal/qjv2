@@ -12,6 +12,7 @@ import {
 import { ShoppingBag, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatMoney } from "@/lib/shopify";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/rewards";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +24,8 @@ export const CartDrawer = () => {
     0,
   );
   const currency = items[0]?.price.currencyCode ?? "USD";
+  const pointsEarned = Math.floor(totalPrice);
+
 
   useEffect(() => {
     if (isOpen) syncCart();
