@@ -108,7 +108,7 @@ function ProductDetail() {
     return (
       <div className="min-h-screen">
         <SiteHeader />
-        <main className="mx-auto grid max-w-[1400px] gap-12 px-5 py-14 sm:px-8 lg:grid-cols-2">
+        <main id="main-content" className="mx-auto grid max-w-[1400px] gap-12 px-5 py-14 sm:px-8 lg:grid-cols-2">
           <Skeleton className="aspect-square w-full" />
           <div className="space-y-5">
             <Skeleton className="h-12 w-3/4" />
@@ -125,7 +125,7 @@ function ProductDetail() {
     return (
       <div className="min-h-screen">
         <SiteHeader />
-        <main className="mx-auto max-w-3xl px-6 py-32 text-center">
+        <main id="main-content" className="mx-auto max-w-3xl px-6 py-32 text-center">
           <p className="eyebrow">Not found</p>
           <h1 className="mt-4 font-display text-4xl">This piece is no longer available</h1>
           <Button asChild variant="gold" className="mt-8">

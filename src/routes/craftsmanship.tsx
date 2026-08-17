@@ -52,7 +52,7 @@ function Craftsmanship() {
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <main>
+      <main id="main-content">
         <section className="mx-auto max-w-4xl px-6 pb-16 pt-20 text-center">
           <p className="eyebrow">The Atelier</p>
           <h1 className="mt-5 font-display text-5xl leading-[1.05] md:text-6xl">

@@ -56,7 +56,7 @@ function Shop() {
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <main className="mx-auto max-w-7xl px-6 pb-16 pt-10">
+      <main id="main-content" className="mx-auto max-w-7xl px-6 pb-16 pt-10">
         <p className="eyebrow">The Collection</p>
         <h1 className="mt-3 font-display text-5xl sm:text-6xl">Every piece, certified</h1>
         <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
