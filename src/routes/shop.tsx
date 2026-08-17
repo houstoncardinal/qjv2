@@ -7,12 +7,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { fetchProducts } from "@/lib/shopify";
 import { cn } from "@/lib/utils";
 
-type ShopSearch = { q?: string };
+type ShopSearch = { q?: string | undefined };
 
 export const Route = createFileRoute("/shop")({
   validateSearch: (search: Record<string, unknown>): ShopSearch => ({
-    q: typeof search.q === "string" && search.q.length > 0 ? search.q : undefined,
+    q: typeof search["q"] === "string" && search["q"].length > 0 ? search["q"] : undefined,
   }),
+
   head: () => ({
     meta: [
       { title: "The Collection | Qureshi Jewelers Moissanite Jewelry" },
