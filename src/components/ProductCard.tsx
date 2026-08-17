@@ -2,20 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { Loader2, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatMoney, type ShopifyProduct } from "@/lib/shopify";
+import { MetalSwatchRow, isMetalOptionName } from "@/components/MetalSwatch";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 function metalOption(product: ShopifyProduct) {
-  return product.node.options?.find((o) => /colou?r|metal|plating|tone|finish/i.test(o.name));
-}
-
-function swatchClass(value: string): string | null {
-  const s = value.toLowerCase();
-  if (/rose|pink/.test(s)) return "swatch-rose";
-  if (/gold|champagne/.test(s) && !/white/.test(s)) return "swatch-gold";
-  if (/silver|white|platinum|rhodium|steel/.test(s)) return "swatch-silver";
-  if (/black|onyx/.test(s)) return "swatch-ink";
-  return null;
+  return product.node.options?.find((o) => isMetalOptionName(o.name));
 }
 
 export function ProductCard({
@@ -35,13 +27,11 @@ export function ProductCard({
     node.variants.edges.find((v) => v.node.availableForSale)?.node ?? node.variants.edges[0]?.node;
   const price = node.priceRange.minVariantPrice;
   const option = metalOption(product);
-  const swatches = (option?.values ?? [])
-    .map((v) => ({ value: v, cls: swatchClass(v) }))
-    .filter((s) => s.cls)
-    .slice(0, 4);
-  const finishCount = option?.values.length ?? 0;
+  const finishes = (option?.values ?? []).filter((v) => v !== "Default Title");
   const bestSeller = (node.tags ?? []).some((t) => /best|trending|featured/i.test(t));
   const soldOut = node.variants.edges.every((v) => !v.node.availableForSale);
+  const points = Math.floor(parseFloat(price.amount || "0"));
+
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
