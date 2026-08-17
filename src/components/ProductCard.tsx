@@ -1,24 +1,21 @@
 import { Link } from "@tanstack/react-router";
-import { Loader2, Star } from "lucide-react";
+import { Loader2, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatMoney, type ShopifyProduct } from "@/lib/shopify";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-function metalDots(product: ShopifyProduct) {
-  const option = product.node.options?.find((o) => /colou?r|metal|plating|tone/i.test(o.name));
-  if (!option) return [];
-  return option.values
-    .map((v) => {
-      const s = v.toLowerCase();
-      if (/rose|pink/.test(s)) return "swatch-rose";
-      if (/gold|champagne/.test(s) && !/white/.test(s)) return "swatch-gold";
-      if (/silver|white|platinum|rhodium|steel/.test(s)) return "swatch-silver";
-      if (/black|onyx/.test(s)) return "swatch-ink";
-      return null;
-    })
-    .filter(Boolean)
-    .slice(0, 4) as string[];
+function metalOption(product: ShopifyProduct) {
+  return product.node.options?.find((o) => /colou?r|metal|plating|tone|finish/i.test(o.name));
+}
+
+function swatchClass(value: string): string | null {
+  const s = value.toLowerCase();
+  if (/rose|pink/.test(s)) return "swatch-rose";
+  if (/gold|champagne/.test(s) && !/white/.test(s)) return "swatch-gold";
+  if (/silver|white|platinum|rhodium|steel/.test(s)) return "swatch-silver";
+  if (/black|onyx/.test(s)) return "swatch-ink";
+  return null;
 }
 
 export function ProductCard({
@@ -37,8 +34,14 @@ export function ProductCard({
   const variant =
     node.variants.edges.find((v) => v.node.availableForSale)?.node ?? node.variants.edges[0]?.node;
   const price = node.priceRange.minVariantPrice;
-  const dots = metalDots(product);
+  const option = metalOption(product);
+  const swatches = (option?.values ?? [])
+    .map((v) => ({ value: v, cls: swatchClass(v) }))
+    .filter((s) => s.cls)
+    .slice(0, 4);
+  const finishCount = option?.values.length ?? 0;
   const bestSeller = (node.tags ?? []).some((t) => /best|trending|featured/i.test(t));
+  const soldOut = node.variants.edges.every((v) => !v.node.availableForSale);
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -59,15 +62,15 @@ export function ProductCard({
       <Link
         to="/product/$handle"
         params={{ handle: node.handle }}
-        className="flex h-full flex-col border border-border bg-card transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[var(--shadow-elevated)]"
+        className="flex h-full flex-col border border-border/70 bg-card transition-all duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-[var(--gold)]/45 hover:shadow-[var(--shadow-elevated)]"
       >
-        <div className="relative aspect-square overflow-hidden bg-secondary/60">
+        <div className="relative aspect-[4/5] overflow-hidden bg-card">
           {image && (
             <img
               src={image.url}
               alt={image.altText ?? node.title}
               loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
             />
           )}
           {hoverImage && (
@@ -75,62 +78,89 @@ export function ProductCard({
               src={hoverImage.url}
               alt={hoverImage.altText ?? node.title}
               loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+              className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-[900ms] group-hover:opacity-100"
             />
           )}
 
-          {bestSeller && (
-            <span className="absolute left-2.5 top-2.5 bg-foreground px-2.5 py-1 text-[7px] uppercase tracking-[0.2em] text-background">
-              Best Seller
-            </span>
-          )}
-
-          {dots.length > 0 && (
-            <div className="absolute bottom-2.5 left-2.5 flex gap-1">
-              {dots.map((d, i) => (
-                <span
-                  key={d + i}
-                  className={`h-3 w-3 rounded-full ring-1 ring-background/70 ${d}`}
-                  aria-hidden
-                />
-              ))}
-            </div>
-          )}
-
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={isLoading || !variant}
-            className="glass-strong absolute inset-x-2.5 bottom-2.5 translate-y-2 py-2.5 text-[9px] uppercase tracking-[0.22em] text-foreground opacity-0 transition-all duration-400 group-hover:translate-y-0 group-hover:opacity-100"
-          >
-            {isLoading ? (
-              <Loader2 className="mx-auto h-3.5 w-3.5 animate-spin" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-3.5">
+            {bestSeller ? (
+              <span className="bg-foreground px-3 py-1.5 text-[8px] uppercase tracking-[0.22em] text-background">
+                Best Seller
+              </span>
             ) : (
-              "Quick add"
+              <span />
             )}
-          </button>
+            {soldOut && (
+              <span className="glass-strong px-3 py-1.5 text-[8px] uppercase tracking-[0.22em] text-foreground">
+                Sold out
+              </span>
+            )}
+          </div>
+
+          {!soldOut && (
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={isLoading || !variant}
+              className="glass-strong absolute inset-x-3.5 bottom-3.5 flex translate-y-3 items-center justify-center gap-2 py-3.5 text-[9px] uppercase tracking-[0.24em] text-foreground opacity-0 transition-all duration-[500ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:opacity-100"
+            >
+              {isLoading ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <>
+                  <ShoppingBag className="h-3.5 w-3.5" /> Quick add
+                </>
+              )}
+            </button>
+          )}
         </div>
 
-        <div className={cn("flex flex-1 flex-col p-3.5", compact && "p-3")}>
-          <div className="flex items-center gap-0.5 text-[var(--gold)]">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} className="h-2.5 w-2.5 fill-current" />
-            ))}
-          </div>
+        <div className={cn("flex flex-1 flex-col bg-card p-5", compact && "p-4")}>
+          {node.productType && (
+            <p className="text-[8px] uppercase tracking-[0.3em] text-muted-foreground">
+              {node.productType}
+            </p>
+          )}
           <h3
             className={cn(
-              "mt-2 line-clamp-2 text-[11px] leading-snug tracking-wide text-foreground/85 transition-colors group-hover:text-[var(--gold)]",
-              compact && "text-[10px]",
+              "mt-2.5 line-clamp-2 font-display text-lg leading-snug text-foreground transition-colors group-hover:text-[var(--gold)]",
+              compact && "text-base",
             )}
           >
             {node.title}
           </h3>
-          <p className="mt-auto pt-3 text-xs tracking-wide text-foreground">
-            <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
-              From{" "}
+
+          {swatches.length > 0 && (
+            <div className="mt-3.5 flex items-center gap-2">
+              <div className="flex gap-1.5">
+                {swatches.map((s) => (
+                  <span
+                    key={s.value}
+                    title={s.value}
+                    className={cn("h-3.5 w-3.5 rounded-full ring-1 ring-border", s.cls)}
+                    aria-hidden
+                  />
+                ))}
+              </div>
+              {finishCount > 1 && (
+                <span className="text-[8px] uppercase tracking-[0.2em] text-muted-foreground">
+                  {finishCount} finishes
+                </span>
+              )}
+            </div>
+          )}
+
+          <div className="mt-auto flex items-end justify-between gap-3 pt-5">
+            <p className="text-sm tracking-wide text-foreground">
+              <span className="text-[8px] uppercase tracking-[0.24em] text-muted-foreground">
+                From{" "}
+              </span>
+              {formatMoney(price.amount, price.currencyCode)}
+            </p>
+            <span className="text-[8px] uppercase tracking-[0.22em] text-muted-foreground transition-colors group-hover:text-[var(--gold)]">
+              View
             </span>
-            {formatMoney(price.amount, price.currencyCode)}
-          </p>
+          </div>
         </div>
       </Link>
     </article>
