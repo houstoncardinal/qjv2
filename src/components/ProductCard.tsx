@@ -120,37 +120,27 @@ export function ProductCard({
             {node.title}
           </h3>
 
-          {swatches.length > 0 && (
-            <div className="mt-3.5 flex items-center gap-2">
-              <div className="flex gap-1.5">
-                {swatches.map((s) => (
-                  <span
-                    key={s.value}
-                    title={s.value}
-                    className={cn("h-3.5 w-3.5 rounded-full ring-1 ring-border", s.cls)}
-                    aria-hidden
-                  />
-                ))}
-              </div>
-              {finishCount > 1 && (
-                <span className="text-[8px] uppercase tracking-[0.2em] text-muted-foreground">
-                  {finishCount} finishes
-                </span>
-              )}
-            </div>
-          )}
+          {finishes.length > 0 && <MetalSwatchRow values={finishes} className="mt-3.5" />}
 
           <div className="mt-auto flex items-end justify-between gap-3 pt-5">
-            <p className="text-sm tracking-wide text-foreground">
-              <span className="text-[8px] uppercase tracking-[0.24em] text-muted-foreground">
-                From{" "}
-              </span>
-              {formatMoney(price.amount, price.currencyCode)}
-            </p>
+            <div>
+              <p className="text-sm tracking-wide text-foreground">
+                <span className="text-[8px] uppercase tracking-[0.24em] text-muted-foreground">
+                  From{" "}
+                </span>
+                {formatMoney(price.amount, price.currencyCode)}
+              </p>
+              {points > 0 && (
+                <p className="mt-1.5 text-[8px] uppercase tracking-[0.2em] text-[var(--gold)]">
+                  Earn {points} pts
+                </p>
+              )}
+            </div>
             <span className="text-[8px] uppercase tracking-[0.22em] text-muted-foreground transition-colors group-hover:text-[var(--gold)]">
               View
             </span>
           </div>
+
         </div>
       </Link>
     </article>
