@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Loader2, Star } from "lucide-react";
-import { useCartStore } from "@/lib/../stores/cartStore";
+import { useCartStore } from "@/stores/cartStore";
 import { formatMoney, type ShopifyProduct } from "@/lib/shopify";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
