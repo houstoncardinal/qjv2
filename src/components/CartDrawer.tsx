@@ -88,7 +88,7 @@ export const CartDrawer = () => {
                         <p className="text-xs text-muted-foreground mt-1">
                           {item.selectedOptions.map((option) => option.value).join(" • ")}
                         </p>
-                        <p className="mt-1 text-sm text-primary">
+                        <p className="mt-1 text-sm text-foreground/80">
                           {formatMoney(item.price.amount, item.price.currencyCode)}
                         </p>
                       </div>

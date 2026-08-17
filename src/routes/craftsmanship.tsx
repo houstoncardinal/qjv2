@@ -67,8 +67,8 @@ function Craftsmanship() {
 
         <section className="mx-auto grid max-w-6xl gap-px border border-border bg-border px-0 sm:grid-cols-2">
           {pillars.map((p) => (
-            <article key={p.title} className="bg-background p-10">
-              <p.icon className="h-5 w-5 text-primary" />
+            <article key={p.title} className="glass-panel p-10">
+              <p.icon className="h-5 w-5 text-[var(--gold)]" />
               <h2 className="mt-6 font-display text-2xl">{p.title}</h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{p.body}</p>
             </article>

@@ -16,17 +16,20 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        gold: "bg-[image:var(--gradient-gold)] text-primary-foreground tracking-[0.18em] uppercase text-xs shadow-[var(--shadow-gold)] transition-all hover:brightness-110",
+        gold: "bg-primary text-primary-foreground tracking-[0.2em] uppercase text-[11px] shadow-[var(--shadow-elevated)] transition-all hover:bg-primary/90 hover:shadow-[var(--shadow-gold)]",
         outlineGold:
-          "border border-primary/50 text-primary bg-transparent tracking-[0.18em] uppercase text-xs hover:bg-primary/10",
+          "border border-foreground/15 bg-[var(--glass-bg)] text-foreground tracking-[0.2em] uppercase text-[11px] backdrop-blur-md transition-colors hover:border-[color-mix(in_oklab,var(--gold)_70%,transparent)] hover:text-[var(--gold)]",
+        metal:
+          "bg-[image:var(--gradient-gold)] text-[oklch(0.18_0.01_60)] tracking-[0.2em] uppercase text-[11px] shadow-[var(--shadow-gold)] transition-all hover:brightness-105",
       },
 
       size: {
         default: "h-9 px-4 py-2",
         sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
+        lg: "h-12 rounded-md px-9",
         icon: "h-9 w-9",
       },
+
     },
     defaultVariants: {
       variant: "default",
