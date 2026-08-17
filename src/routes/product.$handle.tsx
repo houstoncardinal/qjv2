@@ -204,64 +204,20 @@ function ProductDetail() {
           </nav>
         </div>
 
-        <div className="mx-auto grid max-w-[1400px] gap-12 px-5 py-8 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
+        <div className="mx-auto grid max-w-[1560px] gap-12 px-6 py-10 sm:px-10 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
           {/* Gallery */}
-          <div>
-            <div className="relative aspect-square overflow-hidden border border-border bg-card">
-              {images[activeImage]?.node && (
-                <img
-                  src={images[activeImage]!.node.url}
-                  alt={images[activeImage]!.node.altText ?? node.title}
-                  className="h-full w-full object-cover"
-                />
-              )}
-              {metalValue && (
-                <span className="absolute left-4 top-4 flex items-center gap-2 bg-background/90 px-3 py-1.5 text-[8px] uppercase tracking-[0.2em] text-foreground backdrop-blur">
-                  <span
-                    className={cn(
-                      "h-2.5 w-2.5 rounded-full",
-                      metalSwatch(metalValue) ?? "bg-secondary",
-                    )}
-                  />
-                  {prettyValue(metalValue)}
-                </span>
-              )}
-              {images.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    aria-label="Previous image"
-                    onClick={() => setActiveImage((i) => (i - 1 + images.length) % images.length)}
-                    className="absolute left-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center bg-background/85 text-foreground backdrop-blur transition-opacity hover:opacity-80"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Next image"
-                    onClick={() => setActiveImage((i) => (i + 1) % images.length)}
-                    className="absolute right-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center bg-background/85 text-foreground backdrop-blur transition-opacity hover:opacity-80"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                  <span className="absolute bottom-3 right-3 bg-background/85 px-2.5 py-1 text-[9px] tracking-widest text-muted-foreground backdrop-blur">
-                    {activeImage + 1} / {images.length}
-                  </span>
-                </>
-              )}
-            </div>
-
+          <div className="lg:flex lg:gap-4">
             {images.length > 1 && (
-              <div className="scroll-strip mt-3 flex gap-2 overflow-x-auto">
+              <div className="scroll-strip order-first hidden max-h-[720px] flex-col gap-3 overflow-y-auto lg:flex">
                 {images.map((img, i) => (
                   <button
                     key={img.node.url}
                     onClick={() => setActiveImage(i)}
                     className={cn(
-                      "h-16 w-16 shrink-0 overflow-hidden border transition-all duration-300",
+                      "h-20 w-20 shrink-0 overflow-hidden border bg-card transition-all duration-300",
                       i === activeImage
-                        ? "border-foreground"
-                        : "border-border opacity-70 hover:opacity-100",
+                        ? "border-[var(--gold)]"
+                        : "border-border opacity-65 hover:opacity-100",
                     )}
                     aria-label={`View image ${i + 1}`}
                   >
@@ -274,31 +230,95 @@ function ProductDetail() {
                 ))}
               </div>
             )}
+
+            <div className="flex-1">
+              <div className="relative aspect-square overflow-hidden border border-border bg-card">
+                {images[activeImage]?.node && (
+                  <img
+                    src={images[activeImage]!.node.url}
+                    alt={images[activeImage]!.node.altText ?? node.title}
+                    className="h-full w-full object-cover"
+                  />
+                )}
+                {metalValue && (
+                  <span className="absolute left-5 top-5 flex items-center gap-2 bg-background/90 px-3.5 py-2 text-[8px] uppercase tracking-[0.22em] text-foreground backdrop-blur">
+                    <span
+                      className={cn(
+                        "h-2.5 w-2.5 rounded-full",
+                        metalSwatch(metalValue) ?? "bg-secondary",
+                      )}
+                    />
+                    {prettyValue(metalValue)}
+                  </span>
+                )}
+                {images.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      aria-label="Previous image"
+                      onClick={() => setActiveImage((i) => (i - 1 + images.length) % images.length)}
+                      className="absolute left-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center bg-background/85 text-foreground backdrop-blur transition-opacity hover:opacity-80"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Next image"
+                      onClick={() => setActiveImage((i) => (i + 1) % images.length)}
+                      className="absolute right-4 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center bg-background/85 text-foreground backdrop-blur transition-opacity hover:opacity-80"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                    <span className="absolute bottom-4 right-4 bg-background/85 px-3 py-1.5 text-[9px] tracking-widest text-muted-foreground backdrop-blur">
+                      {activeImage + 1} / {images.length}
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {images.length > 1 && (
+                <div className="scroll-strip mt-3 flex gap-2 overflow-x-auto lg:hidden">
+                  {images.map((img, i) => (
+                    <button
+                      key={img.node.url}
+                      onClick={() => setActiveImage(i)}
+                      className={cn(
+                        "h-16 w-16 shrink-0 overflow-hidden border transition-all duration-300",
+                        i === activeImage
+                          ? "border-[var(--gold)]"
+                          : "border-border opacity-70 hover:opacity-100",
+                      )}
+                      aria-label={`View image ${i + 1}`}
+                    >
+                      <img
+                        src={img.node.url}
+                        alt={img.node.altText ?? node.title}
+                        className="h-full w-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Buy box */}
-          <div>
-            <h1 className="font-display text-3xl leading-tight sm:text-4xl">{node.title}</h1>
-
-            <div className="mt-3 flex items-center gap-2">
-              <span className="flex items-center gap-0.5 text-[var(--gold)]">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="h-3 w-3 fill-current" />
-                ))}
-              </span>
-              <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                Be the first to review
-              </span>
-            </div>
+          <div className="lg:sticky lg:top-6 lg:self-start">
+            {node.productType && (
+              <p className="text-[9px] uppercase tracking-[0.34em] text-[var(--gold)]">
+                {node.productType}
+              </p>
+            )}
+            <h1 className="mt-3 font-display text-4xl leading-[1.08] sm:text-5xl">{node.title}</h1>
 
             {shortDescription && (
-              <p className="mt-5 text-xs leading-relaxed text-muted-foreground">
+              <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
                 {shortDescription}
               </p>
             )}
 
-            <div className="mt-6 flex items-baseline gap-3">
-              <p className="font-display text-4xl">
+            <div className="mt-7 flex items-baseline gap-3 border-b border-border pb-7">
+              <p className="font-display text-5xl">
                 {formatMoney(price.amount, price.currencyCode)}
               </p>
               <span className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
@@ -306,9 +326,10 @@ function ProductDetail() {
               </span>
             </div>
 
-            <div className="mt-7">
+            <div className="mt-8">
               <VariantSelector product={product} onVariantChange={onVariantChange} />
             </div>
+
 
             <div className="mt-6 space-y-2">
               <p className="flex items-center gap-2.5 border border-border bg-secondary/60 px-4 py-3 text-[10px] tracking-wide text-muted-foreground">
