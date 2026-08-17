@@ -75,7 +75,7 @@ function Craftsmanship() {
           ))}
         </section>
 
-        <section className="mx-auto max-w-3xl px-6 py-24 text-center">
+        <section className="mx-auto max-w-3xl px-6 py-16 text-center">
           <p className="eyebrow">Our standard</p>
           <blockquote className="mt-6 font-display text-3xl leading-snug md:text-4xl">
             “If it would not pass as an heirloom in thirty years, it does not leave the bench.”

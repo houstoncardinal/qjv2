@@ -404,7 +404,7 @@ function ProductDetail() {
         </div>
 
         {/* Details */}
-        <section className="border-t border-border bg-secondary/50 py-16">
+        <section className="border-t border-border bg-secondary/50 py-12">
           <div className="mx-auto max-w-3xl px-5 sm:px-8">
             <div className="border border-border bg-card">
               <p className="border-b border-border px-6 py-4 text-[10px] uppercase tracking-[0.26em] text-foreground">
@@ -470,7 +470,7 @@ function ProductDetail() {
         </section>
 
         {relatedProducts.length > 0 && (
-          <section className="mx-auto max-w-[1400px] px-5 py-16 sm:px-8">
+          <section className="mx-auto max-w-[1400px] px-5 py-12 sm:px-8">
             <div className="flex items-end justify-between gap-4">
               <div>
                 <p className="text-[9px] uppercase tracking-[0.34em] text-muted-foreground">
