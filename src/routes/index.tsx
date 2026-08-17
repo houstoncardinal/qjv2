@@ -17,6 +17,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -62,6 +63,7 @@ function ProductRow({
   isLoading,
   ctaQuery,
   ctaLabel,
+  tone = "white",
 }: {
   eyebrow: string;
   title: string;
@@ -70,54 +72,66 @@ function ProductRow({
   isLoading: boolean;
   ctaQuery?: string;
   ctaLabel: string;
+  tone?: "white" | "porcelain";
 }) {
   if (!isLoading && products.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-[1400px] px-5 py-16 sm:px-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-[9px] uppercase tracking-[0.34em] text-muted-foreground">{eyebrow}</p>
-          <h2 className="mt-3 font-display text-3xl sm:text-4xl">{title}</h2>
-          {subtitle && <p className="mt-2 text-xs text-muted-foreground">{subtitle}</p>}
+    <section className={cn("bg-card", tone === "porcelain" && "bg-background")}>
+      <div className="mx-auto max-w-[1560px] px-6 py-24 sm:px-10 lg:py-28">
+        <div className="flex flex-wrap items-end justify-between gap-6 border-b border-border pb-8">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">{eyebrow}</p>
+            <h2 className="mt-4 font-display text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
+              {title}
+            </h2>
+            {subtitle && (
+              <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground">
+                {subtitle}
+              </p>
+            )}
+          </div>
+          <Link
+            to="/shop"
+            search={ctaQuery ? { q: ctaQuery } : {}}
+            className="group flex items-center gap-2.5 border-b border-foreground/25 pb-1.5 text-[10px] uppercase tracking-[0.3em] text-foreground transition-colors hover:border-[var(--gold)] hover:text-[var(--gold)]"
+          >
+            View all{" "}
+            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
-        <Link
-          to="/shop"
-          search={ctaQuery ? { q: ctaQuery } : {}}
-          className="flex items-center gap-2 text-[9px] uppercase tracking-[0.26em] text-muted-foreground transition-colors hover:text-foreground"
-        >
-          View all <ArrowRight className="h-3 w-3" />
-        </Link>
-      </div>
 
-      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        {isLoading
-          ? Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="border border-border bg-card">
-                <Skeleton className="aspect-square w-full" />
-                <div className="space-y-2 p-3.5">
-                  <Skeleton className="h-3 w-full" />
-                  <Skeleton className="h-3 w-1/2" />
+        <div className="mt-12 grid grid-cols-2 gap-5 lg:grid-cols-4 lg:gap-7">
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="border border-border bg-card">
+                  <Skeleton className="aspect-[4/5] w-full" />
+                  <div className="space-y-3 p-5">
+                    <Skeleton className="h-3 w-1/3" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
                 </div>
-              </div>
-            ))
-          : products.slice(0, 6).map((p) => <ProductCard key={p.node.id} product={p} compact />)}
-      </div>
+              ))
+            : products.slice(0, 4).map((p) => <ProductCard key={p.node.id} product={p} />)}
+        </div>
 
-      <div className="mt-8 flex justify-center gap-3">
-        <Link
-          to="/shop"
-          search={ctaQuery ? { q: ctaQuery } : {}}
-          className="flex items-center gap-2 bg-foreground px-7 py-3 text-[9px] uppercase tracking-[0.24em] text-background transition-opacity hover:opacity-85"
-        >
-          {ctaLabel} <ArrowRight className="h-3 w-3" />
-        </Link>
-        <Link
-          to="/shop"
-          className="border border-border px-7 py-3 text-[9px] uppercase tracking-[0.24em] text-foreground/75 transition-colors hover:border-foreground"
-        >
-          Shop all
-        </Link>
+        <div className="mt-14 flex flex-wrap justify-center gap-4">
+          <Link
+            to="/shop"
+            search={ctaQuery ? { q: ctaQuery } : {}}
+            className="group flex items-center gap-2.5 bg-foreground px-10 py-4 text-[10px] uppercase tracking-[0.28em] text-background transition-opacity hover:opacity-85"
+          >
+            {ctaLabel}{" "}
+            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+          </Link>
+          <Link
+            to="/shop"
+            className="border border-border px-10 py-4 text-[10px] uppercase tracking-[0.28em] text-foreground/75 transition-colors hover:border-foreground hover:text-foreground"
+          >
+            Shop all
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -131,143 +145,116 @@ function Home() {
   const allProducts = all.data ?? [];
   const ringProducts = rings.data?.length ? rings.data : allProducts;
   const chainProducts = chains.data?.length ? chains.data : allProducts.slice(6);
-  const trending = allProducts.slice(-6);
+  const trending = allProducts.slice(-4);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-card">
       <SiteHeader />
 
       <main>
         {/* Hero */}
-        <section className="relative overflow-hidden bg-foreground text-background">
+        <section className="relative isolate min-h-[86vh] overflow-hidden bg-foreground text-background">
           <img
             src={heroImage}
             alt="VVS1 moissanite rings in 18K gold and rose gold on silk"
             width={1920}
             height={1200}
-            className="absolute inset-0 h-full w-full object-cover opacity-45 mix-blend-luminosity"
+            className="absolute inset-0 h-full w-full object-cover opacity-50 mix-blend-luminosity"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(95deg,oklch(0.16_0.005_60/0.97)_0%,oklch(0.16_0.005_60/0.88)_45%,oklch(0.16_0.005_60/0.55)_100%)]" />
-          <div className="relative mx-auto max-w-[1400px] px-5 py-24 sm:px-8 sm:py-28">
-            <div className="max-w-2xl rise-in">
-              <p className="text-[9px] uppercase tracking-[0.4em] text-[var(--gold)]">
+          <div className="absolute inset-0 bg-[linear-gradient(100deg,oklch(0.13_0.004_60/0.96)_0%,oklch(0.13_0.004_60/0.86)_42%,oklch(0.13_0.004_60/0.42)_100%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(to_top,oklch(0.13_0.004_60/0.9),transparent)]" />
+
+          <div className="relative mx-auto flex min-h-[86vh] max-w-[1560px] flex-col justify-center px-6 py-28 sm:px-10">
+            <div className="max-w-3xl rise-in">
+              <p className="text-[10px] uppercase tracking-[0.48em] text-[var(--gold)]">
                 GRA Certified · D Colour · VVS1
               </p>
-              <h1 className="mt-6 font-display text-5xl leading-[1.05] sm:text-6xl lg:text-7xl">
+              <div className="mt-7 h-px w-24 shimmer-line" />
+              <h1 className="mt-8 font-display text-[3.4rem] leading-[0.98] sm:text-7xl lg:text-[6.2rem]">
                 VVS1 Moissanite
                 <br />
-                Hand-Set in 18K Gold
+                <span className="italic">Hand-Set</span> in 18K Gold
               </h1>
-              <p className="mt-6 max-w-lg text-sm leading-relaxed text-background/70">
-                Expertly crafted VVS1 moissanite set in precious 18K gold. Certified for those who
-                demand quality that lasts — backed by GRA certification and a lifetime guarantee.
+              <p className="mt-8 max-w-xl text-base leading-relaxed text-background/70">
+                Expertly crafted VVS1 moissanite set in precious 18K gold over solid S925 sterling
+                silver. Independently certified, hand-finished, and guaranteed for life.
               </p>
 
-              <div className="mt-9 flex flex-wrap gap-3">
+              <div className="mt-11 flex flex-wrap gap-4">
                 <Link
                   to="/shop"
-                  className="flex items-center gap-2 bg-background px-8 py-3.5 text-[10px] uppercase tracking-[0.24em] text-foreground transition-opacity hover:opacity-85"
+                  className="group flex items-center gap-3 bg-background px-11 py-5 text-[10px] uppercase tracking-[0.28em] text-foreground transition-opacity hover:opacity-85"
                 >
-                  Shop the collection <ArrowRight className="h-3 w-3" />
+                  Shop the collection{" "}
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   to="/craftsmanship"
-                  className="border border-background/30 px-8 py-3.5 text-[10px] uppercase tracking-[0.24em] text-background/85 transition-colors hover:border-background"
+                  className="border border-background/30 px-11 py-5 text-[10px] uppercase tracking-[0.28em] text-background/85 transition-colors hover:border-background hover:text-background"
                 >
                   Our craftsmanship
                 </Link>
               </div>
-
-              <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
-                {[
-                  { icon: BadgeCheck, label: "GRA Certified" },
-                  { icon: Truck, label: "Free Insured Shipping" },
-                  { icon: ShieldCheck, label: "Lifetime Warranty" },
-                ].map((t) => (
-                  <span key={t.label} className="flex items-center gap-2">
-                    <t.icon className="h-3.5 w-3.5 text-[var(--gold)]" />
-                    <span className="text-[9px] uppercase tracking-[0.24em] text-background/70">
-                      {t.label}
-                    </span>
-                  </span>
-                ))}
-              </div>
             </div>
-          </div>
-        </section>
 
-        {/* Scrolling product strip */}
-        <section className="border-b border-border bg-card">
-          <div className="scroll-strip flex gap-3 overflow-x-auto px-5 py-4 sm:px-8">
-            {(allProducts.length ? allProducts : []).slice(0, 14).map((p) => (
-              <Link
-                key={p.node.id}
-                to="/product/$handle"
-                params={{ handle: p.node.handle }}
-                className="group w-[104px] shrink-0"
-              >
-                <div className="aspect-square overflow-hidden bg-secondary/60">
-                  {p.node.images.edges[0]?.node && (
-                    <img
-                      src={p.node.images.edges[0]!.node.url}
-                      alt={p.node.images.edges[0]!.node.altText ?? p.node.title}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                  )}
+            <div className="mt-20 grid max-w-4xl gap-8 border-t border-background/15 pt-8 sm:grid-cols-3">
+              {[
+                { icon: BadgeCheck, label: "GRA Certified", sub: "Every single stone" },
+                { icon: Truck, label: "Free Insured Shipping", sub: "Tracked worldwide" },
+                { icon: ShieldCheck, label: "Lifetime Warranty", sub: "Craftsmanship guaranteed" },
+              ].map((t) => (
+                <div key={t.label} className="flex items-start gap-3">
+                  <t.icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--gold)]" />
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.26em] text-background">
+                      {t.label}
+                    </p>
+                    <p className="mt-1 text-[11px] text-background/55">{t.sub}</p>
+                  </div>
                 </div>
-                <p className="mt-2 line-clamp-2 text-[8px] uppercase leading-tight tracking-[0.12em] text-muted-foreground">
-                  {p.node.title}
-                </p>
-              </Link>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
 
         <ProductRow
           eyebrow="Curated Collection"
           title="Engagement Rings"
-          subtitle="Solitaires, halos and stackable bands in every finish."
+          subtitle="Solitaires, halos and stackable bands, hand-set in every finish and available in full and half sizes."
           products={ringProducts}
           isLoading={rings.isLoading && all.isLoading}
           ctaQuery="product_type:ring"
           ctaLabel="Shop engagement rings"
         />
 
-        <div className="bg-secondary/60">
-          <ProductRow
-            eyebrow="Everyday Brilliance"
-            title="Necklaces & Chains"
-            subtitle="Tennis chains, cuban links and pendants."
-            products={chainProducts}
-            isLoading={chains.isLoading && all.isLoading}
-            ctaQuery="product_type:necklace"
-            ctaLabel="Shop necklaces"
-          />
-        </div>
-
         <ProductRow
-          eyebrow="Just In"
-          title="Latest & Trending"
-          subtitle="The pieces moving fastest this month."
-          products={trending}
-          isLoading={all.isLoading}
-          ctaLabel="Shop new arrivals"
+          eyebrow="Everyday Brilliance"
+          title="Necklaces & Chains"
+          subtitle="Tennis chains, cuban links and pendant necklaces finished in 18K gold, white gold and rose gold."
+          products={chainProducts}
+          isLoading={chains.isLoading && all.isLoading}
+          ctaQuery="product_type:necklace"
+          ctaLabel="Shop necklaces"
+          tone="porcelain"
         />
 
         {/* Why choose */}
-        <section className="border-y border-border bg-secondary/60 py-20">
-          <div className="mx-auto max-w-[1400px] px-5 text-center sm:px-8">
-            <p className="text-[9px] uppercase tracking-[0.34em] text-muted-foreground">
-              The Difference
-            </p>
-            <h2 className="mt-4 font-display text-4xl sm:text-5xl">Why Choose Qureshi Jewelers?</h2>
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              Every stone independently graded, every setting finished by hand, every order insured
-              door to door.
-            </p>
+        <section className="border-y border-border bg-foreground py-24 text-background">
+          <div className="mx-auto max-w-[1560px] px-6 sm:px-10">
+            <div className="max-w-2xl">
+              <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">
+                The Difference
+              </p>
+              <h2 className="mt-4 font-display text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
+                Why Choose Qureshi Jewelers?
+              </h2>
+              <p className="mt-5 text-sm leading-relaxed text-background/60">
+                Every stone independently graded, every setting finished by hand, every order
+                insured door to door.
+              </p>
+            </div>
 
-            <div className="mt-12 grid gap-4 md:grid-cols-3">
+            <div className="mt-14 grid gap-px bg-background/15 md:grid-cols-3">
               {[
                 {
                   icon: Heart,
@@ -285,23 +272,23 @@ function Home() {
                   copy: "Solid S925 sterling silver with 5 layers of 18K plating and a protective e-coat that resists tarnish.",
                 },
               ].map((c) => (
-                <div key={c.title} className="glass-panel p-8 text-left">
+                <div key={c.title} className="bg-foreground p-10">
                   <c.icon className="h-5 w-5 text-[var(--gold)]" />
-                  <h3 className="mt-5 font-display text-xl">{c.title}</h3>
-                  <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{c.copy}</p>
+                  <h3 className="mt-6 font-display text-2xl">{c.title}</h3>
+                  <p className="mt-4 text-xs leading-relaxed text-background/60">{c.copy}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <div className="mt-px grid gap-px bg-background/15 sm:grid-cols-3">
               {[
                 { stat: "100%", label: "GRA certified stones" },
                 { stat: "24/7", label: "Client care" },
                 { stat: "5×", label: "18K gold plating layers" },
               ].map((s) => (
-                <div key={s.stat} className="border border-border bg-card p-6">
-                  <p className="font-display text-3xl">{s.stat}</p>
-                  <p className="mt-1 text-[9px] uppercase tracking-[0.24em] text-muted-foreground">
+                <div key={s.stat} className="bg-foreground p-8">
+                  <p className="font-display text-4xl text-[var(--gold)]">{s.stat}</p>
+                  <p className="mt-2 text-[9px] uppercase tracking-[0.26em] text-background/60">
                     {s.label}
                   </p>
                 </div>
@@ -310,46 +297,55 @@ function Home() {
           </div>
         </section>
 
+        <ProductRow
+          eyebrow="Just In"
+          title="Latest & Trending"
+          subtitle="The pieces moving fastest this month, restocked weekly."
+          products={trending}
+          isLoading={all.isLoading}
+          ctaLabel="Shop new arrivals"
+        />
+
         {/* Sustainability panel */}
-        <section className="py-20">
-          <div className="mx-auto max-w-4xl px-5 text-center sm:px-8">
-            <span className="inline-flex items-center gap-2 border border-border px-4 py-1.5 text-[8px] uppercase tracking-[0.26em] text-muted-foreground">
+        <section className="bg-background py-24">
+          <div className="mx-auto max-w-4xl px-6 text-center sm:px-10">
+            <span className="inline-flex items-center gap-2 border border-border bg-card px-5 py-2 text-[9px] uppercase tracking-[0.3em] text-muted-foreground">
               <Leaf className="h-3 w-3 text-[var(--gold)]" /> Sustainably created
             </span>
-            <h2 className="mt-6 font-display text-4xl sm:text-5xl">
+            <h2 className="mt-8 font-display text-4xl leading-[1.05] sm:text-6xl">
               Brilliance that never costs <span className="italic">the earth.</span>
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               Lab-created moissanite delivers more fire and brilliance than diamond, with none of
               the mining impact — and it is independently verified, not just claimed.
             </p>
 
-            <div className="mt-10 grid gap-3 sm:grid-cols-3">
+            <div className="mt-12 grid gap-px border border-border bg-border sm:grid-cols-3">
               {[
                 { stat: "0", label: "Carats mined" },
                 { stat: "100%", label: "Lab created" },
                 { stat: "~97%", label: "Lower footprint" },
               ].map((s) => (
-                <div key={s.label} className="border border-border bg-card p-6 text-left">
-                  <p className="font-display text-3xl">{s.stat}</p>
-                  <p className="mt-1 text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
+                <div key={s.label} className="bg-card p-8 text-left">
+                  <p className="font-display text-4xl">{s.stat}</p>
+                  <p className="mt-2 text-[9px] uppercase tracking-[0.24em] text-muted-foreground">
                     {s.label}
                   </p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-3 grid gap-3 border border-border bg-card p-6 text-left sm:grid-cols-3">
+            <div className="mt-px grid gap-px border border-border bg-border text-left sm:grid-cols-3">
               {[
                 { k: "Certification", v: "GRA · D Colourless" },
                 { k: "Clarity", v: "VVS1 · Eye clean" },
                 { k: "Refractive index", v: "2.65–2.69 vs diamond 2.42" },
               ].map((r) => (
-                <div key={r.k}>
-                  <p className="text-[8px] uppercase tracking-[0.24em] text-muted-foreground">
+                <div key={r.k} className="bg-card p-6">
+                  <p className="text-[8px] uppercase tracking-[0.26em] text-muted-foreground">
                     {r.k}
                   </p>
-                  <p className="mt-1.5 text-xs text-foreground/85">{r.v}</p>
+                  <p className="mt-2 text-xs text-foreground/85">{r.v}</p>
                 </div>
               ))}
             </div>
@@ -357,8 +353,8 @@ function Home() {
         </section>
 
         {/* Trust row */}
-        <section className="border-y border-border bg-secondary/60">
-          <div className="mx-auto grid max-w-[1400px] gap-8 px-5 py-12 text-center sm:grid-cols-2 sm:px-8 lg:grid-cols-4">
+        <section className="border-y border-border bg-card">
+          <div className="mx-auto grid max-w-[1560px] gap-10 px-6 py-16 text-center sm:grid-cols-2 sm:px-10 lg:grid-cols-4">
             {[
               { icon: BadgeCheck, title: "GRA Certified", copy: "Certificate with every order" },
               { icon: Sparkles, title: "VVS1 · D Colour", copy: "Eye-clean, maximum fire" },
@@ -367,51 +363,56 @@ function Home() {
             ].map((t) => (
               <div key={t.title} className="flex flex-col items-center">
                 <t.icon className="h-5 w-5 text-[var(--gold)]" />
-                <p className="mt-3 text-[9px] uppercase tracking-[0.26em] text-foreground">
+                <p className="mt-4 text-[10px] uppercase tracking-[0.28em] text-foreground">
                   {t.title}
                 </p>
-                <p className="mt-1 text-[10px] text-muted-foreground">{t.copy}</p>
+                <p className="mt-1.5 text-[11px] text-muted-foreground">{t.copy}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* Shop by category */}
-        <section className="mx-auto max-w-[1400px] px-5 py-20 sm:px-8">
-          <p className="text-[9px] uppercase tracking-[0.34em] text-muted-foreground">Browse</p>
-          <h2 className="mt-3 font-display text-3xl sm:text-4xl">Shop by Category</h2>
+        <section className="bg-card">
+          <div className="mx-auto max-w-[1560px] px-6 py-24 sm:px-10">
+            <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">Browse</p>
+            <h2 className="mt-4 font-display text-4xl sm:text-5xl lg:text-6xl">Shop by Category</h2>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {categoryTiles.map((c, i) => {
-              const img = allProducts.filter((p) =>
-                new RegExp(c.label.slice(0, 4), "i").test(p.node.productType ?? ""),
-              )[0]?.node.images.edges[0]?.node ??
-                allProducts[i]?.node.images.edges[0]?.node;
-              return (
-                <Link
-                  key={c.label}
-                  to="/shop"
-                  search={{ q: c.q }}
-                  className="group relative aspect-[4/3] overflow-hidden bg-secondary"
-                >
-                  {img && (
-                    <img
-                      src={img.url}
-                      alt={`${c.label} collection`}
-                      loading="lazy"
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-[linear-gradient(to_top,oklch(0.16_0.005_60/0.75),transparent_55%)]" />
-                  <div className="absolute bottom-4 left-5">
-                    <p className="font-display text-2xl text-background">{c.label}</p>
-                    <p className="text-[8px] uppercase tracking-[0.24em] text-background/70">
-                      {c.sub}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
+            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {categoryTiles.map((c, i) => {
+                const img =
+                  allProducts.filter((p) =>
+                    new RegExp(c.label.slice(0, 4), "i").test(p.node.productType ?? ""),
+                  )[0]?.node.images.edges[0]?.node ?? allProducts[i]?.node.images.edges[0]?.node;
+                return (
+                  <Link
+                    key={c.label}
+                    to="/shop"
+                    search={{ q: c.q }}
+                    className="group relative aspect-[3/4] overflow-hidden bg-secondary"
+                  >
+                    {img && (
+                      <img
+                        src={img.url}
+                        alt={`${c.label} collection`}
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07]"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-[linear-gradient(to_top,oklch(0.13_0.004_60/0.82),transparent_58%)]" />
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <p className="font-display text-3xl text-background">{c.label}</p>
+                      <p className="mt-1 text-[9px] uppercase tracking-[0.26em] text-background/70">
+                        {c.sub}
+                      </p>
+                      <span className="mt-4 inline-flex items-center gap-2 text-[9px] uppercase tracking-[0.26em] text-[var(--gold)] opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                        Shop now <ArrowRight className="h-3 w-3" />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </section>
       </main>
