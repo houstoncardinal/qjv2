@@ -135,7 +135,7 @@ function firstError(errors: ShopifyUserError[] | undefined): string | null {
 
 
 export async function loginCustomer(email: string, password: string) {
-  const data = await storefrontApiRequest(LOGIN_MUTATION, { input: { email, password } });
+  const data = await customerRequest(LOGIN_MUTATION, { input: { email, password } });
   const payload = data?.data?.customerAccessTokenCreate;
   const error = firstError(payload?.customerUserErrors);
   if (error) return { token: null, expiresAt: null, error };
@@ -151,19 +151,19 @@ export async function registerCustomer(input: {
   lastName?: string;
   acceptsMarketing?: boolean;
 }) {
-  const data = await storefrontApiRequest(REGISTER_MUTATION, { input });
+  const data = await customerRequest(REGISTER_MUTATION, { input });
   const error = firstError(data?.data?.customerCreate?.customerUserErrors);
   return { error };
 }
 
 export async function recoverCustomer(email: string) {
-  const data = await storefrontApiRequest(RECOVER_MUTATION, { email });
+  const data = await customerRequest(RECOVER_MUTATION, { email });
   return { error: firstError(data?.data?.customerRecover?.customerUserErrors) };
 }
 
 export async function logoutCustomer(token: string) {
   try {
-    await storefrontApiRequest(LOGOUT_MUTATION, { token });
+    await customerRequest(LOGOUT_MUTATION, { token });
   } catch {
     /* token already invalid — local sign-out is enough */
   }
@@ -173,12 +173,12 @@ export async function updateCustomer(
   token: string,
   customer: { firstName?: string; lastName?: string; phone?: string; email?: string },
 ) {
-  const data = await storefrontApiRequest(UPDATE_MUTATION, { token, customer });
+  const data = await customerRequest(UPDATE_MUTATION, { token, customer });
   return { error: firstError(data?.data?.customerUpdate?.customerUserErrors) };
 }
 
 export async function fetchCustomer(token: string): Promise<CustomerProfile | null> {
-  const data = await storefrontApiRequest(CUSTOMER_QUERY, { token });
+  const data = await customerRequest(CUSTOMER_QUERY, { token });
   const c = data?.data?.customer;
   if (!c) return null;
 
