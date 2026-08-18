@@ -200,3 +200,29 @@ export function variantImageIndex(
 
   return -1;
 }
+
+/**
+ * Minimal allowlist sanitiser for Shopify `descriptionHtml`.
+ * Strips scripts/styles/iframes, event handlers and javascript: URLs while
+ * keeping the merchant's formatting (bold, lists, headings, tables, links).
+ */
+export function sanitizeShopifyHtml(html?: string | null): string {
+  if (!html) return "";
+  return html
+    .replace(/<\s*(script|style|iframe|object|embed|link|meta)[\s\S]*?<\s*\/\s*\1\s*>/gi, "")
+    .replace(/<\s*(script|style|iframe|object|embed|link|meta)\b[^>]*\/?>/gi, "")
+    .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/(href|src)\s*=\s*("|')\s*javascript:[^"']*\2/gi, "");
+}
+
+/** First paragraph / sentence-ish summary taken from the Shopify description. */
+export function shortDescription(product: ShopifyProduct["node"]): string {
+  const html = product.descriptionHtml ?? "";
+  const firstBlock = html
+    .split(/<\/(?:p|div|li|h[1-6])>/i)[0]
+    ?.replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .trim();
+  const text = firstBlock && firstBlock.length > 20 ? firstBlock : product.description;
+  return (text || "").split(/\n/)[0]!.trim();
+}
