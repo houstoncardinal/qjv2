@@ -13,10 +13,10 @@ import {
   Truck,
 } from "lucide-react";
 import heroImage from "@/assets/hero-light.jpg";
-import catRings from "@/assets/cat-rings.jpg";
-import catChains from "@/assets/cat-chains.jpg";
-import catBracelets from "@/assets/cat-bracelets.jpg";
-import catEarrings from "@/assets/cat-earrings.jpg";
+import catRingsAsset from "@/assets/cat-rings.avif.asset.json";
+import catChainsAsset from "@/assets/cat-chains.avif.asset.json";
+import catBraceletsAsset from "@/assets/cat-bracelets.jpg.asset.json";
+import catEarringsAsset from "@/assets/cat-earrings.png.asset.json";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
