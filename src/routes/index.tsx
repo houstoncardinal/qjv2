@@ -13,6 +13,10 @@ import {
   Truck,
 } from "lucide-react";
 import heroImage from "@/assets/hero-light.jpg";
+import catRings from "@/assets/cat-rings.jpg";
+import catChains from "@/assets/cat-chains.jpg";
+import catBracelets from "@/assets/cat-bracelets.jpg";
+import catEarrings from "@/assets/cat-earrings.jpg";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
@@ -48,10 +52,10 @@ export const Route = createFileRoute("/")({
 });
 
 const categoryTiles = [
-  { label: "Rings", sub: "Engagement & stackable", q: "product_type:ring" },
-  { label: "Chains", sub: "Tennis & cuban links", q: "product_type:necklace" },
-  { label: "Bracelets", sub: "Tennis bracelets", q: "product_type:bracelet" },
-  { label: "Earrings", sub: "Studs & hoops", q: "product_type:earring" },
+  { label: "Rings", sub: "Engagement & stackable", q: "product_type:ring", image: catRings },
+  { label: "Chains", sub: "Tennis & cuban links", q: "product_type:necklace", image: catChains },
+  { label: "Bracelets", sub: "Tennis bracelets", q: "product_type:bracelet", image: catBracelets },
+  { label: "Earrings", sub: "Studs & hoops", q: "product_type:earring", image: catEarrings },
 ];
 
 function useShopifyProducts(key: string, query?: string, count = 12) {
@@ -276,11 +280,7 @@ function Home() {
             </div>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-              {categoryTiles.map((c, i) => {
-                const img =
-                  allProducts.filter((p) =>
-                    new RegExp(c.label.slice(0, 4), "i").test(p.node.productType ?? ""),
-                  )[0]?.node.images.edges[0]?.node ?? allProducts[i]?.node.images.edges[0]?.node;
+              {categoryTiles.map((c) => {
                 return (
                   <Link
                     key={c.label}
@@ -288,14 +288,15 @@ function Home() {
                     search={{ q: c.q }}
                     className="group relative aspect-[4/5] overflow-hidden bg-secondary"
                   >
-                    {img && (
-                      <img
-                        src={img.url}
-                        alt={`${c.label} collection`}
-                        loading="lazy"
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07]"
-                      />
-                    )}
+                    <img
+                      src={c.image}
+                      alt={`${c.label} — moissanite ${c.sub.toLowerCase()}`}
+                      loading="lazy"
+                      width={896}
+                      height={1120}
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07]"
+                    />
+                    <div className="absolute inset-0 bg-[linear-gradient(to_top,oklch(0.13_0.004_60/0.55),transparent_60%)]" />
                     <div className="absolute inset-0 bg-[linear-gradient(to_top,oklch(0.13_0.004_60/0.85),transparent_58%)]" />
                     <div className="absolute bottom-6 left-6 right-6">
                       <p className="font-display text-3xl text-background">{c.label}</p>
