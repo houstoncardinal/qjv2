@@ -13,7 +13,6 @@ import {
   Truck,
 } from "lucide-react";
 
-import heroAsset from "@/assets/hero-jewelry.jpg.asset.json";
 import catRingsAsset from "@/assets/cat-rings.avif.asset.json";
 import catChainsAsset from "@/assets/cat-chains.avif.asset.json";
 import catBraceletsAsset from "@/assets/cat-bracelets.jpg.asset.json";
