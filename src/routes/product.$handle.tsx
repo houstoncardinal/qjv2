@@ -468,7 +468,14 @@ function ProductDetail() {
 
             <div className="mt-10">
               <Accordion title="Description" open>
-                <p className="whitespace-pre-line">{node.description}</p>
+                {descriptionHtml ? (
+                  <div
+                    className="rich-text"
+                    dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+                  />
+                ) : (
+                  <p className="whitespace-pre-line">{node.description}</p>
+                )}
               </Accordion>
               <Accordion title="Why VVS Moissanite?">
                 <p>
