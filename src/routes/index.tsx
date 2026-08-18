@@ -13,7 +13,6 @@ import {
   Truck,
 } from "lucide-react";
 
-import heroAsset from "@/assets/hero-jewelry.jpg.asset.json";
 import catRingsAsset from "@/assets/cat-rings.avif.asset.json";
 import catChainsAsset from "@/assets/cat-chains.avif.asset.json";
 import catBraceletsAsset from "@/assets/cat-bracelets.jpg.asset.json";
@@ -168,77 +167,107 @@ function Home() {
           aria-labelledby="hero-heading"
           className="relative isolate overflow-hidden bg-[oklch(0.14_0.004_60)] text-[oklch(0.99_0.002_90)]"
         >
-          {/* Editorial jewelry backdrop */}
-          <img
-            src={heroAsset.url}
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to bottom, oklch(0.14 0.004 60 / 0.82), oklch(0.14 0.004 60 / 0.72) 45%, oklch(0.14 0.004 60 / 0.9))",
-            }}
-          />
           {/* Subtle metallic gradient sheen */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-30"
+            className="pointer-events-none absolute inset-0 opacity-40"
             style={{
               background:
-                "radial-gradient(ellipse 80% 50% at 50% -20%, oklch(0.72 0.085 84 / 0.25), transparent), radial-gradient(ellipse 60% 40% at 80% 100%, oklch(0.72 0.006 250 / 0.15), transparent)",
+                "radial-gradient(ellipse 70% 55% at 0% 0%, oklch(0.72 0.085 84 / 0.18), transparent 60%), radial-gradient(ellipse 50% 45% at 100% 100%, oklch(0.72 0.006 250 / 0.12), transparent 55%), linear-gradient(155deg, oklch(0.18 0.005 60) 0%, oklch(0.14 0.004 60) 55%, oklch(0.12 0.004 60) 100%)",
             }}
           />
 
+          {/* Decorative right-side element — desktop only */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 lg:block"
+          >
+            <div
+              className="h-[420px] w-[1px] opacity-40"
+              style={{
+                background:
+                  "linear-gradient(to bottom, transparent, oklch(0.72 0.085 84 / 0.85), oklch(0.72 0.006 250 / 0.55), transparent)",
+              }}
+            />
+          </div>
+
           <div className="relative mx-auto max-w-[1560px] px-6 py-16 sm:px-10 sm:py-20 lg:py-24">
-            <div className="mx-auto max-w-3xl text-center">
-              <header className="mb-8 inline-flex flex-col items-center gap-3">
-                <span className="text-[10px] uppercase tracking-[0.36em] text-[oklch(0.72_0.085_84)]">
-                  Qureshi Jewelers
-                </span>
-                <div className="h-px w-14 bg-[oklch(0.72_0.085_84)]/60" />
-              </header>
+            <div className="grid items-center gap-12 lg:grid-cols-12">
+              <div className="mx-auto max-w-3xl text-center lg:col-span-7 lg:mx-0 lg:max-w-none lg:text-left">
+                <header className="mb-8 inline-flex flex-col items-center gap-3 lg:items-start">
+                  <span className="text-[10px] uppercase tracking-[0.36em] text-[oklch(0.72_0.085_84)]">
+                    Qureshi Jewelers
+                  </span>
+                  <div className="h-px w-14 bg-[oklch(0.72_0.085_84)]/60 lg:ml-0" />
+                </header>
 
-
-              <h1
-                id="hero-heading"
-                className="font-display text-[2.8rem] leading-[1.02] text-[oklch(1_0_0)] sm:text-6xl lg:text-[4.8rem]"
-              >
-                Pure Elegance
-                <br />
-                <span className="italic font-normal text-[oklch(0.99_0.002_90)]/90">Redefined</span>
-              </h1>
-
-              <p className="mx-auto mt-6 max-w-xl text-sm leading-[1.9] text-[oklch(0.99_0.002_90)]/70 sm:text-base">
-                Masterfully crafted with{" "}
-                <span className="font-medium text-[oklch(1_0_0)]">
-                  18K Gold over S925 Sterling Silver
-                </span>
-                . GRA-certified VVS1 D-colour moissanite, hand-set and inspected before it ships.
-              </p>
-
-              <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-                <Link
-                  to="/shop"
-                  className="group flex min-h-11 items-center gap-3 bg-[oklch(1_0_0)] px-8 py-4 text-[10px] uppercase tracking-[0.24em] text-[oklch(0.14_0.004_60)] transition-colors hover:bg-[oklch(0.99_0.002_90)]"
+                <h1
+                  id="hero-heading"
+                  className="font-display text-[2.8rem] leading-[1.02] text-[oklch(1_0_0)] sm:text-6xl lg:text-[4.8rem]"
                 >
-                  Discover the collection{" "}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-                <Link
-                  to="/craftsmanship"
-                  className="flex min-h-11 items-center border border-[oklch(1_0_0_/_0.22)] px-8 py-4 text-[10px] uppercase tracking-[0.24em] text-[oklch(0.99_0.002_90)]/90 transition-colors hover:border-[oklch(1_0_0)] hover:text-[oklch(1_0_0)]"
-                >
-                  Our craftsmanship
-                </Link>
+                  Pure Elegance
+                  <br />
+                  <span className="italic font-normal text-[oklch(0.99_0.002_90)]/90">Redefined</span>
+                </h1>
+
+                <p className="mx-auto mt-6 max-w-xl text-sm leading-[1.9] text-[oklch(0.99_0.002_90)]/70 sm:text-base lg:mx-0 lg:max-w-lg">
+                  Masterfully crafted with{" "}
+                  <span className="font-medium text-[oklch(1_0_0)]">
+                    18K Gold over S925 Sterling Silver
+                  </span>
+                  . GRA-certified VVS1 D-colour moissanite, hand-set and inspected before it ships.
+                </p>
+
+                <div className="mt-9 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+                  <Link
+                    to="/shop"
+                    className="group flex min-h-11 items-center gap-3 bg-[oklch(1_0_0)] px-8 py-4 text-[10px] uppercase tracking-[0.24em] text-[oklch(0.14_0.004_60)] transition-colors hover:bg-[oklch(0.99_0.002_90)]"
+                  >
+                    Discover the collection{" "}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                  <Link
+                    to="/craftsmanship"
+                    className="flex min-h-11 items-center border border-[oklch(1_0_0_/_0.22)] px-8 py-4 text-[10px] uppercase tracking-[0.24em] text-[oklch(0.99_0.002_90)]/90 transition-colors hover:border-[oklch(1_0_0)] hover:text-[oklch(1_0_0)]"
+                  >
+                    Our craftsmanship
+                  </Link>
+                </div>
+
+                <p className="mt-6 text-[9px] uppercase tracking-[0.24em] text-[oklch(0.99_0.002_90)]/75">
+                  Complimentary express shipping on U.S. orders over $100
+                </p>
               </div>
 
-              <p className="mt-6 text-[9px] uppercase tracking-[0.24em] text-[oklch(0.99_0.002_90)]/75">
-                Complimentary express shipping on U.S. orders over $100
-              </p>
+              {/* Desktop right-side trust panel */}
+              <div className="hidden lg:col-span-5 lg:block">
+                <div
+                  className="ml-auto max-w-sm border border-[oklch(1_0_0_/_0.1)] bg-[oklch(1_0_0_/_0.03)] px-8 py-10 backdrop-blur-sm"
+                >
+                  <div className="mb-6 flex items-center gap-3">
+                    <div className="h-px flex-1 bg-[oklch(1_0_0_/_0.12)]" />
+                    <span className="text-[9px] uppercase tracking-[0.28em] text-[oklch(0.72_0.085_84)]">
+                      Why Qureshi
+                    </span>
+                    <div className="h-px flex-1 bg-[oklch(1_0_0_/_0.12)]" />
+                  </div>
+                  <ul className="space-y-5">
+                    {[
+                      { icon: BadgeCheck, label: "GRA-certified VVS1 moissanite" },
+                      { icon: ShieldCheck, label: "Lifetime craftsmanship warranty" },
+                      { icon: Truck, label: "Insured U.S. shipping over $100" },
+                      { icon: Sparkles, label: "Rewards on every purchase" },
+                    ].map((t) => (
+                      <li key={t.label} className="flex items-center gap-4">
+                        <t.icon aria-hidden="true" className="h-5 w-5 shrink-0 text-[var(--gold)]" />
+                        <span className="text-[11px] uppercase tracking-[0.2em] text-[oklch(0.99_0.002_90)]/85">
+                          {t.label}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
 
