@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   BadgeCheck,
   ChevronLeft,
@@ -30,6 +30,7 @@ import {
   fetchProductByHandle,
   fetchProducts,
   formatMoney,
+  variantImageIndex,
   type ShopifyProduct,
 } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
@@ -109,6 +110,13 @@ function ProductDetail() {
     queryKey: ["products", "related"],
     queryFn: () => fetchProducts(12),
   });
+
+  // Swap the gallery to the image that matches the selected colour/metal variant.
+  useEffect(() => {
+    if (!product || !variant) return;
+    const idx = variantImageIndex(product, variant);
+    if (idx >= 0) setActiveImage(idx);
+  }, [product, variant]);
 
   if (isLoading) {
     return (
