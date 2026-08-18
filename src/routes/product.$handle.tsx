@@ -30,6 +30,8 @@ import {
   fetchProductByHandle,
   fetchProducts,
   formatMoney,
+  sanitizeShopifyHtml,
+  shortDescription,
   variantImageIndex,
   type ShopifyProduct,
 } from "@/lib/shopify";
@@ -158,7 +160,8 @@ function ProductDetail() {
   const metalValue = variant?.selectedOptions.find((o) =>
     /colou?r|metal|plating|finish/i.test(o.name),
   )?.value;
-  const shortDescription = node.description.split(/\.\s/).slice(0, 3).join(". ");
+  const summary = shortDescription(node);
+  const descriptionHtml = sanitizeShopifyHtml(node.descriptionHtml);
 
   const productLd = {
     "@context": "https://schema.org",
@@ -347,10 +350,8 @@ function ProductDetail() {
             )}
             <h1 className="mt-3 break-words font-display text-3xl leading-[1.1] sm:text-4xl lg:text-5xl">{node.title}</h1>
 
-            {shortDescription && (
-              <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-                {shortDescription}
-              </p>
+            {summary && (
+              <p className="mt-5 text-sm leading-relaxed text-muted-foreground">{summary}</p>
             )}
 
             <div className="mt-7 flex items-baseline gap-3 border-b border-border pb-7">
@@ -467,7 +468,14 @@ function ProductDetail() {
 
             <div className="mt-10">
               <Accordion title="Description" open>
-                <p className="whitespace-pre-line">{node.description}</p>
+                {descriptionHtml ? (
+                  <div
+                    className="rich-text"
+                    dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+                  />
+                ) : (
+                  <p className="whitespace-pre-line">{node.description}</p>
+                )}
               </Accordion>
               <Accordion title="Why VVS Moissanite?">
                 <p>
