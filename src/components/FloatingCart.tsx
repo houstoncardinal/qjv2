@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { ShoppingBag, ArrowRight, X } from "lucide-react";
+import { ShoppingBag, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatMoney } from "@/lib/shopify";
-import { cn } from "@/lib/utils";
 
 export function FloatingCart() {
   const { items, setOpen, getCheckoutUrl } = useCartStore();
