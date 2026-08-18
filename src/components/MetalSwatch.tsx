@@ -4,15 +4,16 @@ export type MetalKey = "gold" | "white-gold" | "silver" | "rose" | "ink" | "two-
 
 /** Map any Shopify option value to a metal finish family. */
 export function metalKey(value: string): MetalKey {
-  const v = value.toLowerCase();
-  if (/two.?tone|mixed|multi/.test(v)) return "two-tone";
+  const v = value.toLowerCase().replace(/[_\-/]+/g, " ");
+  if (/two ?tone|mixed|multi/.test(v)) return "two-tone";
   if (/rose|pink|blush/.test(v)) return "rose";
-  if (/white gold|white-gold|rhodium/.test(v)) return "white-gold";
+  if (/white gold|rhodium/.test(v)) return "white-gold";
   if (/black|onyx|gunmetal|noir|obsidian/.test(v)) return "ink";
   if (/gold|champagne|brass|yellow/.test(v)) return "gold";
   if (/silver|platinum|steel|sterling|s925|925/.test(v)) return "silver";
   return "plain";
 }
+
 
 export function isMetalOptionName(name: string) {
   return /colou?r|metal|plating|finish|tone|material/i.test(name);
