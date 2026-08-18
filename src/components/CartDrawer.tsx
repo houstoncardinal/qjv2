@@ -43,12 +43,12 @@ export const CartDrawer = () => {
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
       window.open(checkoutUrl, "_blank");
-      setIsOpen(false);
+      setOpen(false);
     }
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet open={isOpen} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative text-foreground">
           <ShoppingBag className="h-5 w-5" />
