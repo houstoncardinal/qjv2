@@ -193,6 +193,7 @@ export const useCartStore = create<CartStore>()(
 
       addItem: async (item) => {
         const { items, cartId, clearCart } = get();
+        const existingItem = items.find((i) => i.variantId === item.variantId);
 
         set({ isLoading: true });
         try {
