@@ -286,7 +286,7 @@ function Home() {
                     key={c.label}
                     to="/shop"
                     search={{ q: c.q }}
-                    className="group relative aspect-[4/5] overflow-hidden bg-secondary"
+                    className="group relative aspect-[4/5] overflow-hidden border border-border bg-card"
                   >
                     <img
                       src={c.image}
@@ -294,13 +294,12 @@ function Home() {
                       loading="lazy"
                       width={896}
                       height={1120}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07]"
+                      className="absolute inset-0 h-full w-full scale-[0.92] object-contain transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[0.99]"
                     />
-                    <div className="absolute inset-0 bg-[linear-gradient(to_top,oklch(0.13_0.004_60/0.55),transparent_60%)]" />
-                    <div className="absolute inset-0 bg-[linear-gradient(to_top,oklch(0.13_0.004_60/0.85),transparent_58%)]" />
+                    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[linear-gradient(to_top,var(--card)_38%,transparent)]" />
                     <div className="absolute bottom-6 left-6 right-6">
-                      <p className="font-display text-3xl text-background">{c.label}</p>
-                      <p className="mt-1 text-[9px] uppercase tracking-[0.26em] text-background/70">
+                      <p className="font-display text-3xl text-foreground">{c.label}</p>
+                      <p className="mt-1 text-[9px] uppercase tracking-[0.26em] text-muted-foreground">
                         {c.sub}
                       </p>
                       <span className="mt-4 inline-flex items-center gap-2 text-[9px] uppercase tracking-[0.26em] text-[var(--gold)] transition-transform duration-500 group-hover:translate-x-1">
