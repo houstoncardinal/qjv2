@@ -455,15 +455,15 @@
 
 /* Shopify rich-text descriptions -------------------------------------- */
 .rich-text {
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
   font-size: 0.875rem;
   line-height: 1.75;
 }
 .rich-text > * + * { margin-top: 0.9em; }
-.rich-text strong, .rich-text b { color: hsl(var(--foreground)); font-weight: 600; }
+.rich-text strong, .rich-text b { color: var(--foreground); font-weight: 600; }
 .rich-text em, .rich-text i { font-style: italic; }
 .rich-text h1, .rich-text h2, .rich-text h3, .rich-text h4, .rich-text h5, .rich-text h6 {
-  color: hsl(var(--foreground));
+  color: var(--foreground);
   font-family: var(--font-display, inherit);
   font-size: 1rem;
   letter-spacing: 0.02em;
@@ -476,12 +476,12 @@
 .rich-text li::marker { color: var(--gold); }
 .rich-text a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
 .rich-text img { max-width: 100%; height: auto; margin-inline: auto; }
-.rich-text hr { border-color: hsl(var(--border)); margin-block: 1.5em; }
+.rich-text hr { border-color: var(--border); margin-block: 1.5em; }
 .rich-text blockquote {
   border-left: 2px solid var(--gold);
   padding-left: 1rem;
-  color: hsl(var(--foreground));
+  color: var(--foreground);
 }
 .rich-text table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; display: block; overflow-x: auto; }
-.rich-text th, .rich-text td { border: 1px solid hsl(var(--border)); padding: 0.5rem 0.75rem; text-align: left; }
-.rich-text th { color: hsl(var(--foreground)); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.6875rem; }
+.rich-text th, .rich-text td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
+.rich-text th { color: var(--foreground); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.6875rem; }
