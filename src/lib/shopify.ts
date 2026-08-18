@@ -27,6 +27,7 @@ export interface ShopifyProduct {
           title: string;
           price: { amount: string; currencyCode: string };
           availableForSale: boolean;
+          image?: { url: string; altText: string | null } | null;
           selectedOptions: Array<{ name: string; value: string }>;
         };
       }>;
@@ -52,6 +53,7 @@ export const PRODUCT_FIELDS = `
         title
         price { amount currencyCode }
         availableForSale
+        image { url altText }
         selectedOptions { name value }
       }
     }
@@ -128,4 +130,49 @@ export function formatMoney(amount: string | number, currencyCode = "USD") {
   } catch {
     return `${currencyCode} ${value.toFixed(2)}`;
   }
+}
+
+/** Normalise a string for loose matching (lowercase, alphanumeric only). */
+function norm(v: string) {
+  return v.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+/**
+ * Work out which gallery image belongs to a variant.
+ * 1. Shopify's own variant image (most reliable).
+ * 2. Fall back to matching the colour/metal option value against image alt text or filename.
+ * Returns -1 when nothing matches so callers can keep the current image.
+ */
+export function variantImageIndex(
+  product: ShopifyProduct,
+  variant?: { image?: { url: string } | null; selectedOptions: Array<{ name: string; value: string }> } | null,
+): number {
+  if (!variant) return -1;
+  const images = product.node.images.edges;
+
+  if (variant.image?.url) {
+    const target = variant.image.url.split("?")[0];
+    const i = images.findIndex((e) => e.node.url.split("?")[0] === target);
+    if (i >= 0) return i;
+  }
+
+  const colorOption = variant.selectedOptions.find((o) =>
+    /colou?r|metal|plating|finish|tone|material/i.test(o.name),
+  );
+  if (!colorOption) return -1;
+
+  const words = norm(colorOption.value).split(" ").filter((w) => w.length > 2);
+  if (words.length === 0) return -1;
+
+  let best = -1;
+  let bestScore = 0;
+  images.forEach((e, i) => {
+    const haystack = norm(`${e.node.altText ?? ""} ${decodeURIComponent(e.node.url.split("/").pop() ?? "")}`);
+    const score = words.filter((w) => haystack.includes(w)).length;
+    if (score > bestScore) {
+      bestScore = score;
+      best = i;
+    }
+  });
+  return bestScore === words.length ? best : -1;
 }
