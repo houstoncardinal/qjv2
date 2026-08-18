@@ -32,7 +32,7 @@ export function SiteHeader() {
 
       <div className="bg-foreground py-2 text-center">
         <p className="text-[9px] uppercase tracking-[0.32em] text-background/90">
-          Free shipping on orders over $250 · GRA certified moissanite
+          Free U.S. shipping over $100 · 14-day returns · GRA certified moissanite
         </p>
       </div>
 

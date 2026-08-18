@@ -60,8 +60,8 @@ export const Route = createFileRoute("/product/$handle")({
 
 const trustGrid = [
   { icon: BadgeCheck, title: "GRA Certified", sub: "Certificate included" },
-  { icon: Truck, title: "Free Shipping", sub: "Insured & tracked" },
-  { icon: RotateCcw, title: "30-Day Returns", sub: "No questions asked" },
+  { icon: Truck, title: "Free U.S. Shipping", sub: "On orders over $100" },
+  { icon: RotateCcw, title: "14-Day Returns", sub: "Unworn, original packaging" },
   { icon: ShieldCheck, title: "Gift Ready", sub: "Luxury packaging" },
 ];
 
@@ -335,7 +335,7 @@ function ProductDetail() {
               </p>
               <p className="flex items-center gap-2.5 border border-border bg-secondary/60 px-4 py-3 text-[10px] tracking-wide text-muted-foreground">
                 <Truck className="h-3.5 w-3.5 shrink-0 text-[var(--gold)]" />
-                Ships within 24 hours · Free insured delivery on orders over $250.
+                Ships within 24 hours · Free U.S. shipping on orders over $100.
               </p>
             </div>
 
@@ -440,9 +440,9 @@ function ProductDetail() {
               </Accordion>
               <Accordion title="Shipping & Returns">
                 <p>
-                  Dispatched within 24 hours with insured tracked delivery worldwide. Free shipping
-                  on orders over $250. Returns accepted within 30 days in original condition and
-                  packaging, and complimentary resizing within 60 days.
+                  Dispatched within 24 hours with insured tracked delivery. Standard shipping is free
+                  across the United States on orders over $100. Returns accepted within 14 days in
+                  original condition and packaging — one return per customer every 14 days.
                 </p>
               </Accordion>
               <Accordion title="Common Questions">

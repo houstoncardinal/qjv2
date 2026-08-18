@@ -532,7 +532,7 @@ function Home() {
               {[
                 { icon: BadgeCheck, title: "GRA Certified", copy: "Certificate with every order" },
                 { icon: Sparkles, title: "VVS1 · D Colour", copy: "Eye-clean, maximum fire" },
-                { icon: Truck, title: "Free Shipping", copy: "Insured and tracked worldwide" },
+                { icon: Truck, title: "Free U.S. Shipping", copy: "On every order over $100" },
                 { icon: ShieldCheck, title: "Lifetime Warranty", copy: "Craftsmanship guaranteed" },
               ].map((t) => (
                 <li key={t.title} className="bg-foreground p-6">
