@@ -112,9 +112,27 @@ const UPDATE_MUTATION = `
   }
 `;
 
+export const ACCOUNTS_DISABLED_MESSAGE =
+  "Customer accounts aren't switched on for this store yet. Enable customer account access for the Storefront API in your Shopify admin and sign-in will start working instantly.";
+
+function isScopeError(err: unknown) {
+  return err instanceof Error && /access scope|Access denied/i.test(err.message);
+}
+
+/** Runs a storefront call and converts Shopify scope errors into a readable message. */
+async function customerRequest(query: string, variables: Record<string, unknown>) {
+  try {
+    return await storefrontApiRequest(query, variables);
+  } catch (err) {
+    if (isScopeError(err)) throw new Error(ACCOUNTS_DISABLED_MESSAGE);
+    throw err;
+  }
+}
+
 function firstError(errors: ShopifyUserError[] | undefined): string | null {
   return errors && errors.length > 0 ? (errors[0]?.message ?? "Something went wrong.") : null;
 }
+
 
 export async function loginCustomer(email: string, password: string) {
   const data = await storefrontApiRequest(LOGIN_MUTATION, { input: { email, password } });
