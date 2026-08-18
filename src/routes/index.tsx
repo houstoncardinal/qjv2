@@ -162,80 +162,93 @@ function Home() {
       <SiteHeader />
 
       <main id="main-content">
-        {/* Hero — compact editorial split */}
+        {/* Hero — light, editorial, timeless */}
         <section
           aria-labelledby="hero-heading"
-          className="relative isolate overflow-hidden bg-foreground text-background"
+          className="relative isolate overflow-hidden bg-card"
         >
-          <img
-            src={heroImage}
-            alt=""
-            aria-hidden="true"
-            width={1920}
-            height={1200}
-            className="absolute inset-0 h-full w-full object-cover opacity-45 mix-blend-luminosity"
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(100deg,oklch(0.13_0.004_60/0.97)_0%,oklch(0.13_0.004_60/0.82)_46%,oklch(0.13_0.004_60/0.35)_100%)]" />
+          <div className="relative mx-auto max-w-[1560px] px-6 py-12 sm:px-10 lg:py-16">
+            <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+              {/* Messaging */}
+              <div className="order-2 max-w-xl lg:order-1 rise-in">
+                <header className="mb-6 flex flex-col items-start gap-2">
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+                    Qureshi Jewelers
+                  </span>
+                  <div className="h-px w-12 bg-border" />
+                </header>
 
-          <div className="relative mx-auto max-w-[1560px] px-6 py-14 sm:px-10 lg:py-20">
-            <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_auto]">
-              <div className="max-w-2xl rise-in">
-                <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">
-                  GRA Certified · D Colour · VVS1
-                </p>
-                <div className="mt-4 h-px w-20 shimmer-line" />
+                <div className="mb-5 inline-flex items-center gap-2">
+                  <span className="h-px w-5 bg-[var(--gold)]" />
+                  <span className="text-[10px] font-medium uppercase tracking-[0.26em] text-[var(--gold)]">
+                    New Arrival
+                  </span>
+                </div>
+
                 <h1
                   id="hero-heading"
-                  className="mt-5 font-display text-[2.75rem] leading-[0.98] sm:text-6xl lg:text-[4.6rem]"
+                  className="font-display text-[2.6rem] leading-[1.02] text-foreground sm:text-6xl lg:text-[4.2rem]"
                 >
-                  VVS1 Moissanite
+                  Pure Elegance
                   <br />
-                  <span className="italic">Hand-Set</span> in 18K Gold
+                  <span className="italic font-normal">Redefined</span>
                 </h1>
-                <p className="mt-5 max-w-lg text-sm leading-relaxed text-background/75 sm:text-base">
-                  Hand-set in 18K gold over solid S925 sterling silver. Independently certified,
-                  finished by bench jewelers, guaranteed for life.
+
+                <p className="mt-5 max-w-md text-sm leading-[1.8] text-muted-foreground sm:text-base">
+                  Masterfully crafted with{" "}
+                  <span className="font-medium text-foreground">18K Gold over S925 Sterling Silver</span>
+                  . GRA-certified VVS1 D-colour moissanite, hand-set and inspected before it ships.
                 </p>
 
-                <div className="mt-7 flex flex-wrap gap-3">
+                <div className="mt-7 flex flex-wrap items-center gap-3">
                   <Link
                     to="/shop"
-                    className="group flex min-h-11 items-center gap-3 bg-background px-8 py-4 text-[10px] uppercase tracking-[0.26em] text-foreground transition-opacity hover:opacity-85"
+                    className="group flex min-h-11 items-center gap-3 bg-foreground px-8 py-4 text-[10px] uppercase tracking-[0.24em] text-background transition-opacity hover:opacity-85"
                   >
-                    Shop the collection{" "}
+                    Discover the collection{" "}
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                   <Link
                     to="/craftsmanship"
-                    className="flex min-h-11 items-center border border-background/30 px-8 py-4 text-[10px] uppercase tracking-[0.26em] text-background/85 transition-colors hover:border-background hover:text-background"
+                    className="flex min-h-11 items-center border border-border px-8 py-4 text-[10px] uppercase tracking-[0.24em] text-foreground/80 transition-colors hover:border-foreground hover:text-foreground"
                   >
                     Our craftsmanship
                   </Link>
                 </div>
+
+                <p className="mt-5 text-[9px] uppercase tracking-[0.22em] text-muted-foreground/80">
+                  Complimentary express shipping on U.S. orders over $100
+                </p>
               </div>
 
-              <ul className="grid gap-px bg-background/15 sm:grid-cols-3 lg:w-[300px] lg:grid-cols-1">
-                {[
-                  { icon: BadgeCheck, label: "GRA Certified", sub: "Every single stone" },
-                  { icon: Truck, label: "Free Insured Shipping", sub: "Tracked worldwide" },
-                  { icon: ShieldCheck, label: "Lifetime Warranty", sub: "Craftsmanship guaranteed" },
-                ].map((t) => (
-                  <li
-                    key={t.label}
-                    className="flex items-start gap-3 bg-foreground/85 p-4 backdrop-blur-sm"
-                  >
-                    <t.icon aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--gold)]" />
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.24em] text-background">
-                        {t.label}
-                      </p>
-                      <p className="mt-1 text-[11px] text-background/60">{t.sub}</p>
+              {/* Hero image */}
+              <div className="order-1 lg:order-2">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-sm border border-border bg-background sm:aspect-[4/3] lg:aspect-[4/3]">
+                  <img
+                    src={heroImage}
+                    alt="VVS1 moissanite ring set in 18K gold over sterling silver"
+                    width={1920}
+                    height={1200}
+                    className="h-full w-full object-cover"
+                  />
+                  {/* Certification badge */}
+                  <div className="absolute left-4 top-4 sm:left-5 sm:top-5">
+                    <div className="glass-strong px-3 py-2 sm:px-4 sm:py-2.5">
+                      <span className="block text-[8px] uppercase tracking-[0.2em] text-muted-foreground">
+                        Certification
+                      </span>
+                      <span className="mt-0.5 block text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground">
+                        GRA Moissanite
+                      </span>
                     </div>
-                  </li>
-                ))}
-              </ul>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Subtle bottom rule */}
+          <div className="absolute inset-x-0 bottom-0 h-px bg-border" />
         </section>
 
         {/* Marquee assurance strip */}
