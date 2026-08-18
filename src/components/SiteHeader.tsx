@@ -76,6 +76,20 @@ export function SiteHeader() {
               Our Craft
             </Link>
             <Link
+              to="/about"
+              className="py-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "text-foreground" }}
+            >
+              About
+            </Link>
+            <Link
+              to="/contact"
+              className="py-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "text-foreground" }}
+            >
+              Contact
+            </Link>
+            <Link
               to="/rewards"
               className="flex items-center gap-1.5 py-2 text-[10px] uppercase tracking-[0.22em] text-[var(--gold)] transition-opacity hover:opacity-75"
               activeProps={{ className: "opacity-100" }}
@@ -131,6 +145,20 @@ export function SiteHeader() {
               className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
             >
               Our Craft
+            </Link>
+            <Link
+              to="/about"
+              onClick={() => setOpen(false)}
+              className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
+            >
+              About
+            </Link>
+            <Link
+              to="/contact"
+              onClick={() => setOpen(false)}
+              className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
+            >
+              Contact
             </Link>
             <Link
               to="/rewards"
