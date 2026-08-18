@@ -148,7 +148,7 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
               </div>
 
             ) : kind === "size" ? (
-              <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6">
+              <div className="mt-3 grid grid-cols-3 gap-2 xs:grid-cols-4 sm:grid-cols-6">
                 {option.values.map((value) => {
                   const selected = active === value;
                   const available = isValueAvailable(option.name, value);
@@ -166,14 +166,14 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
                         !available && "text-muted-foreground line-through opacity-45",
                       )}
                     >
-                      <span className="text-xs tracking-wide">{prettyValue(value)}</span>
+                      <span className="max-w-full truncate px-1 text-xs tracking-wide">{prettyValue(value)}</span>
                       <span
                         className={cn(
                           "text-[7px] uppercase tracking-[0.18em]",
                           selected ? "text-background/60" : "text-muted-foreground",
                         )}
                       >
-                        {option.name}
+                        <span className="block truncate px-1">{option.name}</span>
                       </span>
                     </button>
                   );
@@ -191,7 +191,7 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
                       aria-pressed={selected}
                       onClick={() => select(value)}
                       className={cn(
-                        "border px-5 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-all duration-300",
+                        "max-w-full break-words border px-4 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-all duration-300",
                         selected
                           ? "border-foreground bg-foreground text-background"
                           : "border-border bg-card text-foreground/80 hover:border-foreground/45",
