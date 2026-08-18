@@ -2,20 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { Loader2, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatMoney, type ShopifyProduct } from "@/lib/shopify";
+import { MetalSwatchRow, isMetalOptionName } from "@/components/MetalSwatch";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 function metalOption(product: ShopifyProduct) {
-  return product.node.options?.find((o) => /colou?r|metal|plating|tone|finish/i.test(o.name));
-}
-
-function swatchClass(value: string): string | null {
-  const s = value.toLowerCase();
-  if (/rose|pink/.test(s)) return "swatch-rose";
-  if (/gold|champagne/.test(s) && !/white/.test(s)) return "swatch-gold";
-  if (/silver|white|platinum|rhodium|steel/.test(s)) return "swatch-silver";
-  if (/black|onyx/.test(s)) return "swatch-ink";
-  return null;
+  return product.node.options?.find((o) => isMetalOptionName(o.name));
 }
 
 export function ProductCard({
@@ -35,13 +27,11 @@ export function ProductCard({
     node.variants.edges.find((v) => v.node.availableForSale)?.node ?? node.variants.edges[0]?.node;
   const price = node.priceRange.minVariantPrice;
   const option = metalOption(product);
-  const swatches = (option?.values ?? [])
-    .map((v) => ({ value: v, cls: swatchClass(v) }))
-    .filter((s) => s.cls)
-    .slice(0, 4);
-  const finishCount = option?.values.length ?? 0;
+  const finishes = (option?.values ?? []).filter((v) => v !== "Default Title");
   const bestSeller = (node.tags ?? []).some((t) => /best|trending|featured/i.test(t));
   const soldOut = node.variants.edges.every((v) => !v.node.availableForSale);
+  const points = Math.floor(parseFloat(price.amount || "0"));
+
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -130,37 +120,27 @@ export function ProductCard({
             {node.title}
           </h3>
 
-          {swatches.length > 0 && (
-            <div className="mt-3.5 flex items-center gap-2">
-              <div className="flex gap-1.5">
-                {swatches.map((s) => (
-                  <span
-                    key={s.value}
-                    title={s.value}
-                    className={cn("h-3.5 w-3.5 rounded-full ring-1 ring-border", s.cls)}
-                    aria-hidden
-                  />
-                ))}
-              </div>
-              {finishCount > 1 && (
-                <span className="text-[8px] uppercase tracking-[0.2em] text-muted-foreground">
-                  {finishCount} finishes
-                </span>
-              )}
-            </div>
-          )}
+          {finishes.length > 0 && <MetalSwatchRow values={finishes} className="mt-3.5" />}
 
           <div className="mt-auto flex items-end justify-between gap-3 pt-5">
-            <p className="text-sm tracking-wide text-foreground">
-              <span className="text-[8px] uppercase tracking-[0.24em] text-muted-foreground">
-                From{" "}
-              </span>
-              {formatMoney(price.amount, price.currencyCode)}
-            </p>
+            <div>
+              <p className="text-sm tracking-wide text-foreground">
+                <span className="text-[8px] uppercase tracking-[0.24em] text-muted-foreground">
+                  From{" "}
+                </span>
+                {formatMoney(price.amount, price.currencyCode)}
+              </p>
+              {points > 0 && (
+                <p className="mt-1.5 text-[8px] uppercase tracking-[0.2em] text-[var(--gold)]">
+                  Earn {points} pts
+                </p>
+              )}
+            </div>
             <span className="text-[8px] uppercase tracking-[0.22em] text-muted-foreground transition-colors group-hover:text-[var(--gold)]">
               View
             </span>
           </div>
+
         </div>
       </Link>
     </article>

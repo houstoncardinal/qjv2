@@ -1,43 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { ShopifyProduct } from "@/lib/shopify";
+import {
+  MetalSwatch,
+  METAL_SUBTITLE,
+  metalKey,
+  isMetalOptionName,
+} from "@/components/MetalSwatch";
 
 type Variant = ShopifyProduct["node"]["variants"]["edges"][number]["node"];
 
-function metalSwatch(value: string): string | null {
-  const v = value.toLowerCase();
-  if (/rose|pink/.test(v)) return "swatch-rose";
-  if (/yellow gold|gold|champagne|brass/.test(v) && !/white/.test(v)) return "swatch-gold";
-  if (/silver|white|platinum|rhodium|steel|s925|sterling/.test(v)) return "swatch-silver";
-  if (/black|onyx|gunmetal|noir/.test(v)) return "swatch-ink";
-  return null;
-}
-
 function metalSub(value: string): string {
-  const v = value.toLowerCase();
-  if (/rose/.test(v)) return "Warm blush";
-  if (/white/.test(v)) return "Rhodium finish";
-  if (/gold/.test(v)) return "5× 18K plated";
-  if (/silver|sterling|s925/.test(v)) return "Solid S925";
-  if (/black/.test(v)) return "Black rhodium";
-  return "Premium finish";
+  return METAL_SUBTITLE[metalKey(value)];
 }
 
 function optionKind(name: string): "metal" | "size" | "measure" | "plain" {
   const n = name.toLowerCase();
-  if (/colou?r|metal|plating|finish|tone/.test(n)) return "metal";
+  if (isMetalOptionName(n)) return "metal";
   if (/size/.test(n)) return "size";
   if (/length|width|carat|ct|inch|chain|diameter|mm/.test(n)) return "measure";
   return "plain";
 }
 
 export function prettyValue(value: string) {
-  return value
-    .replace(/[_-]+/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return value.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export { metalSwatch };
 
 export interface VariantSelectorProps {
   product: ShopifyProduct;
@@ -115,9 +103,8 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
             </div>
 
             {kind === "metal" ? (
-              <div className="mt-3 grid gap-2 sm:grid-cols-3">
+              <div className="mt-3.5 grid gap-2.5 sm:grid-cols-3">
                 {option.values.map((value) => {
-                  const swatch = metalSwatch(value);
                   const selected = active === value;
                   const available = isValueAvailable(option.name, value);
                   return (
@@ -127,32 +114,39 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
                       aria-pressed={selected}
                       onClick={() => select(value)}
                       className={cn(
-                        "flex flex-col items-center gap-2 border px-3 py-3 transition-all duration-300",
+                        "group relative flex items-center gap-3 border px-3.5 py-3 text-left transition-all duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
                         selected
-                          ? "border-foreground bg-foreground text-background"
-                          : "border-border bg-card text-foreground hover:border-foreground/45",
-                        !available && "opacity-45",
+                          ? "border-foreground bg-secondary/60 shadow-[var(--shadow-soft)]"
+                          : "border-border bg-card hover:-translate-y-0.5 hover:border-foreground/40 hover:shadow-[var(--shadow-soft)]",
+                        !available && "opacity-55",
                       )}
                     >
-                      <span
-                        className={cn(
-                          "h-4 w-4 rounded-full ring-1 ring-border",
-                          swatch ?? "bg-secondary",
-                        )}
+                      <MetalSwatch
+                        value={value}
+                        size="md"
+                        selected={selected}
+                        unavailable={!available}
+                        className="transition-transform duration-500 group-hover:scale-105"
                       />
-                      <span className="text-[9px] uppercase tracking-[0.14em]">{prettyValue(value)}</span>
-                      <span
-                        className={cn(
-                          "text-[8px] tracking-wide",
-                          selected ? "text-background/60" : "text-muted-foreground",
-                        )}
-                      >
-                        {metalSub(value)}
+                      <span className="min-w-0">
+                        <span className="block truncate text-[10px] uppercase tracking-[0.16em] text-foreground">
+                          {prettyValue(value)}
+                        </span>
+                        <span className="mt-0.5 block text-[9px] tracking-wide text-muted-foreground">
+                          {available ? metalSub(value) : "Sold out"}
+                        </span>
                       </span>
+                      {selected && (
+                        <span
+                          aria-hidden="true"
+                          className="absolute inset-x-0 bottom-0 h-[2px] tier-bar"
+                        />
+                      )}
                     </button>
                   );
                 })}
               </div>
+
             ) : kind === "size" ? (
               <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6">
                 {option.values.map((value) => {

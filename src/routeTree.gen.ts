@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccessibilityRouteImport } from './routes/accessibility'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as CraftsmanshipRouteImport } from './routes/craftsmanship'
+import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 
@@ -25,9 +27,19 @@ const AccessibilityRoute = AccessibilityRouteImport.update({
   path: '/accessibility',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CraftsmanshipRoute = CraftsmanshipRouteImport.update({
   id: '/craftsmanship',
   path: '/craftsmanship',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RewardsRoute = RewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -44,14 +56,18 @@ const ProductHandleRoute = ProductHandleRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accessibility': typeof AccessibilityRoute
+  '/account': typeof AccountRoute
   '/craftsmanship': typeof CraftsmanshipRoute
+  '/rewards': typeof RewardsRoute
   '/shop': typeof ShopRoute
   '/product/$handle': typeof ProductHandleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accessibility': typeof AccessibilityRoute
+  '/account': typeof AccountRoute
   '/craftsmanship': typeof CraftsmanshipRoute
+  '/rewards': typeof RewardsRoute
   '/shop': typeof ShopRoute
   '/product/$handle': typeof ProductHandleRoute
 }
@@ -59,21 +75,38 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/accessibility': typeof AccessibilityRoute
+  '/account': typeof AccountRoute
   '/craftsmanship': typeof CraftsmanshipRoute
+  '/rewards': typeof RewardsRoute
   '/shop': typeof ShopRoute
   '/product/$handle': typeof ProductHandleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/accessibility' | '/craftsmanship' | '/shop' | '/product/$handle'
+    | '/'
+    | '/accessibility'
+    | '/account'
+    | '/craftsmanship'
+    | '/rewards'
+    | '/shop'
+    | '/product/$handle'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/accessibility' | '/craftsmanship' | '/shop' | '/product/$handle'
+  to:
+    | '/'
+    | '/accessibility'
+    | '/account'
+    | '/craftsmanship'
+    | '/rewards'
+    | '/shop'
+    | '/product/$handle'
   id:
     | '__root__'
     | '/'
     | '/accessibility'
+    | '/account'
     | '/craftsmanship'
+    | '/rewards'
     | '/shop'
     | '/product/$handle'
   fileRoutesById: FileRoutesById
@@ -81,7 +114,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccessibilityRoute: typeof AccessibilityRoute
+  AccountRoute: typeof AccountRoute
   CraftsmanshipRoute: typeof CraftsmanshipRoute
+  RewardsRoute: typeof RewardsRoute
   ShopRoute: typeof ShopRoute
   ProductHandleRoute: typeof ProductHandleRoute
 }
@@ -102,11 +137,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccessibilityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/craftsmanship': {
       id: '/craftsmanship'
       path: '/craftsmanship'
       fullPath: '/craftsmanship'
       preLoaderRoute: typeof CraftsmanshipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rewards': {
+      id: '/rewards'
+      path: '/rewards'
+      fullPath: '/rewards'
+      preLoaderRoute: typeof RewardsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -129,7 +178,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccessibilityRoute: AccessibilityRoute,
+  AccountRoute: AccountRoute,
   CraftsmanshipRoute: CraftsmanshipRoute,
+  RewardsRoute: RewardsRoute,
   ShopRoute: ShopRoute,
   ProductHandleRoute: ProductHandleRoute,
 }

@@ -12,6 +12,7 @@ import {
 import { ShoppingBag, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatMoney } from "@/lib/shopify";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/rewards";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +24,8 @@ export const CartDrawer = () => {
     0,
   );
   const currency = items[0]?.price.currencyCode ?? "USD";
+  const pointsEarned = Math.floor(totalPrice);
+
 
   useEffect(() => {
     if (isOpen) syncCart();
@@ -126,6 +129,24 @@ export const CartDrawer = () => {
                 </div>
               </div>
               <div className="flex-shrink-0 space-y-4 py-5 border-t border-border bg-card">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em]">
+                    <span className="text-muted-foreground">
+                      {totalPrice >= FREE_SHIPPING_THRESHOLD
+                        ? "Free insured shipping unlocked"
+                        : `${formatMoney(FREE_SHIPPING_THRESHOLD - totalPrice, currency)} to free shipping`}
+                    </span>
+                    <span className="text-[var(--gold)]">+{pointsEarned} pts</span>
+                  </div>
+                  <div className="h-1.5 w-full overflow-hidden bg-secondary">
+                    <div
+                      className="h-full tier-bar transition-[width] duration-700"
+                      style={{
+                        width: `${Math.min(100, Math.round((totalPrice / FREE_SHIPPING_THRESHOLD) * 100))}%`,
+                      }}
+                    />
+                  </div>
+                </div>
                 <div className="flex justify-between items-baseline">
                   <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                     Subtotal
@@ -133,8 +154,10 @@ export const CartDrawer = () => {
                   <span className="font-display text-2xl">{formatMoney(totalPrice, currency)}</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground">
-                  Taxes and shipping calculated at checkout.
+                  Taxes and shipping calculated at checkout. Points post to your account after the
+                  order completes.
                 </p>
+
                 <Button
                   onClick={handleCheckout}
                   variant="gold"
