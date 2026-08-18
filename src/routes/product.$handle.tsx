@@ -30,6 +30,8 @@ import {
   fetchProductByHandle,
   fetchProducts,
   formatMoney,
+  sanitizeShopifyHtml,
+  shortDescription,
   variantImageIndex,
   type ShopifyProduct,
 } from "@/lib/shopify";
@@ -158,7 +160,8 @@ function ProductDetail() {
   const metalValue = variant?.selectedOptions.find((o) =>
     /colou?r|metal|plating|finish/i.test(o.name),
   )?.value;
-  const shortDescription = node.description.split(/\.\s/).slice(0, 3).join(". ");
+  const summary = shortDescription(node);
+  const descriptionHtml = sanitizeShopifyHtml(node.descriptionHtml);
 
   const productLd = {
     "@context": "https://schema.org",
