@@ -27,6 +27,7 @@ export interface ShopifyProduct {
           title: string;
           price: { amount: string; currencyCode: string };
           availableForSale: boolean;
+          image?: { url: string; altText: string | null } | null;
           selectedOptions: Array<{ name: string; value: string }>;
         };
       }>;
@@ -52,6 +53,7 @@ export const PRODUCT_FIELDS = `
         title
         price { amount currencyCode }
         availableForSale
+        image { url altText }
         selectedOptions { name value }
       }
     }
@@ -128,4 +130,71 @@ export function formatMoney(amount: string | number, currencyCode = "USD") {
   } catch {
     return `${currencyCode} ${value.toFixed(2)}`;
   }
+}
+
+/** Normalise a string for loose matching (lowercase, alphanumeric only). */
+function norm(v: string) {
+  return v.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+const GENERIC_TOKENS = /^(\d+k?|k|plated|plating|color|colour|finish|tone|metal|the|and)$/;
+
+/**
+ * Work out which gallery image belongs to a variant.
+ * 1. Match the colour/metal option value against image alt text / filename
+ *    (many stores name files "whitegold-123.jpg" without assigning variant images).
+ * 2. Fall back to Shopify's own variant image when it is distinct.
+ * Returns -1 when nothing matches so callers keep the current image.
+ */
+export function variantImageIndex(
+  product: ShopifyProduct,
+  variant?: {
+    image?: { url: string } | null;
+    selectedOptions: Array<{ name: string; value: string }>;
+  } | null,
+): number {
+  if (!variant) return -1;
+  const images = product.node.images.edges;
+  if (images.length < 2) return -1;
+
+  const colorOption = variant.selectedOptions.find((o) =>
+    /colou?r|metal|plating|finish|tone|material/i.test(o.name),
+  );
+
+  if (colorOption) {
+    const words = norm(colorOption.value)
+      .split(" ")
+      .filter((w) => w.length > 2 && !GENERIC_TOKENS.test(w));
+    const phrase = words.join("");
+
+    if (phrase) {
+      const compacts = images.map((e) =>
+        norm(`${e.node.altText ?? ""} ${decodeURIComponent(e.node.url.split("/").pop() ?? "")}`).replace(/ /g, ""),
+      );
+
+      // Exact colour phrase in the filename/alt text wins.
+      const exact = compacts.findIndex((c) => c.includes(phrase));
+      if (exact >= 0) return exact;
+
+      // Otherwise require every colour word to appear, and only if it is unique.
+      const hits = compacts
+        .map((c, i) => (words.every((w) => c.includes(w)) ? i : -1))
+        .filter((i) => i >= 0);
+      if (hits.length === 1) return hits[0]!;
+    }
+  }
+
+  if (variant.image?.url) {
+    const target = variant.image.url.split("?")[0];
+    const distinct = new Set(
+      product.node.variants.edges.map((v) => v.node.image?.url?.split("?")[0] ?? ""),
+    );
+    // Only trust variant images when the store actually assigns different ones.
+    if (distinct.size > 1) {
+      const i = images.findIndex((e) => e.node.url.split("?")[0] === target);
+      if (i >= 0) return i;
+    }
+  }
+
+  return -1;
 }
