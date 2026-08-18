@@ -241,7 +241,9 @@ function Home() {
 
               {/* Desktop right-side trust panel */}
               <div className="hidden lg:col-span-5 lg:block">
-                <div className="glass-panel ml-auto max-w-sm px-8 py-10">
+                <div
+                  className="ml-auto max-w-sm border border-[oklch(1_0_0_/_0.1)] bg-[oklch(1_0_0_/_0.03)] px-8 py-10 backdrop-blur-sm"
+                >
                   <div className="mb-6 flex items-center gap-3">
                     <div className="h-px flex-1 bg-[oklch(1_0_0_/_0.12)]" />
                     <span className="text-[9px] uppercase tracking-[0.28em] text-[oklch(0.72_0.085_84)]">
