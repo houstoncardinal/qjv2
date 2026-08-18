@@ -52,10 +52,10 @@ export const Route = createFileRoute("/")({
 });
 
 const categoryTiles = [
-  { label: "Rings", sub: "Engagement & stackable", q: "product_type:ring", image: catRings },
-  { label: "Chains", sub: "Tennis & cuban links", q: "product_type:necklace", image: catChains },
-  { label: "Bracelets", sub: "Tennis bracelets", q: "product_type:bracelet", image: catBracelets },
-  { label: "Earrings", sub: "Studs & hoops", q: "product_type:earring", image: catEarrings },
+  { label: "Rings", sub: "Engagement & stackable", q: "product_type:ring", image: catRingsAsset.url },
+  { label: "Chains", sub: "Tennis & cuban links", q: "product_type:necklace", image: catChainsAsset.url },
+  { label: "Bracelets", sub: "Tennis bracelets", q: "product_type:bracelet", image: catBraceletsAsset.url },
+  { label: "Earrings", sub: "Studs & hoops", q: "product_type:earring", image: catEarringsAsset.url },
 ];
 
 function useShopifyProducts(key: string, query?: string, count = 12) {
