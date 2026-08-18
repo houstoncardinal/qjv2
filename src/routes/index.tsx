@@ -12,7 +12,7 @@ import {
   Sparkles,
   Truck,
 } from "lucide-react";
-import heroImage from "@/assets/hero-light.jpg";
+
 import catRingsAsset from "@/assets/cat-rings.avif.asset.json";
 import catChainsAsset from "@/assets/cat-chains.avif.asset.json";
 import catBraceletsAsset from "@/assets/cat-bracelets.jpg.asset.json";
@@ -162,93 +162,78 @@ function Home() {
       <SiteHeader />
 
       <main id="main-content">
-        {/* Hero — light, editorial, timeless */}
+        {/* Hero — dark, premium, editorial */}
         <section
           aria-labelledby="hero-heading"
-          className="relative isolate overflow-hidden bg-card"
+          className="relative isolate overflow-hidden bg-[oklch(0.14_0.004_60)] text-[oklch(0.99_0.002_90)]"
         >
-          <div className="relative mx-auto max-w-[1560px] px-6 py-12 sm:px-10 lg:py-16">
-            <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
-              {/* Messaging */}
-              <div className="order-2 max-w-xl lg:order-1 rise-in">
-                <header className="mb-6 flex flex-col items-start gap-2">
-                  <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-                    Qureshi Jewelers
-                  </span>
-                  <div className="h-px w-12 bg-border" />
-                </header>
+          {/* Subtle metallic gradient sheen */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 opacity-30"
+            style={{
+              background:
+                "radial-gradient(ellipse 80% 50% at 50% -20%, oklch(0.72 0.085 84 / 0.25), transparent), radial-gradient(ellipse 60% 40% at 80% 100%, oklch(0.72 0.006 250 / 0.15), transparent)",
+            }}
+          />
 
-                <div className="mb-5 inline-flex items-center gap-2">
-                  <span className="h-px w-5 bg-[var(--gold)]" />
-                  <span className="text-[10px] font-medium uppercase tracking-[0.26em] text-[var(--gold)]">
-                    New Arrival
-                  </span>
-                </div>
+          <div className="relative mx-auto max-w-[1560px] px-6 py-16 sm:px-10 sm:py-20 lg:py-24">
+            <div className="mx-auto max-w-3xl text-center">
+              <header className="mb-8 inline-flex flex-col items-center gap-3">
+                <span className="text-[10px] uppercase tracking-[0.36em] text-[oklch(0.72_0.085_84)]">
+                  Qureshi Jewelers
+                </span>
+                <div className="h-px w-14 bg-[oklch(0.72_0.085_84)]/60" />
+              </header>
 
-                <h1
-                  id="hero-heading"
-                  className="font-display text-[2.6rem] leading-[1.02] text-foreground sm:text-6xl lg:text-[4.2rem]"
+              <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-[oklch(1_0_0_/_0.12)] bg-[oklch(1_0_0_/_0.06)] px-4 py-1.5 backdrop-blur-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-[oklch(0.72_0.085_84)]" />
+                <span className="text-[10px] font-medium uppercase tracking-[0.26em] text-[oklch(0.99_0.002_90)]">
+                  New Arrival
+                </span>
+              </div>
+
+              <h1
+                id="hero-heading"
+                className="font-display text-[2.8rem] leading-[1.02] text-[oklch(1_0_0)] sm:text-6xl lg:text-[4.8rem]"
+              >
+                Pure Elegance
+                <br />
+                <span className="italic font-normal text-[oklch(0.99_0.002_90)]/90">Redefined</span>
+              </h1>
+
+              <p className="mx-auto mt-6 max-w-xl text-sm leading-[1.9] text-[oklch(0.99_0.002_90)]/70 sm:text-base">
+                Masterfully crafted with{" "}
+                <span className="font-medium text-[oklch(1_0_0)]">
+                  18K Gold over S925 Sterling Silver
+                </span>
+                . GRA-certified VVS1 D-colour moissanite, hand-set and inspected before it ships.
+              </p>
+
+              <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  to="/shop"
+                  className="group flex min-h-11 items-center gap-3 bg-[oklch(1_0_0)] px-8 py-4 text-[10px] uppercase tracking-[0.24em] text-[oklch(0.14_0.004_60)] transition-colors hover:bg-[oklch(0.99_0.002_90)]"
                 >
-                  Pure Elegance
-                  <br />
-                  <span className="italic font-normal">Redefined</span>
-                </h1>
-
-                <p className="mt-5 max-w-md text-sm leading-[1.8] text-muted-foreground sm:text-base">
-                  Masterfully crafted with{" "}
-                  <span className="font-medium text-foreground">18K Gold over S925 Sterling Silver</span>
-                  . GRA-certified VVS1 D-colour moissanite, hand-set and inspected before it ships.
-                </p>
-
-                <div className="mt-7 flex flex-wrap items-center gap-3">
-                  <Link
-                    to="/shop"
-                    className="group flex min-h-11 items-center gap-3 bg-foreground px-8 py-4 text-[10px] uppercase tracking-[0.24em] text-background transition-opacity hover:opacity-85"
-                  >
-                    Discover the collection{" "}
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                  <Link
-                    to="/craftsmanship"
-                    className="flex min-h-11 items-center border border-border px-8 py-4 text-[10px] uppercase tracking-[0.24em] text-foreground/80 transition-colors hover:border-foreground hover:text-foreground"
-                  >
-                    Our craftsmanship
-                  </Link>
-                </div>
-
-                <p className="mt-5 text-[9px] uppercase tracking-[0.22em] text-muted-foreground/80">
-                  Complimentary express shipping on U.S. orders over $100
-                </p>
+                  Discover the collection{" "}
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+                <Link
+                  to="/craftsmanship"
+                  className="flex min-h-11 items-center border border-[oklch(1_0_0_/_0.22)] px-8 py-4 text-[10px] uppercase tracking-[0.24em] text-[oklch(0.99_0.002_90)]/90 transition-colors hover:border-[oklch(1_0_0)] hover:text-[oklch(1_0_0)]"
+                >
+                  Our craftsmanship
+                </Link>
               </div>
 
-              {/* Hero image */}
-              <div className="order-1 lg:order-2">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-sm border border-border bg-background sm:aspect-[4/3] lg:aspect-[4/3]">
-                  <img
-                    src={heroImage}
-                    alt="VVS1 moissanite ring set in 18K gold over sterling silver"
-                    width={1920}
-                    height={1200}
-                    className="h-full w-full object-cover"
-                  />
-                  {/* Certification badge */}
-                  <div className="absolute left-4 top-4 sm:left-5 sm:top-5">
-                    <div className="glass-strong px-3 py-2 sm:px-4 sm:py-2.5">
-                      <span className="block text-[8px] uppercase tracking-[0.2em] text-muted-foreground">
-                        Certification
-                      </span>
-                      <span className="mt-0.5 block text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground">
-                        GRA Moissanite
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <p className="mt-6 text-[9px] uppercase tracking-[0.24em] text-[oklch(0.99_0.002_90)]/55">
+                Complimentary express shipping on U.S. orders over $100
+              </p>
             </div>
           </div>
 
-          {/* Subtle bottom rule */}
-          <div className="absolute inset-x-0 bottom-0 h-px bg-border" />
+          {/* Bottom gradient fade into the next section */}
+          <div className="absolute inset-x-0 bottom-0 h-px bg-[oklch(1_0_0_/_0.12)]" />
         </section>
 
         {/* Marquee assurance strip */}
