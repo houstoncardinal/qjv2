@@ -13,6 +13,10 @@ import {
   Truck,
 } from "lucide-react";
 import heroImage from "@/assets/hero-light.jpg";
+import catRings from "@/assets/cat-rings.jpg";
+import catChains from "@/assets/cat-chains.jpg";
+import catBracelets from "@/assets/cat-bracelets.jpg";
+import catEarrings from "@/assets/cat-earrings.jpg";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
@@ -48,10 +52,10 @@ export const Route = createFileRoute("/")({
 });
 
 const categoryTiles = [
-  { label: "Rings", sub: "Engagement & stackable", q: "product_type:ring" },
-  { label: "Chains", sub: "Tennis & cuban links", q: "product_type:necklace" },
-  { label: "Bracelets", sub: "Tennis bracelets", q: "product_type:bracelet" },
-  { label: "Earrings", sub: "Studs & hoops", q: "product_type:earring" },
+  { label: "Rings", sub: "Engagement & stackable", q: "product_type:ring", image: catRings },
+  { label: "Chains", sub: "Tennis & cuban links", q: "product_type:necklace", image: catChains },
+  { label: "Bracelets", sub: "Tennis bracelets", q: "product_type:bracelet", image: catBracelets },
+  { label: "Earrings", sub: "Studs & hoops", q: "product_type:earring", image: catEarrings },
 ];
 
 function useShopifyProducts(key: string, query?: string, count = 12) {
