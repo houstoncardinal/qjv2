@@ -59,7 +59,7 @@ export function FloatingCart() {
             }}
             className="group flex items-center justify-center gap-2 bg-foreground px-4 py-3.5 text-[10px] uppercase tracking-[0.22em] text-background transition-opacity hover:opacity-90"
           >
-            Checkout
+            {formatMoney(totalPrice, currency)}
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
           </button>
         </div>
