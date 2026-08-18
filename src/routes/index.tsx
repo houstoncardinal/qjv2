@@ -236,7 +236,7 @@ function Home() {
                 </Link>
               </div>
 
-              <p className="mt-6 text-[9px] uppercase tracking-[0.24em] text-[oklch(0.99_0.002_90)]/55">
+              <p className="mt-6 text-[9px] uppercase tracking-[0.24em] text-[oklch(0.99_0.002_90)]/75">
                 Complimentary express shipping on U.S. orders over $100
               </p>
             </div>
