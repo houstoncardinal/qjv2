@@ -12,7 +12,7 @@ import {
   Sparkles,
   Truck,
 } from "lucide-react";
-import heroImage from "@/assets/hero-light.jpg";
+
 import catRingsAsset from "@/assets/cat-rings.avif.asset.json";
 import catChainsAsset from "@/assets/cat-chains.avif.asset.json";
 import catBraceletsAsset from "@/assets/cat-bracelets.jpg.asset.json";
