@@ -148,7 +148,7 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
               </div>
 
             ) : kind === "size" ? (
-              <div className="mt-3 grid grid-cols-3 gap-2 xs:grid-cols-4 sm:grid-cols-6">
+              <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6">
                 {option.values.map((value) => {
                   const selected = active === value;
                   const available = isValueAvailable(option.name, value);
