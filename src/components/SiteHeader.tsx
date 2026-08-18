@@ -32,7 +32,7 @@ export function SiteHeader() {
 
       <div className="bg-foreground py-2 text-center">
         <p className="text-[9px] uppercase tracking-[0.32em] text-background/90">
-          Free shipping on orders over $250 · GRA certified moissanite
+          Free U.S. shipping over $100 · 14-day returns · GRA certified moissanite
         </p>
       </div>
 
@@ -74,6 +74,20 @@ export function SiteHeader() {
               activeProps={{ className: "text-foreground" }}
             >
               Our Craft
+            </Link>
+            <Link
+              to="/about"
+              className="py-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "text-foreground" }}
+            >
+              About
+            </Link>
+            <Link
+              to="/contact"
+              className="py-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "text-foreground" }}
+            >
+              Contact
             </Link>
             <Link
               to="/rewards"
@@ -131,6 +145,20 @@ export function SiteHeader() {
               className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
             >
               Our Craft
+            </Link>
+            <Link
+              to="/about"
+              onClick={() => setOpen(false)}
+              className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
+            >
+              About
+            </Link>
+            <Link
+              to="/contact"
+              onClick={() => setOpen(false)}
+              className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
+            >
+              Contact
             </Link>
             <Link
               to="/rewards"

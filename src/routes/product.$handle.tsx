@@ -21,6 +21,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
 import { VariantSelector, prettyValue } from "@/components/VariantSelector";
 import { MetalSwatch } from "@/components/MetalSwatch";
+import { JsonLd } from "@/components/JsonLd";
+import { OFFER_POLICY_LD, SITE_NAME, breadcrumbLd } from "@/lib/site";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -52,7 +54,9 @@ export const Route = createFileRoute("/product/$handle")({
         },
         { property: "og:type", content: "product" },
         { name: "twitter:card", content: "summary_large_image" },
+        { property: "og:url", content: `/product/${params.handle}` },
       ],
+      links: [{ rel: "canonical", href: `/product/${params.handle}` }],
     };
   },
   component: ProductDetail,
@@ -60,8 +64,8 @@ export const Route = createFileRoute("/product/$handle")({
 
 const trustGrid = [
   { icon: BadgeCheck, title: "GRA Certified", sub: "Certificate included" },
-  { icon: Truck, title: "Free Shipping", sub: "Insured & tracked" },
-  { icon: RotateCcw, title: "30-Day Returns", sub: "No questions asked" },
+  { icon: Truck, title: "Free U.S. Shipping", sub: "On orders over $100" },
+  { icon: RotateCcw, title: "14-Day Returns", sub: "Unworn, original packaging" },
   { icon: ShieldCheck, title: "Gift Ready", sub: "Luxury packaging" },
 ];
 
@@ -147,6 +151,33 @@ function ProductDetail() {
     /colou?r|metal|plating|finish/i.test(o.name),
   )?.value;
   const shortDescription = node.description.split(/\.\s/).slice(0, 3).join(". ");
+
+  const productLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: node.title,
+    description: node.description,
+    sku: (variant?.id ?? node.id).split("/").pop(),
+    image: images.map((i) => i.node.url),
+    brand: { "@type": "Brand", name: SITE_NAME },
+    material: "Moissanite, S925 sterling silver, 18K gold plating",
+    category: node.productType || "Jewelry",
+    offers: {
+      "@type": "AggregateOffer",
+      priceCurrency: node.priceRange.minVariantPrice.currencyCode,
+      lowPrice: Number(node.priceRange.minVariantPrice.amount),
+      highPrice: Math.max(
+        ...node.variants.edges.map((v) => Number(v.node.price.amount)),
+        Number(node.priceRange.minVariantPrice.amount),
+      ),
+      offerCount: node.variants.edges.length,
+      availability: node.variants.edges.some((v) => v.node.availableForSale)
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      seller: { "@id": "/#organization" },
+      ...OFFER_POLICY_LD,
+    },
+  };
 
   const handleAddToCart = async (checkout = false) => {
     if (!variant) return;
@@ -335,7 +366,7 @@ function ProductDetail() {
               </p>
               <p className="flex items-center gap-2.5 border border-border bg-secondary/60 px-4 py-3 text-[10px] tracking-wide text-muted-foreground">
                 <Truck className="h-3.5 w-3.5 shrink-0 text-[var(--gold)]" />
-                Ships within 24 hours · Free insured delivery on orders over $250.
+                Ships within 24 hours · Free U.S. shipping on orders over $100.
               </p>
             </div>
 
@@ -440,9 +471,9 @@ function ProductDetail() {
               </Accordion>
               <Accordion title="Shipping & Returns">
                 <p>
-                  Dispatched within 24 hours with insured tracked delivery worldwide. Free shipping
-                  on orders over $250. Returns accepted within 30 days in original condition and
-                  packaging, and complimentary resizing within 60 days.
+                  Dispatched within 24 hours with insured tracked delivery. Standard shipping is free
+                  across the United States on orders over $100. Returns accepted within 14 days in
+                  original condition and packaging — one return per customer every 14 days.
                 </p>
               </Accordion>
               <Accordion title="Common Questions">
@@ -493,6 +524,14 @@ function ProductDetail() {
       </main>
 
       <SiteFooter />
+      <JsonLd data={productLd} />
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Home", url: "/" },
+          { name: "Shop", url: "/shop" },
+          { name: node.title, url: `/product/${node.handle}` },
+        ])}
+      />
     </div>
   );
 }

@@ -10,16 +10,26 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AccessibilityRouteImport } from './routes/accessibility'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CraftsmanshipRouteImport } from './routes/craftsmanship'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccessibilityRoute = AccessibilityRouteImport.update({
@@ -32,9 +42,19 @@ const AccountRoute = AccountRouteImport.update({
   path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CraftsmanshipRoute = CraftsmanshipRouteImport.update({
   id: '/craftsmanship',
   path: '/craftsmanship',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RewardsRoute = RewardsRouteImport.update({
@@ -47,6 +67,16 @@ const ShopRoute = ShopRouteImport.update({
   path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductHandleRoute = ProductHandleRouteImport.update({
   id: '/product/$handle',
   path: '/product/$handle',
@@ -55,69 +85,104 @@ const ProductHandleRoute = ProductHandleRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/accessibility': typeof AccessibilityRoute
   '/account': typeof AccountRoute
+  '/contact': typeof ContactRoute
   '/craftsmanship': typeof CraftsmanshipRoute
+  '/privacy': typeof PrivacyRoute
   '/rewards': typeof RewardsRoute
   '/shop': typeof ShopRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/product/$handle': typeof ProductHandleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/accessibility': typeof AccessibilityRoute
   '/account': typeof AccountRoute
+  '/contact': typeof ContactRoute
   '/craftsmanship': typeof CraftsmanshipRoute
+  '/privacy': typeof PrivacyRoute
   '/rewards': typeof RewardsRoute
   '/shop': typeof ShopRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/product/$handle': typeof ProductHandleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/accessibility': typeof AccessibilityRoute
   '/account': typeof AccountRoute
+  '/contact': typeof ContactRoute
   '/craftsmanship': typeof CraftsmanshipRoute
+  '/privacy': typeof PrivacyRoute
   '/rewards': typeof RewardsRoute
   '/shop': typeof ShopRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/product/$handle': typeof ProductHandleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/accessibility'
     | '/account'
+    | '/contact'
     | '/craftsmanship'
+    | '/privacy'
     | '/rewards'
     | '/shop'
+    | '/sitemap.xml'
+    | '/terms'
     | '/product/$handle'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/accessibility'
     | '/account'
+    | '/contact'
     | '/craftsmanship'
+    | '/privacy'
     | '/rewards'
     | '/shop'
+    | '/sitemap.xml'
+    | '/terms'
     | '/product/$handle'
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/accessibility'
     | '/account'
+    | '/contact'
     | '/craftsmanship'
+    | '/privacy'
     | '/rewards'
     | '/shop'
+    | '/sitemap.xml'
+    | '/terms'
     | '/product/$handle'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AccessibilityRoute: typeof AccessibilityRoute
   AccountRoute: typeof AccountRoute
+  ContactRoute: typeof ContactRoute
   CraftsmanshipRoute: typeof CraftsmanshipRoute
+  PrivacyRoute: typeof PrivacyRoute
   RewardsRoute: typeof RewardsRoute
   ShopRoute: typeof ShopRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsRoute: typeof TermsRoute
   ProductHandleRoute: typeof ProductHandleRoute
 }
 
@@ -128,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/accessibility': {
@@ -144,11 +216,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/craftsmanship': {
       id: '/craftsmanship'
       path: '/craftsmanship'
       fullPath: '/craftsmanship'
       preLoaderRoute: typeof CraftsmanshipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rewards': {
@@ -165,6 +251,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product/$handle': {
       id: '/product/$handle'
       path: '/product/$handle'
@@ -177,11 +277,16 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AccessibilityRoute: AccessibilityRoute,
   AccountRoute: AccountRoute,
+  ContactRoute: ContactRoute,
   CraftsmanshipRoute: CraftsmanshipRoute,
+  PrivacyRoute: PrivacyRoute,
   RewardsRoute: RewardsRoute,
   ShopRoute: ShopRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsRoute: TermsRoute,
   ProductHandleRoute: ProductHandleRoute,
 }
 export const routeTree = rootRouteImport

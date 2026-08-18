@@ -13,6 +13,14 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { useCartSync } from "@/hooks/useCartSync";
+import { JsonLd } from "@/components/JsonLd";
+import {
+  ORGANIZATION_LD,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TAGLINE,
+  WEBSITE_LD,
+} from "@/lib/site";
 
 function NotFoundComponent() {
   return (
@@ -79,14 +87,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: `${SITE_NAME} | ${SITE_TAGLINE}` },
+      { name: "description", content: SITE_DESCRIPTION },
+      { name: "author", content: SITE_NAME },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { name: "theme-color", content: "#ffffff" },
+      { property: "og:site_name", content: SITE_NAME },
+      { property: "og:locale", content: "en_US" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
@@ -125,6 +134,8 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <Toaster />
+      <JsonLd data={ORGANIZATION_LD} />
+      <JsonLd data={WEBSITE_LD} />
     </QueryClientProvider>
   );
 }

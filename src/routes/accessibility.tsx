@@ -20,7 +20,9 @@ export const Route = createFileRoute("/accessibility")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "/accessibility" },
     ],
+    links: [{ rel: "canonical", href: "/accessibility" }],
   }),
   component: Accessibility,
 });

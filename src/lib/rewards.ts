@@ -137,4 +137,4 @@ export function questsFor(summary: RewardsSummary, hasProfile: boolean): Quest[]
   ];
 }
 
-export const FREE_SHIPPING_THRESHOLD = 250;
+export const FREE_SHIPPING_THRESHOLD = 100;

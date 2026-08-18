@@ -20,7 +20,9 @@ export const Route = createFileRoute("/craftsmanship")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "/craftsmanship" },
     ],
+    links: [{ rel: "canonical", href: "/craftsmanship" }],
   }),
   component: Craftsmanship,
 });

@@ -16,16 +16,17 @@ const columns: Array<{ title: string; links: Array<{ label: string; to: string; 
     title: "Learn",
     links: [
       { label: "Moissanite Guide", to: "/craftsmanship" },
-      { label: "Size Guide", to: "/craftsmanship" },
       { label: "Our Craft", to: "/craftsmanship" },
+      { label: "Accessibility", to: "/accessibility" },
     ],
   },
   {
     title: "Support",
     links: [
-      { label: "Shipping & FAQ", to: "/craftsmanship" },
-      { label: "Returns", to: "/craftsmanship" },
-      { label: "Contact Us", to: "/craftsmanship" },
+      { label: "Contact Us", to: "/contact" },
+      { label: "Shipping & Returns", to: "/terms" },
+      { label: "About Us", to: "/about" },
+      { label: "Rewards", to: "/rewards" },
     ],
   },
 ];
@@ -127,13 +128,18 @@ export function SiteFooter() {
               >
                 Accessibility
               </Link>
-              {["Privacy Policy", "Terms & Conditions", "GRA Certificate"].map((t) => (
-                <span
-                  key={t}
-                  className="text-[9px] uppercase tracking-[0.24em] text-muted-foreground"
+              {[
+                { label: "Privacy Policy", to: "/privacy" },
+                { label: "Terms & Conditions", to: "/terms" },
+                { label: "Contact", to: "/contact" },
+              ].map((t) => (
+                <Link
+                  key={t.label}
+                  to={t.to}
+                  className="text-[9px] uppercase tracking-[0.24em] text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  {t}
-                </span>
+                  {t.label}
+                </Link>
               ))}
             </div>
           </div>
