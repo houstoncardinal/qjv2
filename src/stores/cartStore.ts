@@ -190,8 +190,9 @@ export const useCartStore = create<CartStore>()(
       isOpen: false,
 
       setOpen: (open) => set({ isOpen: open }),
+
+      addItem: async (item) => {
         const { items, cartId, clearCart } = get();
-        const existingItem = items.find((i) => i.variantId === item.variantId);
 
         set({ isLoading: true });
         try {
