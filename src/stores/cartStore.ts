@@ -169,12 +169,14 @@ interface CartStore {
   checkoutUrl: string | null;
   isLoading: boolean;
   isSyncing: boolean;
+  isOpen: boolean;
   addItem: (item: Omit<CartItem, "lineId">) => Promise<void>;
   updateQuantity: (variantId: string, quantity: number) => Promise<void>;
   removeItem: (variantId: string) => Promise<void>;
   clearCart: () => void;
   syncCart: () => Promise<void>;
   getCheckoutUrl: () => string | null;
+  setOpen: (open: boolean) => void;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -185,6 +187,9 @@ export const useCartStore = create<CartStore>()(
       checkoutUrl: null,
       isLoading: false,
       isSyncing: false,
+      isOpen: false,
+
+      setOpen: (open) => set({ isOpen: open }),
 
       addItem: async (item) => {
         const { items, cartId, clearCart } = get();

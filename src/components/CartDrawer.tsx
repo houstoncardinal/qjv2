@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -15,9 +15,17 @@ import { formatMoney } from "@/lib/shopify";
 import { FREE_SHIPPING_THRESHOLD } from "@/lib/rewards";
 
 export const CartDrawer = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } =
-    useCartStore();
+  const {
+    items,
+    isLoading,
+    isSyncing,
+    isOpen,
+    setOpen,
+    updateQuantity,
+    removeItem,
+    getCheckoutUrl,
+    syncCart,
+  } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
     (sum, item) => sum + parseFloat(item.price.amount) * item.quantity,
@@ -35,12 +43,12 @@ export const CartDrawer = () => {
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
       window.open(checkoutUrl, "_blank");
-      setIsOpen(false);
+      setOpen(false);
     }
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet open={isOpen} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative text-foreground">
           <ShoppingBag className="h-5 w-5" />
