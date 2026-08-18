@@ -13,6 +13,7 @@ import {
   Truck,
 } from "lucide-react";
 
+import heroAsset from "@/assets/hero-jewelry.jpg.asset.json";
 import catRingsAsset from "@/assets/cat-rings.avif.asset.json";
 import catChainsAsset from "@/assets/cat-chains.avif.asset.json";
 import catBraceletsAsset from "@/assets/cat-bracelets.jpg.asset.json";
@@ -167,6 +168,21 @@ function Home() {
           aria-labelledby="hero-heading"
           className="relative isolate overflow-hidden bg-[oklch(0.14_0.004_60)] text-[oklch(0.99_0.002_90)]"
         >
+          {/* Editorial jewelry backdrop */}
+          <img
+            src={heroAsset.url}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to bottom, oklch(0.14 0.004 60 / 0.82), oklch(0.14 0.004 60 / 0.72) 45%, oklch(0.14 0.004 60 / 0.9))",
+            }}
+          />
           {/* Subtle metallic gradient sheen */}
           <div
             aria-hidden="true"
@@ -186,12 +202,6 @@ function Home() {
                 <div className="h-px w-14 bg-[oklch(0.72_0.085_84)]/60" />
               </header>
 
-              <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-[oklch(1_0_0_/_0.12)] bg-[oklch(1_0_0_/_0.06)] px-4 py-1.5 backdrop-blur-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-[oklch(0.72_0.085_84)]" />
-                <span className="text-[10px] font-medium uppercase tracking-[0.26em] text-[oklch(0.99_0.002_90)]">
-                  New Arrival
-                </span>
-              </div>
 
               <h1
                 id="hero-heading"
@@ -226,7 +236,7 @@ function Home() {
                 </Link>
               </div>
 
-              <p className="mt-6 text-[9px] uppercase tracking-[0.24em] text-[oklch(0.99_0.002_90)]/55">
+              <p className="mt-6 text-[9px] uppercase tracking-[0.24em] text-[oklch(0.99_0.002_90)]/75">
                 Complimentary express shipping on U.S. orders over $100
               </p>
             </div>

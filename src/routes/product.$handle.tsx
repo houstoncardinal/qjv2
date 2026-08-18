@@ -244,9 +244,9 @@ function ProductDetail() {
           </nav>
         </div>
 
-        <div className="mx-auto grid max-w-[1560px] gap-12 px-6 py-10 sm:px-10 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
+        <div className="mx-auto grid max-w-[1560px] grid-cols-1 gap-10 px-5 py-8 sm:px-10 sm:py-10 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
           {/* Gallery */}
-          <div className="lg:flex lg:gap-4">
+          <div className="min-w-0 lg:flex lg:gap-4">
             {images.length > 1 && (
               <div className="scroll-strip order-first hidden max-h-[720px] flex-col gap-3 overflow-y-auto lg:flex">
                 {images.map((img, i) => (
@@ -271,7 +271,7 @@ function ProductDetail() {
               </div>
             )}
 
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <div className="relative aspect-square overflow-hidden border border-border bg-card">
                 {images[activeImage]?.node && (
                   <img
@@ -339,13 +339,13 @@ function ProductDetail() {
           </div>
 
           {/* Buy box */}
-          <div className="lg:sticky lg:top-6 lg:self-start">
+          <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
             {node.productType && (
               <p className="text-[9px] uppercase tracking-[0.34em] text-[var(--gold)]">
                 {node.productType}
               </p>
             )}
-            <h1 className="mt-3 font-display text-4xl leading-[1.08] sm:text-5xl">{node.title}</h1>
+            <h1 className="mt-3 break-words font-display text-3xl leading-[1.1] sm:text-4xl lg:text-5xl">{node.title}</h1>
 
             {shortDescription && (
               <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
@@ -354,7 +354,7 @@ function ProductDetail() {
             )}
 
             <div className="mt-7 flex items-baseline gap-3 border-b border-border pb-7">
-              <p className="font-display text-5xl">
+              <p className="font-display text-4xl sm:text-5xl">
                 {formatMoney(price.amount, price.currencyCode)}
               </p>
               <span className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
