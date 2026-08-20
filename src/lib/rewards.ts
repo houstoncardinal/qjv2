@@ -22,7 +22,11 @@ export const TIERS: RewardTier[] = [
     swatch: "Silver",
     threshold: 0,
     multiplier: 1,
-    perks: ["1 point per $1 spent", "Birthday gift", "Early access to restocks"],
+    perks: [
+      "1 point per $1 spent, redeemable as store credit",
+      "A free gift on your birthday, every year",
+      "Early access to new restocks before they go public",
+    ],
   },
   {
     key: "gold",
@@ -30,7 +34,11 @@ export const TIERS: RewardTier[] = [
     swatch: "Gold",
     threshold: 500,
     multiplier: 1.25,
-    perks: ["1.25× points", "Free express shipping", "Complimentary resizing"],
+    perks: [
+      "1.25× points on every order, no exceptions",
+      "Free express shipping on all U.S. orders",
+      "Complimentary ring resizing, anytime",
+    ],
   },
   {
     key: "rose",
@@ -38,7 +46,11 @@ export const TIERS: RewardTier[] = [
     swatch: "Rose Gold",
     threshold: 1500,
     multiplier: 1.5,
-    perks: ["1.5× points", "Priority atelier support", "Annual cleaning kit"],
+    perks: [
+      "1.5× points on every order",
+      "Priority access to atelier support",
+      "A free annual cleaning & polish kit",
+    ],
   },
   {
     key: "black",
@@ -46,7 +58,11 @@ export const TIERS: RewardTier[] = [
     swatch: "Black",
     threshold: 3500,
     multiplier: 2,
-    perks: ["2× points", "Private styling appointments", "First look at drops"],
+    perks: [
+      "2× points on every order, our top rate",
+      "Private one-on-one styling appointments",
+      "First look at new drops, before anyone else",
+    ],
   },
 ];
 

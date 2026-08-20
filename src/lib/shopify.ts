@@ -48,7 +48,7 @@ export const PRODUCT_FIELDS = `
   tags
   priceRange { minVariantPrice { amount currencyCode } }
   images(first: 8) { edges { node { url altText } } }
-  variants(first: 30) {
+  variants(first: 100) {
     edges {
       node {
         id

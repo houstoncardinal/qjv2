@@ -20,7 +20,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
 import { VariantSelector, prettyValue } from "@/components/VariantSelector";
-import { MetalSwatch } from "@/components/MetalSwatch";
+import { MetalSwatch, isMetalOptionName } from "@/components/MetalSwatch";
 import { JsonLd } from "@/components/JsonLd";
 import { OFFER_POLICY_LD, SITE_NAME, breadcrumbLd } from "@/lib/site";
 
@@ -90,6 +90,30 @@ function Accordion({
       <div className="pb-6 text-sm leading-relaxed text-muted-foreground">{children}</div>
     </details>
   );
+}
+
+function joinWithOr(items: string[]): string {
+  if (items.length <= 1) return items[0] ?? "";
+  if (items.length === 2) return `${items[0]} or ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")} or ${items[items.length - 1]}`;
+}
+
+const PRONG_WORDS: Record<string, string> = {
+  one: "1",
+  two: "2",
+  three: "3",
+  four: "4",
+  five: "5",
+  six: "6",
+};
+
+/** Pulls a stated prong count (e.g. "4-prong claw inlay") out of the product copy, if any. */
+function prongSettingText(description: string): string | null {
+  const match = description.match(/\b(one|two|three|four|five|six|\d+)[- ]prong\b/i);
+  if (!match?.[1]) return null;
+  const raw = match[1].toLowerCase();
+  const count = PRONG_WORDS[raw] ?? raw;
+  return `${count}-Prong Setting`;
 }
 
 function ProductDetail() {
@@ -215,11 +239,17 @@ function ProductDetail() {
 
   const relatedProducts = (related ?? []).filter((p) => p.node.handle !== handle).slice(0, 4);
 
+  const metalOption = node.options.find((o) => isMetalOptionName(o.name));
+  const platingValues = metalOption?.values.map(prettyValue) ?? [];
+  const platingText = platingValues.length
+    ? `5× Gold Plated in ${joinWithOr(platingValues)}`
+    : "5× 18K Gold Plated";
+
   const specs: Array<[string, string]> = [
     ["Base Metal", "Solid S925 Sterling Silver"],
-    ["Plating", metalValue ? `5× ${prettyValue(metalValue)}` : "5× 18K Gold · Rose Gold · White Gold"],
+    ["Plating", platingText],
     ["Stone", "VVS1 Moissanite · D Colour"],
-    ["Setting", "Classic prong solitaire"],
+    ["Setting", prongSettingText(node.description) ?? "Classic prong solitaire"],
     ["Finish", "Tarnish-resistant e-coat"],
     ["Certificate", "GRA included"],
   ];

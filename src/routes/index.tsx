@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Award,
   BadgeCheck,
+  Check,
   Crown,
   Gem,
   Heart,
@@ -13,10 +14,6 @@ import {
   Truck,
 } from "lucide-react";
 
-import catRingsAsset from "@/assets/cat-rings.avif.asset.json";
-import catChainsAsset from "@/assets/cat-chains.avif.asset.json";
-import catBraceletsAsset from "@/assets/cat-bracelets.jpg.asset.json";
-import catEarringsAsset from "@/assets/cat-earrings.png.asset.json";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
@@ -51,12 +48,12 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const categoryTiles = [
-  { label: "Rings", sub: "Engagement & stackable", q: "product_type:ring", image: catRingsAsset.url },
-  { label: "Chains", sub: "Tennis & cuban links", q: "product_type:necklace", image: catChainsAsset.url },
-  { label: "Bracelets", sub: "Tennis bracelets", q: "product_type:bracelet", image: catBraceletsAsset.url },
-  { label: "Earrings", sub: "Studs & hoops", q: "product_type:earring", image: catEarringsAsset.url },
-];
+const CATEGORY_INFO = [
+  { label: "Rings", sub: "Engagement & stackable", q: "product_type:ring" },
+  { label: "Chains", sub: "Tennis & cuban links", q: "product_type:necklace", imageIndex: 2 },
+  { label: "Bracelets", sub: "Tennis bracelets", q: "product_type:bracelet" },
+  { label: "Earrings", sub: "Studs & hoops", q: "product_type:earring" },
+] as const;
 
 function useShopifyProducts(key: string, query?: string, count = 12) {
   return useQuery({
@@ -151,11 +148,21 @@ function Home() {
   const all = useShopifyProducts("home-all", undefined, 24);
   const rings = useShopifyProducts("home-rings", "product_type:ring", 12);
   const chains = useShopifyProducts("home-chains", "product_type:necklace", 12);
+  const bracelets = useShopifyProducts("home-bracelets", "product_type:bracelet", 12);
+  const earrings = useShopifyProducts("home-earrings", "product_type:earring", 12);
 
   const allProducts = all.data ?? [];
   const ringProducts = rings.data?.length ? rings.data : allProducts;
   const chainProducts = chains.data?.length ? chains.data : allProducts.slice(6);
   const trending = allProducts.slice(-4);
+
+  const categoryQueries = [rings, chains, bracelets, earrings] as const;
+  const categoryTiles = CATEGORY_INFO.map((info, i) => {
+    const products = categoryQueries[i]?.data;
+    const idx = "imageIndex" in info ? info.imageIndex : 0;
+    const product = products?.[idx] ?? products?.[0];
+    return { ...info, image: product?.node.images.edges[0]?.node.url };
+  });
 
   return (
     <div className="min-h-screen bg-card">
@@ -279,14 +286,18 @@ function Home() {
                     search={{ q: c.q }}
                     className="group relative aspect-[4/5] overflow-hidden border border-border bg-card"
                   >
-                    <img
-                      src={c.image}
-                      alt={`${c.label} — moissanite ${c.sub.toLowerCase()}`}
-                      loading="lazy"
-                      width={896}
-                      height={1120}
-                      className="absolute inset-0 h-full w-full scale-[0.92] object-contain transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[0.99]"
-                    />
+                    {c.image ? (
+                      <img
+                        src={c.image}
+                        alt={`${c.label} — moissanite ${c.sub.toLowerCase()}`}
+                        loading="lazy"
+                        width={896}
+                        height={1120}
+                        className="absolute inset-0 h-full w-full scale-[0.92] object-contain transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[0.99]"
+                      />
+                    ) : (
+                      <Skeleton className="absolute inset-0 h-full w-full" />
+                    )}
                     <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[linear-gradient(to_top,var(--card)_38%,transparent)]" />
                     <div className="absolute bottom-6 left-6 right-6">
                       <p className="font-display text-3xl text-foreground">{c.label}</p>
@@ -306,31 +317,31 @@ function Home() {
 
         {/* Rewards / gamification band */}
         <section className="border-y border-border bg-background">
-          <div className="mx-auto grid max-w-[1560px] gap-px bg-border px-0 lg:grid-cols-[1.1fr_1.4fr]">
-            <div className="bg-card p-8 sm:p-10">
+          <div className="mx-auto grid max-w-[1560px] gap-px bg-border px-0 lg:grid-cols-[1.25fr_1.5fr] lg:items-stretch">
+            <div className="flex flex-col justify-center bg-card p-6 sm:p-7">
               <div className="flex items-center gap-3">
                 <Crown aria-hidden="true" className="h-4 w-4 text-[var(--gold)]" />
                 <p className="text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
                   The Qureshi Circle
                 </p>
               </div>
-              <h2 className="mt-5 font-display text-4xl leading-[1.05] sm:text-5xl">
+              <h2 className="mt-2.5 font-display text-3xl leading-[1.05] sm:text-4xl">
                 Earn points, <span className="italic">unlock metal tiers</span>
               </h2>
-              <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-2.5 max-w-md text-sm leading-relaxed text-muted-foreground">
                 1 point per $1, bonus points for milestones, and 20 points equals $1 of store credit.
                 Free to join — members start with 100 points.
               </p>
-              <div className="mt-7 flex flex-wrap gap-3">
+              <div className="mt-4 flex flex-wrap gap-3">
                 <Link
                   to="/account"
-                  className="min-h-11 bg-foreground px-8 py-4 text-[10px] uppercase tracking-[0.26em] text-background transition-opacity hover:opacity-85"
+                  className="min-h-10 bg-foreground px-8 py-3 text-[10px] uppercase tracking-[0.26em] text-background transition-opacity hover:opacity-85"
                 >
                   Join free · +100 pts
                 </Link>
                 <Link
                   to="/rewards"
-                  className="min-h-11 border border-border px-8 py-4 text-[10px] uppercase tracking-[0.26em] text-foreground/75 transition-colors hover:border-foreground hover:text-foreground"
+                  className="min-h-10 border border-border px-8 py-3 text-[10px] uppercase tracking-[0.26em] text-foreground/75 transition-colors hover:border-foreground hover:text-foreground"
                 >
                   How it works
                 </Link>
@@ -339,21 +350,33 @@ function Home() {
 
             <div className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
               {TIERS.map((t) => (
-                <div key={t.key} className="flex flex-col bg-card p-6">
-                  <MetalSwatch value={t.swatch} size="md" />
-                  <p className="mt-5 font-display text-xl leading-tight">{t.name}</p>
-                  <p className="mt-1.5 text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
-                    {t.threshold}+ pts · {t.multiplier}×
+                <div key={t.key} className="flex flex-col bg-card p-5">
+                  <div className="flex items-center gap-2.5">
+                    <MetalSwatch value={t.swatch} size="sm" />
+                    <p className="font-display text-lg leading-tight">{t.name}</p>
+                  </div>
+                  <p className="mt-1.5 text-[9px] uppercase tracking-[0.22em] text-[var(--gold)]">
+                    {t.threshold}+ pts · {t.multiplier}× points
                   </p>
-                  <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-                    {t.perks[1] ?? t.perks[0]}
-                  </p>
+                  <ul className="mt-2.5 space-y-1">
+                    {t.perks.map((perk) => (
+                      <li
+                        key={perk}
+                        className="flex items-start gap-1.5 text-[11px] leading-snug text-muted-foreground"
+                      >
+                        <Check
+                          aria-hidden="true"
+                          className="mt-[3px] h-3 w-3 shrink-0 text-[var(--gold)]"
+                        />
+                        <span>{perk}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               ))}
             </div>
           </div>
         </section>
-
 
         <ProductRow
           eyebrow="Curated Collection"
