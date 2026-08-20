@@ -16,7 +16,7 @@ export function metalKey(value: string): MetalKey {
 
 
 export function isMetalOptionName(name: string) {
-  return /colou?r|metal|plating|finish|tone|material/i.test(name);
+  return /colou?r|metal|plating|finish|\btone\b|material/i.test(name);
 }
 
 const FACE: Record<MetalKey, string> = {

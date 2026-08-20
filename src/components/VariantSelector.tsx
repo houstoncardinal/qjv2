@@ -7,6 +7,7 @@ import {
   metalKey,
   isMetalOptionName,
 } from "@/components/MetalSwatch";
+import { DiamondFace } from "@/components/DiamondFace";
 
 type Variant = ShopifyProduct["node"]["variants"]["edges"][number]["node"];
 
@@ -14,8 +15,16 @@ function metalSub(value: string): string {
   return METAL_SUBTITLE[metalKey(value)];
 }
 
-function optionKind(name: string): "metal" | "size" | "measure" | "plain" {
+function isStoneSizeOptionName(name: string) {
+  return /stone size|carat weight|\bcarat\b/.test(name);
+}
+
+function optionKind(
+  name: string,
+  isRing: boolean,
+): "metal" | "stone" | "size" | "measure" | "plain" {
   const n = name.toLowerCase();
+  if (isRing && isStoneSizeOptionName(n)) return "stone";
   if (isMetalOptionName(n)) return "metal";
   if (/size/.test(n)) return "size";
   if (/length|width|carat|ct|inch|chain|diameter|mm/.test(n)) return "measure";
@@ -26,6 +35,28 @@ export function prettyValue(value: string) {
   return value.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+/** Parses a carat weight out of an option value like "1ct" or "1.5 Carat". */
+function caratFromValue(value: string): number | null {
+  const match = value.match(/(\d+(?:\.\d+)?)\s*(?:ct|carat)/i);
+  const carat = match?.[1] ? Number(match[1]) : NaN;
+  return Number.isFinite(carat) && carat > 0 ? carat : null;
+}
+
+function formatStoneSize(value: string): string {
+  const carat = caratFromValue(value);
+  return carat ? `${carat} CT` : prettyValue(value);
+}
+
+/** Round-brilliant carat-to-diameter approximation (diameter scales with the cube root of weight). */
+function caratToMm(carat: number): number {
+  return 6.5 * Math.cbrt(carat);
+}
+
+/** Icon pixel size for a carat weight, clamped to a legible comparison range. */
+function stoneIconPx(carat: number): number {
+  return Math.min(56, Math.max(18, caratToMm(carat) * 5));
+}
+
 
 export interface VariantSelectorProps {
   product: ShopifyProduct;
@@ -34,6 +65,7 @@ export interface VariantSelectorProps {
 
 export function VariantSelector({ product, onVariantChange }: VariantSelectorProps) {
   const node = product.node;
+  const isRing = (node.productType ?? "").toLowerCase() === "ring";
   const variants = useMemo(() => node.variants.edges.map((e) => e.node), [node]);
 
   const options = useMemo(
@@ -84,7 +116,7 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
   return (
     <div className="space-y-6">
       {options.map((option) => {
-        const kind = optionKind(option.name);
+        const kind = optionKind(option.name, isRing);
         const active = selection[option.name];
         const select = (value: string) =>
           setSelection((s) => ({ ...s, [option.name]: value }));
@@ -97,7 +129,7 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
               </p>
               {active && (
                 <p className="text-[10px] uppercase tracking-[0.16em] text-foreground/70">
-                  {prettyValue(active)}
+                  {kind === "stone" ? formatStoneSize(active) : prettyValue(active)}
                 </p>
               )}
             </div>
@@ -134,6 +166,59 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
                         </span>
                         <span className="mt-0.5 block text-[9px] tracking-wide text-muted-foreground">
                           {available ? metalSub(value) : "Sold out"}
+                        </span>
+                      </span>
+                      {selected && (
+                        <span
+                          aria-hidden="true"
+                          className="absolute inset-x-0 bottom-0 h-[2px] tier-bar"
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+            ) : kind === "stone" ? (
+              <div className="mt-3.5 grid gap-2.5 sm:grid-cols-3">
+                {option.values.map((value) => {
+                  const selected = active === value;
+                  const available = isValueAvailable(option.name, value);
+                  const carat = caratFromValue(value);
+                  const mm = carat ? caratToMm(carat) : null;
+                  const px = carat ? stoneIconPx(carat) : 28;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => select(value)}
+                      className={cn(
+                        "group relative flex items-center gap-3 border px-3.5 py-3 text-left transition-all duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+                        selected
+                          ? "border-foreground bg-secondary/60 shadow-[var(--shadow-soft)]"
+                          : "border-border bg-card hover:-translate-y-0.5 hover:border-foreground/40 hover:shadow-[var(--shadow-soft)]",
+                        !available && "opacity-55",
+                      )}
+                    >
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center">
+                        <DiamondFace
+                          size={px}
+                          selected={selected}
+                          unavailable={!available}
+                          className="transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block truncate text-[10px] uppercase tracking-[0.16em] text-foreground">
+                          {formatStoneSize(value)}
+                        </span>
+                        <span className="mt-0.5 block text-[9px] tracking-wide text-muted-foreground">
+                          {available
+                            ? mm
+                              ? `≈ ${mm.toFixed(1)}mm diameter`
+                              : "Approx. size"
+                            : "Sold out"}
                         </span>
                       </span>
                       {selected && (
