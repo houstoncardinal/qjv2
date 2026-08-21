@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, Search, Sparkles, User } from "lucide-react";
+import { Layers, Menu, Search, Sparkles, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CartDrawer } from "@/components/CartDrawer";
 import { useAuthStore } from "@/stores/authStore";
@@ -90,6 +90,13 @@ export function SiteHeader() {
               Contact
             </Link>
             <Link
+              to="/bundle"
+              className="flex items-center gap-1.5 py-2 text-[10px] uppercase tracking-[0.22em] text-[var(--gold)] transition-opacity hover:opacity-75"
+              activeProps={{ className: "opacity-100" }}
+            >
+              <Layers aria-hidden="true" className="h-3 w-3" /> Build a Bundle
+            </Link>
+            <Link
               to="/rewards"
               className="flex items-center gap-1.5 py-2 text-[10px] uppercase tracking-[0.22em] text-[var(--gold)] transition-opacity hover:opacity-75"
               activeProps={{ className: "opacity-100" }}
@@ -159,6 +166,13 @@ export function SiteHeader() {
               className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
             >
               Contact
+            </Link>
+            <Link
+              to="/bundle"
+              onClick={() => setOpen(false)}
+              className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-[var(--gold)]"
+            >
+              Build a Bundle
             </Link>
             <Link
               to="/rewards"

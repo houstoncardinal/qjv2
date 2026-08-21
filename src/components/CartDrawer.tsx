@@ -9,10 +9,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ShoppingBag, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { ShoppingBag, Minus, Plus, Trash2, ExternalLink, Loader2, Sparkles } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatMoney } from "@/lib/shopify";
 import { FREE_SHIPPING_THRESHOLD } from "@/lib/rewards";
+import { BUNDLE_DISCOUNT_PERCENT } from "@/lib/bundle";
 
 export const CartDrawer = () => {
   const {
@@ -25,6 +26,7 @@ export const CartDrawer = () => {
     removeItem,
     getCheckoutUrl,
     syncCart,
+    bundleDiscountActive,
   } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
@@ -32,7 +34,9 @@ export const CartDrawer = () => {
     0,
   );
   const currency = items[0]?.price.currencyCode ?? "USD";
-  const pointsEarned = Math.floor(totalPrice);
+  const bundleSavings = bundleDiscountActive ? totalPrice * (BUNDLE_DISCOUNT_PERCENT / 100) : 0;
+  const estimatedTotal = totalPrice - bundleSavings;
+  const pointsEarned = Math.floor(estimatedTotal);
 
 
   useEffect(() => {
@@ -155,11 +159,27 @@ export const CartDrawer = () => {
                     />
                   </div>
                 </div>
-                <div className="flex justify-between items-baseline">
-                  <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                    Subtotal
-                  </span>
-                  <span className="font-display text-2xl">{formatMoney(totalPrice, currency)}</span>
+                {bundleDiscountActive && (
+                  <div className="flex items-center gap-2 bg-[var(--gold)]/10 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[var(--gold)]">
+                    <Sparkles aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+                    Bundle discount applied — {BUNDLE_DISCOUNT_PERCENT}% off
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                      {bundleDiscountActive ? "Estimated total" : "Subtotal"}
+                    </span>
+                    <span className="font-display text-2xl">
+                      {formatMoney(estimatedTotal, currency)}
+                    </span>
+                  </div>
+                  {bundleDiscountActive && (
+                    <div className="flex justify-between text-[10px] text-muted-foreground">
+                      <span>Subtotal before bundle discount</span>
+                      <span className="line-through">{formatMoney(totalPrice, currency)}</span>
+                    </div>
+                  )}
                 </div>
                 <p className="text-[11px] text-muted-foreground">
                   Taxes and shipping calculated at checkout. Points post to your account after the

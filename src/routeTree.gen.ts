@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AccessibilityRouteImport } from './routes/accessibility'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as BundleRouteImport } from './routes/bundle'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CraftsmanshipRouteImport } from './routes/craftsmanship'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -40,6 +41,11 @@ const AccessibilityRoute = AccessibilityRouteImport.update({
 const AccountRoute = AccountRouteImport.update({
   id: '/account',
   path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BundleRoute = BundleRouteImport.update({
+  id: '/bundle',
+  path: '/bundle',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/accessibility': typeof AccessibilityRoute
   '/account': typeof AccountRoute
+  '/bundle': typeof BundleRoute
   '/contact': typeof ContactRoute
   '/craftsmanship': typeof CraftsmanshipRoute
   '/privacy': typeof PrivacyRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/accessibility': typeof AccessibilityRoute
   '/account': typeof AccountRoute
+  '/bundle': typeof BundleRoute
   '/contact': typeof ContactRoute
   '/craftsmanship': typeof CraftsmanshipRoute
   '/privacy': typeof PrivacyRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/accessibility': typeof AccessibilityRoute
   '/account': typeof AccountRoute
+  '/bundle': typeof BundleRoute
   '/contact': typeof ContactRoute
   '/craftsmanship': typeof CraftsmanshipRoute
   '/privacy': typeof PrivacyRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/accessibility'
     | '/account'
+    | '/bundle'
     | '/contact'
     | '/craftsmanship'
     | '/privacy'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/accessibility'
     | '/account'
+    | '/bundle'
     | '/contact'
     | '/craftsmanship'
     | '/privacy'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/accessibility'
     | '/account'
+    | '/bundle'
     | '/contact'
     | '/craftsmanship'
     | '/privacy'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AccessibilityRoute: typeof AccessibilityRoute
   AccountRoute: typeof AccountRoute
+  BundleRoute: typeof BundleRoute
   ContactRoute: typeof ContactRoute
   CraftsmanshipRoute: typeof CraftsmanshipRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -214,6 +227,13 @@ declare module '@tanstack/react-router' {
       path: '/account'
       fullPath: '/account'
       preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bundle': {
+      id: '/bundle'
+      path: '/bundle'
+      fullPath: '/bundle'
+      preLoaderRoute: typeof BundleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -280,6 +300,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AccessibilityRoute: AccessibilityRoute,
   AccountRoute: AccountRoute,
+  BundleRoute: BundleRoute,
   ContactRoute: ContactRoute,
   CraftsmanshipRoute: CraftsmanshipRoute,
   PrivacyRoute: PrivacyRoute,

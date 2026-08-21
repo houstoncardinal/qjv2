@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
+import { BUNDLE_DISCOUNT_CODE, isBundleEligible } from "@/lib/bundle";
 
 export interface CartItem {
   lineId: string | null;
@@ -55,6 +56,15 @@ const CART_LINES_UPDATE_MUTATION = `
 const CART_LINES_REMOVE_MUTATION = `
   mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+      cart { id }
+      userErrors { field message }
+    }
+  }
+`;
+
+const CART_DISCOUNT_CODES_UPDATE_MUTATION = `
+  mutation cartDiscountCodesUpdate($cartId: ID!, $discountCodes: [String!]) {
+    cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {
       cart { id }
       userErrors { field message }
     }
@@ -163,6 +173,76 @@ async function removeLineFromShopifyCart(
   return { success: true };
 }
 
+type LineEdge = { node: { id: string; merchandise: { id: string } } };
+
+function mapLineIds(edges: LineEdge[]): Record<string, string> {
+  const lineIds: Record<string, string> = {};
+  for (const edge of edges) lineIds[edge.node.merchandise.id] = edge.node.id;
+  return lineIds;
+}
+
+async function createShopifyCartWithLines(
+  items: CartItem[],
+): Promise<{ cartId: string; checkoutUrl: string; lineIds: Record<string, string> } | null> {
+  const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
+    input: {
+      lines: items.map((item) => ({ quantity: item.quantity, merchandiseId: item.variantId })),
+    },
+  });
+
+  if (data?.data?.cartCreate?.userErrors?.length > 0) {
+    console.error("Cart creation failed:", data.data.cartCreate.userErrors);
+    return null;
+  }
+
+  const cart = data?.data?.cartCreate?.cart;
+  if (!cart?.checkoutUrl) return null;
+
+  return {
+    cartId: cart.id,
+    checkoutUrl: formatCheckoutUrl(cart.checkoutUrl),
+    lineIds: mapLineIds(cart.lines.edges),
+  };
+}
+
+async function addLinesToShopifyCart(
+  cartId: string,
+  items: CartItem[],
+): Promise<{ success: boolean; lineIds?: Record<string, string>; cartNotFound?: boolean }> {
+  const data = await storefrontApiRequest(CART_LINES_ADD_MUTATION, {
+    cartId,
+    lines: items.map((item) => ({ quantity: item.quantity, merchandiseId: item.variantId })),
+  });
+
+  const userErrors: UserError[] = data?.data?.cartLinesAdd?.userErrors || [];
+  if (isCartNotFoundError(userErrors)) return { success: false, cartNotFound: true };
+  if (userErrors.length > 0) {
+    console.error("Add lines failed:", userErrors);
+    return { success: false };
+  }
+
+  const lines = data?.data?.cartLinesAdd?.cart?.lines?.edges || [];
+  return { success: true, lineIds: mapLineIds(lines) };
+}
+
+async function updateShopifyCartDiscount(
+  cartId: string,
+  discountCodes: string[],
+): Promise<{ success: boolean; cartNotFound?: boolean }> {
+  const data = await storefrontApiRequest(CART_DISCOUNT_CODES_UPDATE_MUTATION, {
+    cartId,
+    discountCodes,
+  });
+
+  const userErrors: UserError[] = data?.data?.cartDiscountCodesUpdate?.userErrors || [];
+  if (isCartNotFoundError(userErrors)) return { success: false, cartNotFound: true };
+  if (userErrors.length > 0) {
+    console.error("Discount update failed:", userErrors);
+    return { success: false };
+  }
+  return { success: true };
+}
+
 interface CartStore {
   items: CartItem[];
   cartId: string | null;
@@ -170,7 +250,13 @@ interface CartStore {
   isLoading: boolean;
   isSyncing: boolean;
   isOpen: boolean;
+  /** Whether the "Build Your Own Bundle" 10% discount code is currently applied to the cart. */
+  bundleDiscountActive: boolean;
+  /** Applies or removes the bundle discount code to match the cart's current eligibility. */
+  syncBundleDiscount: () => Promise<void>;
   addItem: (item: Omit<CartItem, "lineId">) => Promise<void>;
+  /** Adds several new lines (e.g. a completed bundle) in as few Shopify round-trips as possible. */
+  addBundleItems: (items: Array<Omit<CartItem, "lineId">>) => Promise<void>;
   updateQuantity: (variantId: string, quantity: number) => Promise<void>;
   removeItem: (variantId: string) => Promise<void>;
   clearCart: () => void;
@@ -188,8 +274,28 @@ export const useCartStore = create<CartStore>()(
       isLoading: false,
       isSyncing: false,
       isOpen: false,
+      bundleDiscountActive: false,
 
       setOpen: (open) => set({ isOpen: open }),
+
+      /** Applies or removes the bundle discount code to match the cart's current eligibility. */
+      syncBundleDiscount: async () => {
+        const { items, cartId, bundleDiscountActive } = get();
+        if (!cartId) return;
+
+        const eligible = isBundleEligible(items);
+        if (eligible === bundleDiscountActive) return;
+
+        try {
+          const result = await updateShopifyCartDiscount(
+            cartId,
+            eligible ? [BUNDLE_DISCOUNT_CODE] : [],
+          );
+          if (result.success) set({ bundleDiscountActive: eligible });
+        } catch (error) {
+          console.error("Failed to sync bundle discount:", error);
+        }
+      },
 
       addItem: async (item) => {
         const { items, cartId, clearCart } = get();
@@ -237,6 +343,64 @@ export const useCartStore = create<CartStore>()(
         } finally {
           set({ isLoading: false });
         }
+        await get().syncBundleDiscount();
+      },
+
+      addBundleItems: async (items) => {
+        if (items.length === 0) return;
+        const { cartId, clearCart } = get();
+
+        set({ isLoading: true });
+        try {
+          if (!cartId) {
+            const result = await createShopifyCartWithLines(
+              items.map((item) => ({ ...item, lineId: null })),
+            );
+            if (result) {
+              set({
+                cartId: result.cartId,
+                checkoutUrl: result.checkoutUrl,
+                items: items.map((item) => ({
+                  ...item,
+                  lineId: result.lineIds[item.variantId] ?? null,
+                })),
+              });
+            }
+          } else {
+            const result = await addLinesToShopifyCart(
+              cartId,
+              items.map((item) => ({ ...item, lineId: null })),
+            );
+            if (result.success) {
+              const currentItems = get().items;
+              let nextItems = [...currentItems];
+              for (const item of items) {
+                const lineId = result.lineIds?.[item.variantId] ?? null;
+                const existingIndex = nextItems.findIndex((i) => i.variantId === item.variantId);
+                if (existingIndex >= 0) {
+                  const existing = nextItems[existingIndex];
+                  if (existing) {
+                    nextItems[existingIndex] = {
+                      ...existing,
+                      quantity: existing.quantity + item.quantity,
+                      lineId,
+                    };
+                  }
+                } else {
+                  nextItems = [...nextItems, { ...item, lineId }];
+                }
+              }
+              set({ items: nextItems });
+            } else if (result.cartNotFound) {
+              clearCart();
+            }
+          }
+        } catch (error) {
+          console.error("Failed to add bundle:", error);
+        } finally {
+          set({ isLoading: false });
+        }
+        await get().syncBundleDiscount();
       },
 
       updateQuantity: async (variantId, quantity) => {
@@ -291,9 +455,11 @@ export const useCartStore = create<CartStore>()(
         } finally {
           set({ isLoading: false });
         }
+        await get().syncBundleDiscount();
       },
 
-      clearCart: () => set({ items: [], cartId: null, checkoutUrl: null }),
+      clearCart: () =>
+        set({ items: [], cartId: null, checkoutUrl: null, bundleDiscountActive: false }),
       getCheckoutUrl: () => get().checkoutUrl,
 
       syncCart: async () => {
@@ -320,6 +486,7 @@ export const useCartStore = create<CartStore>()(
         items: state.items,
         cartId: state.cartId,
         checkoutUrl: state.checkoutUrl,
+        bundleDiscountActive: state.bundleDiscountActive,
       }),
     },
   ),

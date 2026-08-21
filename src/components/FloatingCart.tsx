@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { ShoppingBag, ArrowRight } from "lucide-react";
+import { ShoppingBag, ArrowRight, Sparkles } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { formatMoney } from "@/lib/shopify";
+import { BUNDLE_DISCOUNT_PERCENT } from "@/lib/bundle";
 
 export function FloatingCart() {
-  const { items, setOpen, getCheckoutUrl } = useCartStore();
+  const { items, setOpen, getCheckoutUrl, bundleDiscountActive } = useCartStore();
   const [mounted, setMounted] = useState(false);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
@@ -12,6 +13,9 @@ export function FloatingCart() {
     0,
   );
   const currency = items[0]?.price.currencyCode ?? "USD";
+  const estimatedTotal = bundleDiscountActive
+    ? totalPrice * (1 - BUNDLE_DISCOUNT_PERCENT / 100)
+    : totalPrice;
 
   useEffect(() => {
     setMounted(true);
@@ -33,6 +37,11 @@ export function FloatingCart() {
             <p className="text-[10px] uppercase tracking-[0.24em] text-foreground">
               {totalItems} {totalItems === 1 ? "item" : "items"} in bag
             </p>
+            {bundleDiscountActive && (
+              <span className="flex items-center gap-1 text-[9px] uppercase tracking-[0.18em] text-[var(--gold)]">
+                <Sparkles aria-hidden="true" className="h-3 w-3" /> −{BUNDLE_DISCOUNT_PERCENT}%
+              </span>
+            )}
           </div>
           <button
             type="button"
@@ -59,7 +68,7 @@ export function FloatingCart() {
             }}
             className="group flex items-center justify-center gap-2 bg-foreground px-4 py-3.5 text-[10px] uppercase tracking-[0.22em] text-background transition-opacity hover:opacity-90"
           >
-            {formatMoney(totalPrice, currency)}
+            {formatMoney(estimatedTotal, currency)}
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
           </button>
         </div>

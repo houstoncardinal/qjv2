@@ -21,6 +21,7 @@ import { MetalSwatch } from "@/components/MetalSwatch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
 import { TIERS } from "@/lib/rewards";
+import { BUNDLE_SLOTS } from "@/lib/bundle";
 import { cn } from "@/lib/utils";
 
 
@@ -311,6 +312,49 @@ function Home() {
                   </Link>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        {/* Build Your Own Bundle promo — gamified merchandising */}
+        <section className="border-y border-border bg-foreground py-14 text-background lg:py-20">
+          <div className="mx-auto max-w-[1560px] px-6 sm:px-10">
+            <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-16">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">
+                  Curate Your Own
+                </p>
+                <h2 className="mt-4 font-display text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
+                  Build Your Own <span className="italic">Bundle</span>
+                </h2>
+                <p className="mt-5 max-w-md text-sm leading-relaxed text-background/65">
+                  Choose one ring, one necklace or chain, one bracelet and one pair of earrings —
+                  10% comes off automatically the moment your set is complete. No code needed.
+                </p>
+                <Link
+                  to="/bundle"
+                  className="group mt-8 inline-flex items-center gap-3 bg-[var(--gold)] px-9 py-4 text-[10px] uppercase tracking-[0.26em] text-[oklch(0.18_0.01_60)] transition-opacity hover:opacity-90"
+                >
+                  Start building{" "}
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-2 gap-px bg-background/15 sm:grid-cols-4">
+                {BUNDLE_SLOTS.map((slot, i) => (
+                  <div
+                    key={slot.key}
+                    className="flex flex-col items-center gap-3 bg-foreground px-4 py-8 text-center"
+                  >
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full border border-background/25 text-[11px] text-background/70">
+                      {i + 1}
+                    </span>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-background/80">
+                      {slot.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
