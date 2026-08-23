@@ -4,10 +4,20 @@
  * never drift apart.
  */
 
+export const SITE_URL = "https://www.qureshijewelers.com";
+
 export const SITE_NAME = "Qureshi Jewelers";
 export const SITE_TAGLINE = "VVS1 Moissanite Hand-Set in 18K Gold";
 export const SITE_DESCRIPTION =
   "GRA-certified VVS1 D colour moissanite engagement rings, tennis bracelets, chains and stud earrings, hand-set in 18K gold, white gold and rose gold plated S925 sterling silver.";
+
+/**
+ * Fallback social-share image for pages that don't set their own (product pages use their real
+ * product photo instead). A real, already-hosted product shot — swap for a dedicated branded
+ * banner whenever one exists.
+ */
+export const SITE_OG_IMAGE =
+  "https://cdn.shopify.com/s/files/1/0729/6385/0319/files/H94a9b18aa5c14616b6bd0e4e358b4e76h-1781937290160-ku8jna.png?v=1786995060";
 
 export const SUPPORT_EMAIL = "care@qureshijewelers.com";
 export const SUPPORT_PHONE = "+1 (312) 555-0184";
@@ -30,10 +40,10 @@ export const SOCIAL_LINKS = [
 export const ORGANIZATION_LD = {
   "@context": "https://schema.org",
   "@type": "JewelryStore",
-  "@id": "/#organization",
+  "@id": `${SITE_URL}/#organization`,
   name: SITE_NAME,
   description: SITE_DESCRIPTION,
-  url: "/",
+  url: SITE_URL,
   email: SUPPORT_EMAIL,
   telephone: SUPPORT_PHONE,
   priceRange: "$$-$$$",
@@ -60,14 +70,14 @@ export const ORGANIZATION_LD = {
 export const WEBSITE_LD = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "@id": "/#website",
+  "@id": `${SITE_URL}/#website`,
   name: SITE_NAME,
-  url: "/",
+  url: SITE_URL,
   description: SITE_DESCRIPTION,
-  publisher: { "@id": "/#organization" },
+  publisher: { "@id": `${SITE_URL}/#organization` },
   potentialAction: {
     "@type": "SearchAction",
-    target: { "@type": "EntryPoint", urlTemplate: "/shop?q={search_term_string}" },
+    target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/shop?q={search_term_string}` },
     "query-input": "required name=search_term_string",
   },
 } as const;
@@ -80,7 +90,7 @@ export function breadcrumbLd(trail: Array<{ name: string; url: string }>) {
       "@type": "ListItem",
       position: i + 1,
       name: t.name,
-      item: t.url,
+      item: t.url.startsWith("http") ? t.url : `${SITE_URL}${t.url}`,
     })),
   };
 }

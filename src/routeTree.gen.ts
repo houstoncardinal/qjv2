@@ -16,6 +16,8 @@ import { Route as AccountRouteImport } from './routes/account'
 import { Route as BundleRouteImport } from './routes/bundle'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CraftsmanshipRouteImport } from './routes/craftsmanship'
+import { Route as LlmsFullDottxtRouteImport } from './routes/llms-full[.]txt'
+import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as ShopRouteImport } from './routes/shop'
@@ -58,6 +60,16 @@ const CraftsmanshipRoute = CraftsmanshipRouteImport.update({
   path: '/craftsmanship',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LlmsFullDottxtRoute = LlmsFullDottxtRouteImport.update({
+  id: '/llms-full.txt',
+  path: '/llms-full.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -97,6 +109,8 @@ export interface FileRoutesByFullPath {
   '/bundle': typeof BundleRoute
   '/contact': typeof ContactRoute
   '/craftsmanship': typeof CraftsmanshipRoute
+  '/llms-full.txt': typeof LlmsFullDottxtRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/privacy': typeof PrivacyRoute
   '/rewards': typeof RewardsRoute
   '/shop': typeof ShopRoute
@@ -112,6 +126,8 @@ export interface FileRoutesByTo {
   '/bundle': typeof BundleRoute
   '/contact': typeof ContactRoute
   '/craftsmanship': typeof CraftsmanshipRoute
+  '/llms-full.txt': typeof LlmsFullDottxtRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/privacy': typeof PrivacyRoute
   '/rewards': typeof RewardsRoute
   '/shop': typeof ShopRoute
@@ -128,6 +144,8 @@ export interface FileRoutesById {
   '/bundle': typeof BundleRoute
   '/contact': typeof ContactRoute
   '/craftsmanship': typeof CraftsmanshipRoute
+  '/llms-full.txt': typeof LlmsFullDottxtRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/privacy': typeof PrivacyRoute
   '/rewards': typeof RewardsRoute
   '/shop': typeof ShopRoute
@@ -145,6 +163,8 @@ export interface FileRouteTypes {
     | '/bundle'
     | '/contact'
     | '/craftsmanship'
+    | '/llms-full.txt'
+    | '/llms.txt'
     | '/privacy'
     | '/rewards'
     | '/shop'
@@ -160,6 +180,8 @@ export interface FileRouteTypes {
     | '/bundle'
     | '/contact'
     | '/craftsmanship'
+    | '/llms-full.txt'
+    | '/llms.txt'
     | '/privacy'
     | '/rewards'
     | '/shop'
@@ -175,6 +197,8 @@ export interface FileRouteTypes {
     | '/bundle'
     | '/contact'
     | '/craftsmanship'
+    | '/llms-full.txt'
+    | '/llms.txt'
     | '/privacy'
     | '/rewards'
     | '/shop'
@@ -191,6 +215,8 @@ export interface RootRouteChildren {
   BundleRoute: typeof BundleRoute
   ContactRoute: typeof ContactRoute
   CraftsmanshipRoute: typeof CraftsmanshipRoute
+  LlmsFullDottxtRoute: typeof LlmsFullDottxtRoute
+  LlmsDottxtRoute: typeof LlmsDottxtRoute
   PrivacyRoute: typeof PrivacyRoute
   RewardsRoute: typeof RewardsRoute
   ShopRoute: typeof ShopRoute
@@ -250,6 +276,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CraftsmanshipRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/llms-full.txt': {
+      id: '/llms-full.txt'
+      path: '/llms-full.txt'
+      fullPath: '/llms-full.txt'
+      preLoaderRoute: typeof LlmsFullDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof LlmsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -303,6 +343,8 @@ const rootRouteChildren: RootRouteChildren = {
   BundleRoute: BundleRoute,
   ContactRoute: ContactRoute,
   CraftsmanshipRoute: CraftsmanshipRoute,
+  LlmsFullDottxtRoute: LlmsFullDottxtRoute,
+  LlmsDottxtRoute: LlmsDottxtRoute,
   PrivacyRoute: PrivacyRoute,
   RewardsRoute: RewardsRoute,
   ShopRoute: ShopRoute,

@@ -233,7 +233,7 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
               </div>
 
             ) : kind === "size" ? (
-              <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6">
+              <div className="mt-3 grid grid-cols-[repeat(auto-fit,minmax(4.5rem,1fr))] gap-2">
                 {option.values.map((value) => {
                   const selected = active === value;
                   const available = isValueAvailable(option.name, value);
@@ -244,7 +244,7 @@ export function VariantSelector({ product, onVariantChange }: VariantSelectorPro
                       aria-pressed={selected}
                       onClick={() => select(value)}
                       className={cn(
-                        "flex flex-col items-center gap-0.5 border py-2.5 transition-all duration-300",
+                        "flex flex-col items-center gap-0.5 border px-1.5 py-2.5 transition-all duration-300",
                         selected
                           ? "border-foreground bg-foreground text-background"
                           : "border-border bg-card text-foreground hover:border-foreground/45",

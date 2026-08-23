@@ -4,6 +4,7 @@ import { fetchProducts } from "@/lib/shopify";
 const STATIC_PATHS: Array<{ path: string; priority: string; changefreq: string }> = [
   { path: "/", priority: "1.0", changefreq: "daily" },
   { path: "/shop", priority: "0.9", changefreq: "daily" },
+  { path: "/bundle", priority: "0.8", changefreq: "monthly" },
   { path: "/craftsmanship", priority: "0.7", changefreq: "monthly" },
   { path: "/rewards", priority: "0.7", changefreq: "monthly" },
   { path: "/about", priority: "0.7", changefreq: "monthly" },

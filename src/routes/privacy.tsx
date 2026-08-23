@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { JsonLd } from "@/components/JsonLd";
-import { SUPPORT_EMAIL, breadcrumbLd } from "@/lib/site";
+import { SITE_URL, SUPPORT_EMAIL, breadcrumbLd } from "@/lib/site";
 
 const title = "Privacy Policy | Qureshi Jewelers";
 const description =
@@ -16,10 +16,10 @@ export const Route = createFileRoute("/privacy")({
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/privacy" },
+      { property: "og:url", content: `${SITE_URL}/privacy` },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/privacy" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/privacy` }],
   }),
   component: PrivacyPage,
 });

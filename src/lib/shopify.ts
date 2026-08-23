@@ -27,6 +27,7 @@ export interface ShopifyProduct {
           id: string;
           title: string;
           price: { amount: string; currencyCode: string };
+          compareAtPrice: { amount: string; currencyCode: string } | null;
           availableForSale: boolean;
           image?: { url: string; altText: string | null } | null;
           selectedOptions: Array<{ name: string; value: string }>;
@@ -54,6 +55,7 @@ export const PRODUCT_FIELDS = `
         id
         title
         price { amount currencyCode }
+        compareAtPrice { amount currencyCode }
         availableForSale
         image { url altText }
         selectedOptions { name value }
@@ -119,6 +121,14 @@ export async function fetchProductByHandle(handle: string): Promise<ShopifyProdu
   const data = await storefrontApiRequest(PRODUCT_BY_HANDLE_QUERY, { handle });
   const node = data?.data?.productByHandle;
   return node ? ({ node } as ShopifyProduct) : null;
+}
+
+type PriceLike = { amount: string; currencyCode: string } | null | undefined;
+
+/** True when a variant's compareAtPrice is a real, higher original price (i.e. it's on sale). */
+export function isOnSale(price: PriceLike, compareAtPrice: PriceLike): boolean {
+  if (!price || !compareAtPrice) return false;
+  return parseFloat(compareAtPrice.amount) > parseFloat(price.amount);
 }
 
 export function formatMoney(amount: string | number, currencyCode = "USD") {

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Loader2, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
-import { formatMoney, type ShopifyProduct } from "@/lib/shopify";
+import { formatMoney, isOnSale, type ShopifyProduct } from "@/lib/shopify";
 import { MetalSwatchRow, isMetalOptionName } from "@/components/MetalSwatch";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -13,9 +13,12 @@ function metalOption(product: ShopifyProduct) {
 export function ProductCard({
   product,
   compact = false,
+  eager = false,
 }: {
   product: ShopifyProduct;
   compact?: boolean;
+  /** Load the primary image eagerly — use for cards in the first, above-the-fold row. */
+  eager?: boolean;
 }) {
   const addItem = useCartStore((s) => s.addItem);
   const isLoading = useCartStore((s) => s.isLoading);
@@ -30,13 +33,13 @@ export function ProductCard({
   const finishes = (option?.values ?? []).filter((v) => v !== "Default Title");
   const bestSeller = (node.tags ?? []).some((t) => /best|trending|featured/i.test(t));
   const soldOut = node.variants.edges.every((v) => !v.node.availableForSale);
+  const onSale = Boolean(variant) && isOnSale(variant?.price, variant?.compareAtPrice);
   const points = Math.floor(parseFloat(price.amount || "0"));
-
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!variant) return;
-    await addItem({
+    const { success } = await addItem({
       product,
       variantId: variant.id,
       variantTitle: variant.title,
@@ -44,7 +47,14 @@ export function ProductCard({
       quantity: 1,
       selectedOptions: variant.selectedOptions || [],
     });
-    toast.success("Added to bag", { description: node.title, position: "top-center" });
+    if (success) {
+      toast.success("Added to bag", { description: node.title, position: "top-center" });
+    } else {
+      toast.error("Couldn't add to bag", {
+        description: "Please check your connection and try again.",
+        position: "top-center",
+      });
+    }
   };
 
   return (
@@ -59,7 +69,8 @@ export function ProductCard({
             <img
               src={image.url}
               alt={image.altText ?? node.title}
-              loading="lazy"
+              loading={eager ? "eager" : "lazy"}
+              fetchPriority={eager ? "high" : undefined}
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
             />
           )}
@@ -76,6 +87,10 @@ export function ProductCard({
             {bestSeller ? (
               <span className="bg-foreground px-3 py-1.5 text-[8px] uppercase tracking-[0.22em] text-background">
                 Best Seller
+              </span>
+            ) : onSale ? (
+              <span className="bg-[var(--gold)] px-3 py-1.5 text-[8px] uppercase tracking-[0.22em] text-[oklch(0.18_0.01_60)]">
+                Sale
               </span>
             ) : (
               <span />
@@ -128,7 +143,17 @@ export function ProductCard({
                 <span className="text-[8px] uppercase tracking-[0.24em] text-muted-foreground">
                   From{" "}
                 </span>
-                {formatMoney(price.amount, price.currencyCode)}
+                {onSale && variant
+                  ? formatMoney(variant.price.amount, variant.price.currencyCode)
+                  : formatMoney(price.amount, price.currencyCode)}
+                {onSale && variant?.compareAtPrice && (
+                  <span className="ml-1.5 text-muted-foreground line-through">
+                    {formatMoney(
+                      variant.compareAtPrice.amount,
+                      variant.compareAtPrice.currencyCode,
+                    )}
+                  </span>
+                )}
               </p>
               {points > 0 && (
                 <p className="mt-1.5 text-[8px] uppercase tracking-[0.2em] text-[var(--gold)]">
@@ -140,7 +165,6 @@ export function ProductCard({
               View
             </span>
           </div>
-
         </div>
       </Link>
     </article>

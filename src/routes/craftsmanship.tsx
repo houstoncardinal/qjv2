@@ -3,6 +3,7 @@ import { Gem, Hammer, ShieldCheck, Sparkles } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Button } from "@/components/ui/button";
+import { RETURN_WINDOW_DAYS, SITE_URL } from "@/lib/site";
 
 export const Route = createFileRoute("/craftsmanship")({
   head: () => ({
@@ -20,9 +21,9 @@ export const Route = createFileRoute("/craftsmanship")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "/craftsmanship" },
+      { property: "og:url", content: `${SITE_URL}/craftsmanship` },
     ],
-    links: [{ rel: "canonical", href: "/craftsmanship" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/craftsmanship` }],
   }),
   component: Craftsmanship,
 });
@@ -46,7 +47,7 @@ const pillars = [
   {
     icon: ShieldCheck,
     title: "The Promise",
-    body: "A lifetime warranty on craftsmanship, complimentary re-polishing, and 30-day returns on every order, anywhere in the world.",
+    body: `A lifetime warranty on craftsmanship, complimentary re-polishing, and ${RETURN_WINDOW_DAYS}-day returns on every order, anywhere in the world.`,
   },
 ];
 

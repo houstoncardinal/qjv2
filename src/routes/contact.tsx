@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Clock, Mail, MessageCircle, Package, Phone, Send } from "lucide-react";
-import { toast } from "sonner";
+import { Check, Clock, Mail, MessageCircle, Package, Phone, Send } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { JsonLd } from "@/components/JsonLd";
@@ -9,10 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { submitShopifyForm } from "@/lib/shopifyForm";
 import {
   FREE_SHIPPING_MINIMUM,
   RETURN_LIMIT_DAYS,
   RETURN_WINDOW_DAYS,
+  SITE_URL,
   SUPPORT_EMAIL,
   SUPPORT_HOURS,
   SUPPORT_PHONE,
@@ -55,10 +56,10 @@ export const Route = createFileRoute("/contact")({
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/contact" },
+      { property: "og:url", content: `${SITE_URL}/contact` },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/contact" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/contact` }],
   }),
   component: ContactPage,
 });
@@ -88,7 +89,7 @@ const channels = [
 ];
 
 function ContactPage() {
-  const [sending, setSending] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
 
   return (
     <div className="min-h-screen bg-card">
@@ -147,69 +148,102 @@ function ContactPage() {
                 us answer in one reply instead of three.
               </p>
 
-              <form
-                className="mt-8 space-y-5"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const form = e.currentTarget;
-                  setSending(true);
-                  const data = new FormData(form);
-                  const subject = encodeURIComponent(
-                    `Client care · ${String(data.get("topic") || "General enquiry")}`,
-                  );
-                  const body = encodeURIComponent(
-                    `Name: ${String(data.get("name") || "")}\nEmail: ${String(
-                      data.get("email") || "",
-                    )}\nOrder number: ${String(data.get("order") || "—")}\n\n${String(
-                      data.get("message") || "",
-                    )}`,
-                  );
-                  window.location.href = `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
-                  toast.success("Opening your email app", {
-                    description: `Your message is addressed to ${SUPPORT_EMAIL}.`,
-                  });
-                  setSending(false);
-                }}
-              >
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full name</Label>
-                    <Input id="name" name="name" required autoComplete="name" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email address</Label>
-                    <Input id="email" name="email" type="email" required autoComplete="email" />
+              {status === "sent" ? (
+                <div className="mt-8 flex items-start gap-3 border border-border bg-card p-6">
+                  <Check
+                    aria-hidden="true"
+                    className="mt-0.5 h-5 w-5 shrink-0 text-[var(--gold)]"
+                  />
+                  <div>
+                    <p className="font-display text-lg">Message sent</p>
+                    <p className="mt-1.5 text-sm text-muted-foreground">
+                      Thank you — client care will reply within one business day. Need to reach us
+                      right away instead?{" "}
+                      <a
+                        href={`mailto:${SUPPORT_EMAIL}`}
+                        className="underline hover:text-foreground"
+                      >
+                        Email {SUPPORT_EMAIL}
+                      </a>
+                      .
+                    </p>
                   </div>
                 </div>
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="topic">Topic</Label>
-                    <select
-                      id="topic"
-                      name="topic"
-                      className="h-10 w-full border border-input bg-background px-3 text-sm focus-visible:outline-none"
-                    >
-                      <option>General enquiry</option>
-                      <option>Sizing & fit</option>
-                      <option>Order status</option>
-                      <option>Return or exchange</option>
-                      <option>Custom piece</option>
-                      <option>Wholesale</option>
-                    </select>
+              ) : (
+                <form
+                  className="mt-8 space-y-5"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const form = e.currentTarget;
+                    const data = new FormData(form);
+                    const topic = String(data.get("topic") || "General enquiry");
+                    const order = String(data.get("order") || "");
+                    const message = String(data.get("message") || "");
+                    setStatus("sending");
+                    void submitShopifyForm({
+                      form_type: "contact",
+                      utf8: "✓",
+                      "contact[name]": String(data.get("name") || ""),
+                      "contact[email]": String(data.get("email") || ""),
+                      "contact[body]": `Topic: ${topic}${order ? `\nOrder number: ${order}` : ""}\n\n${message}`,
+                    }).then(() => {
+                      setStatus("sent");
+                      form.reset();
+                    });
+                  }}
+                >
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Full name</Label>
+                      <Input id="name" name="name" required autoComplete="name" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email address</Label>
+                      <Input id="email" name="email" type="email" required autoComplete="email" />
+                    </div>
+                  </div>
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="topic">Topic</Label>
+                      <select
+                        id="topic"
+                        name="topic"
+                        className="h-10 w-full border border-input bg-background px-3 text-sm focus-visible:outline-none"
+                      >
+                        <option>General enquiry</option>
+                        <option>Sizing & fit</option>
+                        <option>Order status</option>
+                        <option>Return or exchange</option>
+                        <option>Custom piece</option>
+                        <option>Wholesale</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="order">Order number (optional)</Label>
+                      <Input id="order" name="order" placeholder="#1042" />
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="order">Order number (optional)</Label>
-                    <Input id="order" name="order" placeholder="#1042" />
+                    <Label htmlFor="message">How can we help?</Label>
+                    <Textarea id="message" name="message" rows={6} required />
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="message">How can we help?</Label>
-                  <Textarea id="message" name="message" rows={6} required />
-                </div>
-                <Button type="submit" disabled={sending} className="min-h-11 w-full sm:w-auto">
-                  <Send aria-hidden="true" className="mr-2 h-4 w-4" /> Send message
-                </Button>
-              </form>
+                  <Button
+                    type="submit"
+                    disabled={status === "sending"}
+                    className="min-h-11 w-full sm:w-auto"
+                  >
+                    <Send aria-hidden="true" className="mr-2 h-4 w-4" />
+                    {status === "sending" ? "Sending…" : "Send message"}
+                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    Prefer email? Write to{" "}
+                    <a href={`mailto:${SUPPORT_EMAIL}`} className="underline hover:text-foreground">
+                      {SUPPORT_EMAIL}
+                    </a>{" "}
+                    directly.
+                  </p>
+                </form>
+              )}
             </div>
 
             <aside className="border border-border bg-card p-7">

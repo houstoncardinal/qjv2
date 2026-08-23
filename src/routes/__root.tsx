@@ -19,6 +19,7 @@ import {
   ORGANIZATION_LD,
   SITE_DESCRIPTION,
   SITE_NAME,
+  SITE_OG_IMAGE,
   SITE_TAGLINE,
   WEBSITE_LD,
 } from "@/lib/site";
@@ -96,7 +97,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: SITE_NAME },
       { property: "og:locale", content: "en_US" },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: SITE_OG_IMAGE },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: SITE_OG_IMAGE },
     ],
     links: [
       {

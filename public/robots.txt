@@ -14,4 +14,4 @@ User-agent: *
 Allow: /
 Disallow: /account
 
-Sitemap: /sitemap.xml
+Sitemap: https://www.qureshijewelers.com/sitemap.xml

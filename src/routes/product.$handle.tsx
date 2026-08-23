@@ -22,7 +22,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { VariantSelector, prettyValue } from "@/components/VariantSelector";
 import { MetalSwatch, isMetalOptionName } from "@/components/MetalSwatch";
 import { JsonLd } from "@/components/JsonLd";
-import { OFFER_POLICY_LD, SITE_NAME, breadcrumbLd } from "@/lib/site";
+import { OFFER_POLICY_LD, SITE_NAME, SITE_URL, breadcrumbLd, faqLd } from "@/lib/site";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,6 +30,7 @@ import {
   fetchProductByHandle,
   fetchProducts,
   formatMoney,
+  isOnSale,
   sanitizeShopifyHtml,
   shortDescription,
   variantImageIndex,
@@ -40,26 +41,48 @@ import { cn } from "@/lib/utils";
 
 type Variant = ShopifyProduct["node"]["variants"]["edges"][number]["node"];
 
+const FALLBACK_DESCRIPTION_FOR = (name: string) =>
+  `Shop ${name} — hand-set VVS1 D colour moissanite in 18K gold, white gold or rose gold plated S925 sterling silver. GRA certified with insured worldwide shipping.`;
+
 export const Route = createFileRoute("/product/$handle")({
-  head: ({ params }) => {
-    const name = params.handle.replace(/-/g, " ");
+  loader: ({ params }) => fetchProductByHandle(params.handle),
+  head: (ctx) => {
+    const node = ctx.loaderData?.node;
+    const name = node?.title ?? ctx.params.handle.replace(/-/g, " ");
+    const rawDescription = node ? shortDescription(node) : "";
+    const description =
+      rawDescription.length > 10
+        ? rawDescription.length > 160
+          ? `${rawDescription.slice(0, 157)}...`
+          : rawDescription
+        : FALLBACK_DESCRIPTION_FOR(name);
+    const image = node?.images.edges[0]?.node.url;
+    const price = node?.priceRange.minVariantPrice;
+    const url = `${SITE_URL}/product/${ctx.params.handle}`;
+
     return {
       meta: [
         { title: `${name} | Qureshi Jewelers` },
-        {
-          name: "description",
-          content: `Shop ${name} — hand-set VVS1 D colour moissanite in 18K gold, white gold or rose gold plated S925 sterling silver. GRA certified with insured worldwide shipping.`,
-        },
+        { name: "description", content: description },
         { property: "og:title", content: `${name} | Qureshi Jewelers` },
-        {
-          property: "og:description",
-          content: "Hand-set VVS1 moissanite, GRA certified and shipped worldwide.",
-        },
+        { property: "og:description", content: description },
         { property: "og:type", content: "product" },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+        ...(price
+          ? [
+              { property: "product:price:amount", content: price.amount },
+              { property: "product:price:currency", content: price.currencyCode },
+            ]
+          : []),
         { name: "twitter:card", content: "summary_large_image" },
-        { property: "og:url", content: `/product/${params.handle}` },
+        { property: "og:url", content: url },
       ],
-      links: [{ rel: "canonical", href: `/product/${params.handle}` }],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   component: ProductDetail,
@@ -70,6 +93,21 @@ const trustGrid = [
   { icon: Truck, title: "Free U.S. Shipping", sub: "On orders over $100" },
   { icon: RotateCcw, title: "14-Day Returns", sub: "Unworn, original packaging" },
   { icon: ShieldCheck, title: "Gift Ready", sub: "Luxury packaging" },
+];
+
+const productFaqs = [
+  {
+    q: "Will it tarnish?",
+    a: "The solid S925 base carries five layers of plating sealed with a protective e-coat, so daily wear holds its finish for years.",
+  },
+  {
+    q: "Is it hypoallergenic?",
+    a: "Yes — nickel-free, lead-free and cadmium-free, safe for sensitive skin.",
+  },
+  {
+    q: "Is it good for an engagement ring?",
+    a: "Yes. Moissanite scores 9.25 on the Mohs scale, second only to diamond, so it holds up to everyday wear as an engagement or wedding ring stone.",
+  },
 ];
 
 function Accordion({
@@ -127,9 +165,11 @@ function ProductDetail() {
 
   const onVariantChange = useCallback((v: Variant | undefined) => setVariant(v), []);
 
+  const loaderData = Route.useLoaderData();
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", handle],
     queryFn: () => fetchProductByHandle(handle),
+    initialData: loaderData ?? undefined,
   });
 
   const { data: related } = useQuery({
@@ -148,7 +188,10 @@ function ProductDetail() {
     return (
       <div className="min-h-screen">
         <SiteHeader />
-        <main id="main-content" className="mx-auto grid max-w-[1400px] gap-12 px-5 py-14 sm:px-8 lg:grid-cols-2">
+        <main
+          id="main-content"
+          className="mx-auto grid max-w-[1400px] gap-12 px-5 py-14 sm:px-8 lg:grid-cols-2"
+        >
           <Skeleton className="aspect-square w-full" />
           <div className="space-y-5">
             <Skeleton className="h-12 w-3/4" />
@@ -181,6 +224,7 @@ function ProductDetail() {
   const images = node.images.edges;
   const price = variant?.price ?? node.priceRange.minVariantPrice;
   const soldOut = variant ? !variant.availableForSale : false;
+  const onSale = isOnSale(variant?.price, variant?.compareAtPrice);
   const metalValue = variant?.selectedOptions.find((o) =>
     /colou?r|metal|plating|finish/i.test(o.name),
   )?.value;
@@ -209,14 +253,14 @@ function ProductDetail() {
       availability: node.variants.edges.some((v) => v.node.availableForSale)
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
-      seller: { "@id": "/#organization" },
+      seller: { "@id": `${SITE_URL}/#organization` },
       ...OFFER_POLICY_LD,
     },
   };
 
   const handleAddToCart = async (checkout = false) => {
     if (!variant) return;
-    await addItem({
+    const { success } = await addItem({
       product,
       variantId: variant.id,
       variantTitle: variant.title,
@@ -224,13 +268,21 @@ function ProductDetail() {
       quantity,
       selectedOptions: variant.selectedOptions || [],
     });
+
+    if (!success) {
+      toast.error("Couldn't add to bag", {
+        description: "Please check your connection and try again.",
+        position: "top-center",
+      });
+      return;
+    }
+
     if (checkout) {
       const url = useCartStore.getState().checkoutUrl;
-      if (url) {
-        window.location.href = url;
-        return;
-      }
+      if (url) window.open(url, "_blank");
+      return;
     }
+
     toast.success("Added to bag", {
       description: `${node.title} · ${variant.title}`,
       position: "top-center",
@@ -310,6 +362,8 @@ function ProductDetail() {
                   <img
                     src={images[activeImage]!.node.url}
                     alt={images[activeImage]!.node.altText ?? node.title}
+                    loading="eager"
+                    fetchPriority="high"
                     className="h-full w-full object-cover"
                   />
                 )}
@@ -378,16 +432,31 @@ function ProductDetail() {
                 {node.productType}
               </p>
             )}
-            <h1 className="mt-3 break-words font-display text-3xl leading-[1.1] sm:text-4xl lg:text-5xl">{node.title}</h1>
+            <h1 className="mt-3 break-words font-display text-3xl leading-[1.1] sm:text-4xl lg:text-5xl">
+              {node.title}
+            </h1>
 
             {summary && (
               <p className="mt-5 text-sm leading-relaxed text-muted-foreground">{summary}</p>
             )}
 
-            <div className="mt-7 flex items-baseline gap-3 border-b border-border pb-7">
+            <div className="mt-7 flex flex-wrap items-baseline gap-3 border-b border-border pb-7">
               <p className="font-display text-4xl sm:text-5xl">
                 {formatMoney(price.amount, price.currencyCode)}
               </p>
+              {onSale && variant?.compareAtPrice && (
+                <>
+                  <p className="text-lg text-muted-foreground line-through">
+                    {formatMoney(
+                      variant.compareAtPrice.amount,
+                      variant.compareAtPrice.currencyCode,
+                    )}
+                  </p>
+                  <span className="bg-[var(--gold)] px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] text-[oklch(0.18_0.01_60)]">
+                    Sale
+                  </span>
+                </>
+              )}
               <span className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
                 {price.currencyCode} · Tax included
               </span>
@@ -396,7 +465,6 @@ function ProductDetail() {
             <div className="mt-8">
               <VariantSelector product={product} onVariantChange={onVariantChange} />
             </div>
-
 
             <div className="mt-6 space-y-2">
               <p className="flex items-center gap-2.5 border border-border bg-secondary/60 px-4 py-3 text-[10px] tracking-wide text-muted-foreground">
@@ -517,18 +585,20 @@ function ProductDetail() {
               </Accordion>
               <Accordion title="Shipping & Returns">
                 <p>
-                  Dispatched within 24 hours with insured tracked delivery. Standard shipping is free
-                  across the United States on orders over $100. Returns accepted within 14 days in
-                  original condition and packaging — one return per customer every 14 days.
+                  Dispatched within 24 hours with insured tracked delivery. Standard shipping is
+                  free across the United States on orders over $100. Returns accepted within 14 days
+                  in original condition and packaging — one return per customer every 14 days.
                 </p>
               </Accordion>
               <Accordion title="Common Questions">
-                <p>
-                  Will it tarnish? The solid S925 base carries five layers of plating sealed with a
-                  protective e-coat, so daily wear holds its finish for years. Is it hypoallergenic?
-                  Yes — nickel-free, lead-free and cadmium-free. Is it good for an engagement ring?
-                  Moissanite scores 9.25 on the Mohs scale, second only to diamond.
-                </p>
+                <dl className="space-y-4">
+                  {productFaqs.map((f) => (
+                    <div key={f.q}>
+                      <dt className="font-medium text-foreground">{f.q}</dt>
+                      <dd className="mt-1">{f.a}</dd>
+                    </div>
+                  ))}
+                </dl>
               </Accordion>
               <Accordion title="Reviews">
                 <p>No reviews yet — be the first to share how this piece wears.</p>
@@ -571,6 +641,7 @@ function ProductDetail() {
 
       <SiteFooter />
       <JsonLd data={productLd} />
+      <JsonLd data={faqLd(productFaqs)} />
       <JsonLd
         data={breadcrumbLd([
           { name: "Home", url: "/" },

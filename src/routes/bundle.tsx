@@ -5,6 +5,7 @@ import { Check, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { JsonLd } from "@/components/JsonLd";
 import { VariantSelector } from "@/components/VariantSelector";
 import { MetalSwatchRow, isMetalOptionName } from "@/components/MetalSwatch";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,11 +17,17 @@ import {
   type BundleSlot,
   type BundleSlotKey,
 } from "@/lib/bundle";
+import { SITE_URL, breadcrumbLd } from "@/lib/site";
 import { useCartStore } from "@/stores/cartStore";
 import { cn } from "@/lib/utils";
 
 type Variant = ShopifyProduct["node"]["variants"]["edges"][number]["node"];
 type SlotSelection = { product: ShopifyProduct; variant: Variant | undefined };
+
+/** A slot only counts as filled once its chosen variant is a real, purchasable option. */
+function isSlotFilled(selection: SlotSelection | undefined): boolean {
+  return Boolean(selection?.variant?.availableForSale);
+}
 
 export const Route = createFileRoute("/bundle")({
   head: () => ({
@@ -38,9 +45,9 @@ export const Route = createFileRoute("/bundle")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "/bundle" },
+      { property: "og:url", content: `${SITE_URL}/bundle` },
     ],
-    links: [{ rel: "canonical", href: "/bundle" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/bundle` }],
   }),
   component: BundlePage,
 });
@@ -75,7 +82,7 @@ function BundlePage() {
     });
   };
 
-  const filledSlots = BUNDLE_SLOTS.filter((slot) => selections[slot.key]?.variant);
+  const filledSlots = BUNDLE_SLOTS.filter((slot) => isSlotFilled(selections[slot.key]));
   const allFilled = filledSlots.length === BUNDLE_SLOTS.length;
   const subtotal = filledSlots.reduce(
     (sum, slot) => sum + parseFloat(selections[slot.key]!.variant!.price.amount),
@@ -105,12 +112,19 @@ function BundlePage() {
 
     setAdding(true);
     try {
-      await addBundleItems(items);
-      toast.success("Bundle added to your bag", {
-        description: "10% off has been applied automatically.",
-        position: "top-center",
-      });
-      useCartStore.getState().setOpen(true);
+      const { success } = await addBundleItems(items);
+      if (success) {
+        toast.success("Bundle added to your bag", {
+          description: "10% off has been applied automatically.",
+          position: "top-center",
+        });
+        useCartStore.getState().setOpen(true);
+      } else {
+        toast.error("Couldn't add your bundle", {
+          description: "Please check your connection and try again.",
+          position: "top-center",
+        });
+      }
     } finally {
       setAdding(false);
     }
@@ -146,7 +160,7 @@ function BundlePage() {
             <div className="mx-auto mt-12 max-w-xl">
               <div className="flex items-start justify-center">
                 {BUNDLE_SLOTS.map((slot, i) => {
-                  const filled = Boolean(selections[slot.key]?.variant);
+                  const filled = isSlotFilled(selections[slot.key]);
                   const isLast = i === BUNDLE_SLOTS.length - 1;
                   return (
                     <div key={slot.key} className={cn("flex items-center", !isLast && "flex-1")}>
@@ -192,10 +206,10 @@ function BundlePage() {
         </section>
 
         <div className="mx-auto max-w-[1560px] px-6 py-14 sm:px-10 lg:py-20">
-          <div className="grid gap-12 lg:grid-cols-[56px_1fr_380px] lg:items-start lg:gap-10">
+          <div className="grid gap-12 xl:grid-cols-[56px_1fr_380px] xl:items-start xl:gap-10">
             <BundleStepRail selections={selections} />
 
-            <div className="space-y-16">
+            <div className="min-w-0 space-y-16">
               {BUNDLE_SLOTS.map((slot, i) => (
                 <BundleSlotSection
                   key={slot.key}
@@ -209,7 +223,7 @@ function BundlePage() {
               ))}
             </div>
 
-            <div className="lg:sticky lg:top-24">
+            <div className="w-full min-w-0 max-w-md mx-auto xl:sticky xl:top-24 xl:mx-0 xl:w-auto xl:max-w-none">
               <BundleSummary
                 selections={selections}
                 allFilled={allFilled}
@@ -226,6 +240,12 @@ function BundlePage() {
       </main>
 
       <SiteFooter />
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Home", url: "/" },
+          { name: "Build Your Own Bundle", url: "/bundle" },
+        ])}
+      />
     </div>
   );
 }
@@ -236,9 +256,9 @@ function BundleStepRail({
   selections: Partial<Record<BundleSlotKey, SlotSelection>>;
 }) {
   return (
-    <div className="hidden lg:sticky lg:top-32 lg:flex lg:h-fit lg:w-14 lg:flex-col lg:items-center">
+    <div className="hidden xl:sticky xl:top-32 xl:flex xl:h-fit xl:w-14 xl:flex-col xl:items-center">
       {BUNDLE_SLOTS.map((slot, i) => {
-        const filled = Boolean(selections[slot.key]?.variant);
+        const filled = isSlotFilled(selections[slot.key]);
         const isLast = i === BUNDLE_SLOTS.length - 1;
         return (
           <div key={slot.key} className="flex flex-col items-center">
@@ -286,14 +306,14 @@ function BundleSlotSection({
   onClear: () => void;
 }) {
   const { data: products, isLoading } = useSlotProducts(slot);
-  const filled = Boolean(selection?.variant);
+  const filled = isSlotFilled(selection);
 
   return (
     <section id={slot.key} aria-labelledby={`slot-${slot.key}`} className="scroll-mt-28">
       <div className="flex items-center gap-4 border-b border-border pb-4">
         <span
           className={cn(
-            "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[11px] transition-all duration-500 lg:hidden",
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[11px] transition-all duration-500 xl:hidden",
             filled
               ? "border-[var(--gold)] bg-[var(--gold)]/10 text-[var(--gold)]"
               : "border-border text-muted-foreground",
@@ -448,7 +468,7 @@ function BundleSummary({
   onAdd: () => void;
   loading: boolean;
 }) {
-  const remaining = BUNDLE_SLOTS.filter((slot) => !selections[slot.key]?.variant).length;
+  const remaining = BUNDLE_SLOTS.filter((slot) => !isSlotFilled(selections[slot.key])).length;
 
   return (
     <div
@@ -465,7 +485,7 @@ function BundleSummary({
       <div className="mt-5 space-y-3">
         {BUNDLE_SLOTS.map((slot) => {
           const sel = selections[slot.key];
-          const filled = Boolean(sel?.variant);
+          const filled = isSlotFilled(sel);
           const image = sel?.product.node.images.edges[0]?.node;
           return (
             <div key={slot.key} className="flex items-center gap-3">

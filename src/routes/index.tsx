@@ -22,6 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
 import { TIERS } from "@/lib/rewards";
 import { BUNDLE_SLOTS } from "@/lib/bundle";
+import { RETURN_WINDOW_DAYS, SITE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 
@@ -42,9 +43,9 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: SITE_URL },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: SITE_URL }],
   }),
   component: Home,
 });
@@ -469,7 +470,7 @@ function Home() {
                 {
                   icon: Gem,
                   title: "Customer First",
-                  copy: "Free resizing within 60 days, 30-day returns and a support team that answers in hours, not weeks.",
+                  copy: `Free resizing within 60 days, ${RETURN_WINDOW_DAYS}-day returns and a support team that answers in hours, not weeks.`,
                 },
                 {
                   icon: Award,

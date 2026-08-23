@@ -3,12 +3,7 @@ import { Award, Gem, Globe2, HeartHandshake, ShieldCheck, Sparkles } from "lucid
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { JsonLd } from "@/components/JsonLd";
-import {
-  ORGANIZATION_LD,
-  RETURN_POLICY_SHORT,
-  SHIPPING_POLICY_SHORT,
-  breadcrumbLd,
-} from "@/lib/site";
+import { RETURN_POLICY_SHORT, SHIPPING_POLICY_SHORT, SITE_URL, breadcrumbLd } from "@/lib/site";
 
 const title = "About Qureshi Jewelers | Ethical Moissanite Fine Jewelry";
 const description =
@@ -22,10 +17,10 @@ export const Route = createFileRoute("/about")({
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/about" },
+      { property: "og:url", content: `${SITE_URL}/about` },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/about" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/about` }],
   }),
   component: AboutPage,
 });
@@ -183,7 +178,6 @@ function AboutPage() {
       </main>
 
       <SiteFooter />
-      <JsonLd data={ORGANIZATION_LD} />
       <JsonLd
         data={breadcrumbLd([
           { name: "Home", url: "/" },

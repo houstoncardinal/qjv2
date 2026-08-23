@@ -254,11 +254,11 @@ interface CartStore {
   bundleDiscountActive: boolean;
   /** Applies or removes the bundle discount code to match the cart's current eligibility. */
   syncBundleDiscount: () => Promise<void>;
-  addItem: (item: Omit<CartItem, "lineId">) => Promise<void>;
+  addItem: (item: Omit<CartItem, "lineId">) => Promise<{ success: boolean }>;
   /** Adds several new lines (e.g. a completed bundle) in as few Shopify round-trips as possible. */
-  addBundleItems: (items: Array<Omit<CartItem, "lineId">>) => Promise<void>;
-  updateQuantity: (variantId: string, quantity: number) => Promise<void>;
-  removeItem: (variantId: string) => Promise<void>;
+  addBundleItems: (items: Array<Omit<CartItem, "lineId">>) => Promise<{ success: boolean }>;
+  updateQuantity: (variantId: string, quantity: number) => Promise<{ success: boolean }>;
+  removeItem: (variantId: string) => Promise<{ success: boolean }>;
   clearCart: () => void;
   syncCart: () => Promise<void>;
   getCheckoutUrl: () => string | null;
@@ -300,6 +300,7 @@ export const useCartStore = create<CartStore>()(
       addItem: async (item) => {
         const { items, cartId, clearCart } = get();
         const existingItem = items.find((i) => i.variantId === item.variantId);
+        let success = false;
 
         set({ isLoading: true });
         try {
@@ -311,12 +312,13 @@ export const useCartStore = create<CartStore>()(
                 checkoutUrl: result.checkoutUrl,
                 items: [{ ...item, lineId: result.lineId }],
               });
+              success = true;
             }
           } else if (existingItem) {
             const newQuantity = existingItem.quantity + item.quantity;
             if (!existingItem.lineId) {
               console.error("Cannot update quantity for item without lineId:", existingItem);
-              return;
+              return { success: false };
             }
             const result = await updateShopifyCartLine(cartId, existingItem.lineId, newQuantity);
             if (result.success) {
@@ -326,6 +328,7 @@ export const useCartStore = create<CartStore>()(
                   i.variantId === item.variantId ? { ...i, quantity: newQuantity } : i,
                 ),
               });
+              success = true;
             } else if (result.cartNotFound) {
               clearCart();
             }
@@ -334,6 +337,7 @@ export const useCartStore = create<CartStore>()(
             if (result.success) {
               const currentItems = get().items;
               set({ items: [...currentItems, { ...item, lineId: result.lineId ?? null }] });
+              success = true;
             } else if (result.cartNotFound) {
               clearCart();
             }
@@ -344,11 +348,13 @@ export const useCartStore = create<CartStore>()(
           set({ isLoading: false });
         }
         await get().syncBundleDiscount();
+        return { success };
       },
 
       addBundleItems: async (items) => {
-        if (items.length === 0) return;
+        if (items.length === 0) return { success: false };
         const { cartId, clearCart } = get();
+        let success = false;
 
         set({ isLoading: true });
         try {
@@ -365,6 +371,7 @@ export const useCartStore = create<CartStore>()(
                   lineId: result.lineIds[item.variantId] ?? null,
                 })),
               });
+              success = true;
             }
           } else {
             const result = await addLinesToShopifyCart(
@@ -391,6 +398,7 @@ export const useCartStore = create<CartStore>()(
                 }
               }
               set({ items: nextItems });
+              success = true;
             } else if (result.cartNotFound) {
               clearCart();
             }
@@ -401,17 +409,18 @@ export const useCartStore = create<CartStore>()(
           set({ isLoading: false });
         }
         await get().syncBundleDiscount();
+        return { success };
       },
 
       updateQuantity: async (variantId, quantity) => {
         if (quantity <= 0) {
-          await get().removeItem(variantId);
-          return;
+          return get().removeItem(variantId);
         }
 
         const { items, cartId, clearCart } = get();
         const item = items.find((i) => i.variantId === variantId);
-        if (!item?.lineId || !cartId) return;
+        if (!item?.lineId || !cartId) return { success: false };
+        let success = false;
 
         set({ isLoading: true });
         try {
@@ -421,6 +430,7 @@ export const useCartStore = create<CartStore>()(
             set({
               items: currentItems.map((i) => (i.variantId === variantId ? { ...i, quantity } : i)),
             });
+            success = true;
           } else if (result.cartNotFound) {
             clearCart();
           }
@@ -429,12 +439,14 @@ export const useCartStore = create<CartStore>()(
         } finally {
           set({ isLoading: false });
         }
+        return { success };
       },
 
       removeItem: async (variantId) => {
         const { items, cartId, clearCart } = get();
         const item = items.find((i) => i.variantId === variantId);
-        if (!item?.lineId || !cartId) return;
+        if (!item?.lineId || !cartId) return { success: false };
+        let success = false;
 
         set({ isLoading: true });
         try {
@@ -447,6 +459,7 @@ export const useCartStore = create<CartStore>()(
             } else {
               set({ items: newItems });
             }
+            success = true;
           } else if (result.cartNotFound) {
             clearCart();
           }
@@ -456,6 +469,7 @@ export const useCartStore = create<CartStore>()(
           set({ isLoading: false });
         }
         await get().syncBundleDiscount();
+        return { success };
       },
 
       clearCart: () =>

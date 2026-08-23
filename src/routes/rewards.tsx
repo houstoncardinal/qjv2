@@ -2,8 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Gift, Sparkles, Star, Ticket, Truck } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { JsonLd } from "@/components/JsonLd";
 import { MetalSwatch } from "@/components/MetalSwatch";
 import { TIERS, POINTS_PER_DOLLAR_CREDIT } from "@/lib/rewards";
+import { SITE_URL, breadcrumbLd } from "@/lib/site";
 
 export const Route = createFileRoute("/rewards")({
   head: () => ({
@@ -21,9 +23,9 @@ export const Route = createFileRoute("/rewards")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "/rewards" },
+      { property: "og:url", content: `${SITE_URL}/rewards` },
     ],
-    links: [{ rel: "canonical", href: "/rewards" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/rewards` }],
   }),
   component: RewardsPage,
 });
@@ -107,6 +109,12 @@ function RewardsPage() {
         </section>
       </main>
       <SiteFooter />
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Home", url: "/" },
+          { name: "Rewards", url: "/rewards" },
+        ])}
+      />
     </div>
   );
 }

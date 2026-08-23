@@ -1,5 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, Check, Loader2 } from "lucide-react";
+import { submitShopifyForm } from "@/lib/shopifyForm";
+import { SUPPORT_EMAIL } from "@/lib/site";
 
 const columns: Array<{ title: string; links: Array<{ label: string; to: string; q?: string }> }> = [
   {
@@ -32,6 +35,23 @@ const columns: Array<{ title: string; links: Array<{ label: string; to: string; 
 ];
 
 export function SiteFooter() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || status === "loading") return;
+    setStatus("loading");
+    await submitShopifyForm({
+      form_type: "customer",
+      utf8: "✓",
+      "contact[email]": email,
+      "contact[tags]": "newsletter",
+    });
+    setStatus("success");
+    setEmail("");
+  };
+
   return (
     <>
       {/* Newsletter */}
@@ -47,26 +67,47 @@ export function SiteFooter() {
             Join our private list. First to see new drops, limited finishes, and members-only
             pricing. No noise — just the good stuff.
           </p>
-          <form
-            className="mx-auto mt-8 flex max-w-md items-center gap-3 border-b border-background/25 pb-2"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <input
-              type="email"
-              required
-              placeholder="Your email address"
-              aria-label="Email address"
-              className="w-full bg-transparent py-2 text-sm text-background placeholder:text-background/40 focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="flex shrink-0 items-center gap-2 bg-background px-6 py-2.5 text-[10px] uppercase tracking-[0.24em] text-foreground transition-opacity hover:opacity-85"
+          {status === "success" ? (
+            <p className="mx-auto mt-8 flex max-w-md items-center justify-center gap-2 border-b border-background/25 pb-3 text-sm text-background">
+              <Check aria-hidden="true" className="h-4 w-4 text-[var(--gold)]" />
+              You're on the list — welcome to the Inner Circle.
+            </p>
+          ) : (
+            <form
+              className="mx-auto mt-8 flex max-w-md items-center gap-3 border-b border-background/25 pb-2"
+              onSubmit={(e) => void handleSubscribe(e)}
             >
-              Subscribe <ArrowRight className="h-3 w-3" />
-            </button>
-          </form>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Your email address"
+                aria-label="Email address"
+                disabled={status === "loading"}
+                className="w-full bg-transparent py-2 text-sm text-background placeholder:text-background/40 focus:outline-none disabled:opacity-60"
+              />
+              <button
+                type="submit"
+                disabled={status === "loading"}
+                className="flex shrink-0 items-center gap-2 bg-background px-6 py-2.5 text-[10px] uppercase tracking-[0.24em] text-foreground transition-opacity hover:opacity-85 disabled:opacity-60"
+              >
+                {status === "loading" ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <>
+                    Subscribe <ArrowRight className="h-3 w-3" />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
           <p className="mt-4 text-[10px] tracking-wide text-background/40">
-            Unsubscribe anytime. No sharing, ever.
+            Unsubscribe anytime. No sharing, ever. Trouble signing up? Email{" "}
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="underline hover:text-background/70">
+              {SUPPORT_EMAIL}
+            </a>
+            .
           </p>
         </div>
       </section>

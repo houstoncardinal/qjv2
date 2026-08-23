@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Contrast, Ear, Keyboard, MousePointer2, ScanEye, Type } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SITE_URL } from "@/lib/site";
 
 export const Route = createFileRoute("/accessibility")({
   head: () => ({
@@ -20,9 +21,9 @@ export const Route = createFileRoute("/accessibility")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "/accessibility" },
+      { property: "og:url", content: `${SITE_URL}/accessibility` },
     ],
-    links: [{ rel: "canonical", href: "/accessibility" }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/accessibility` }],
   }),
   component: Accessibility,
 });
