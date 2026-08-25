@@ -286,22 +286,32 @@ function HostedAccountPanel() {
       </p>
 
       <div className="mt-7 space-y-3">
-        <Button variant="gold" size="lg" className="w-full" asChild>
-          <a href={SHOPIFY_ACCOUNT_URLS.login} target="_blank" rel="noopener noreferrer">
-            Sign in or create account <ArrowRight className="ml-2 h-4 w-4" />
-          </a>
+        <Button
+          variant="gold"
+          size="lg"
+          className="w-full"
+          onClick={() => openShopifyAccount(SHOPIFY_ACCOUNT_URLS.login)}
+        >
+          Sign in or create account <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
-        <Button variant="outline" size="lg" className="w-full" asChild>
-          <a href={SHOPIFY_ACCOUNT_URLS.orders} target="_blank" rel="noopener noreferrer">
-            Order history <ExternalLink className="ml-2 h-3.5 w-3.5" />
-          </a>
+        <Button
+          variant="outline"
+          size="lg"
+          className="w-full"
+          onClick={() => openShopifyAccount(SHOPIFY_ACCOUNT_URLS.orders)}
+        >
+          Order history <ExternalLink className="ml-2 h-3.5 w-3.5" />
         </Button>
-        <Button variant="ghost" size="lg" className="w-full" asChild>
-          <a href={SHOPIFY_ACCOUNT_URLS.account} target="_blank" rel="noopener noreferrer">
-            Profile & addresses <ExternalLink className="ml-2 h-3.5 w-3.5" />
-          </a>
+        <Button
+          variant="ghost"
+          size="lg"
+          className="w-full"
+          onClick={() => openShopifyAccount(SHOPIFY_ACCOUNT_URLS.account)}
+        >
+          Profile & addresses <ExternalLink className="ml-2 h-3.5 w-3.5" />
         </Button>
       </div>
+
 
       <p className="mt-6 border-t border-border pt-5 text-[11px] leading-relaxed text-muted-foreground">
         Accounts are hosted by Shopify at <strong>account.qureshijewelers.com</strong>, so profiles,
