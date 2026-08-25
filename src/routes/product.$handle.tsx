@@ -130,6 +130,32 @@ function Accordion({
   );
 }
 
+/** Long Shopify intros push price and options below the fold on phones, so clamp with an in-place expander. */
+function ProductSummary({ text }: { text: string }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div className="mt-5">
+      <p
+        className={cn(
+          "text-sm leading-relaxed text-muted-foreground",
+          !expanded && "line-clamp-3 lg:line-clamp-none",
+        )}
+      >
+        {text}
+      </p>
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        className="mt-2 text-[9px] uppercase tracking-[0.24em] text-foreground underline underline-offset-4 lg:hidden"
+      >
+        {expanded ? "Show less" : "Read more"}
+      </button>
+    </div>
+  );
+}
+
+
+
 function joinWithOr(items: string[]): string {
   if (items.length <= 1) return items[0] ?? "";
   if (items.length === 2) return `${items[0]} or ${items[1]}`;
@@ -436,9 +462,7 @@ function ProductDetail() {
               {node.title}
             </h1>
 
-            {summary && (
-              <p className="mt-5 text-sm leading-relaxed text-muted-foreground">{summary}</p>
-            )}
+            {summary && <ProductSummary text={summary} />}
 
             <div className="mt-7 flex flex-wrap items-baseline gap-3 border-b border-border pb-7">
               <p className="font-display text-4xl sm:text-5xl">

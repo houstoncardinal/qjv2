@@ -235,41 +235,40 @@ function Home() {
             <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent" />
           </div>
 
-          <div className="relative mx-auto w-full max-w-[1560px] px-6 py-12 sm:px-10 sm:py-14 lg:py-16">
+          <div className="relative mx-auto w-full max-w-[1560px] px-5 py-12 sm:px-10 sm:py-14 lg:py-16">
             <div className="max-w-xl">
-              <div className="mb-4 flex items-center gap-3">
-                <span className="text-[10px] uppercase tracking-[0.38em] text-[var(--gold)]">
+              <div className="mb-4 flex min-w-0 items-center gap-3">
+                <span className="text-[10px] uppercase tracking-[0.32em] text-[var(--gold)] sm:tracking-[0.38em]">
                   Qureshi Jewelers
                 </span>
-                <div className="h-px w-16 bg-[var(--gold)]/70" />
+                <div className="h-px w-10 shrink-0 bg-[var(--gold)]/70 sm:w-16" />
               </div>
 
               <h1
                 id="hero-heading"
-                className="font-display text-[2.15rem] leading-[1.08] text-foreground sm:text-[2.75rem] lg:text-[3.4rem]"
+                className="font-display text-[clamp(2rem,9vw,2.6rem)] leading-[1.1] text-balance hyphens-none text-foreground sm:text-[2.75rem] lg:text-[3.4rem]"
               >
-                Moissanite fine jewelry
-                <br />
-                <span className="italic font-normal text-foreground/85">in 18K gold.</span>
+                <span className="block">Moissanite fine jewelry</span>
+                <span className="block italic font-normal text-foreground/85">in 18K gold.</span>
               </h1>
 
-              <p className="mt-4 max-w-md text-sm leading-[1.75] text-muted-foreground sm:text-base">
+              <p className="mt-4 max-w-md text-pretty text-[0.9375rem] leading-[1.7] text-muted-foreground sm:text-base">
                 Engagement rings, tennis chains, bracelets and earrings — hand-set with{" "}
                 <span className="font-medium text-foreground">GRA-certified VVS1 moissanite</span>{" "}
                 over solid sterling silver, inspected before it ships.
               </p>
 
-              <div className="mt-7 flex flex-wrap items-center gap-4">
+              <div className="mt-7 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
                 <Link
                   to="/shop"
-                  className="group flex min-h-11 items-center gap-3 bg-foreground px-8 py-3.5 text-[10px] uppercase tracking-[0.24em] text-background transition-opacity hover:opacity-85"
+                  className="group flex min-h-12 items-center justify-center gap-3 bg-foreground px-6 py-3.5 text-center text-[10px] uppercase tracking-[0.22em] text-background transition-opacity hover:opacity-85 sm:px-8 sm:tracking-[0.24em]"
                 >
                   Discover the collection{" "}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   to="/craftsmanship"
-                  className="flex min-h-11 items-center border border-foreground/25 bg-background/70 px-8 py-3.5 text-[10px] uppercase tracking-[0.24em] text-foreground backdrop-blur-sm transition-colors hover:border-foreground lg:bg-transparent lg:backdrop-blur-none"
+                  className="flex min-h-12 items-center justify-center border border-foreground/25 bg-background/70 px-6 py-3.5 text-center text-[10px] uppercase tracking-[0.22em] text-foreground backdrop-blur-sm transition-colors hover:border-foreground sm:px-8 sm:tracking-[0.24em] lg:bg-transparent lg:backdrop-blur-none"
                 >
                   Our craftsmanship
                 </Link>
