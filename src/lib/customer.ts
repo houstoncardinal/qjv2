@@ -1,4 +1,12 @@
-import { storefrontApiRequest } from "@/lib/shopify";
+import { storefrontApiRequest, SHOPIFY_STORE_PERMANENT_DOMAIN } from "@/lib/shopify";
+
+/** Shopify-hosted customer account surfaces (always in sync with the store). */
+export const SHOPIFY_ACCOUNT_URLS = {
+  login: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/account/login`,
+  register: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/account/register`,
+  account: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/account`,
+  orders: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/account`,
+} as const;
 
 export interface CustomerOrderLine {
   title: string;
@@ -224,4 +232,25 @@ export async function fetchCustomer(token: string): Promise<CustomerProfile | nu
     defaultAddress: c.defaultAddress ?? null,
     orders,
   };
+}
+
+
+/**
+ * Detects whether this storefront token is allowed to run customer mutations
+ * (`unauthenticated_write_customers`). When it is not, the UI falls back to
+ * Shopify-hosted customer accounts so sign-in still works against the store.
+ */
+let accountsEnabledCache: boolean | null = null;
+
+export async function checkAccountsEnabled(): Promise<boolean> {
+  if (accountsEnabledCache !== null) return accountsEnabledCache;
+  try {
+    await storefrontApiRequest(LOGIN_MUTATION, {
+      input: { email: "storefront-probe@example.invalid", password: "probe-password" },
+    });
+    accountsEnabledCache = true;
+  } catch (err) {
+    accountsEnabledCache = !isScopeError(err);
+  }
+  return accountsEnabledCache;
 }
