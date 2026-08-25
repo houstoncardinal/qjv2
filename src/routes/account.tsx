@@ -130,12 +130,12 @@ function AuthPanel() {
   };
 
   return (
-    <div className="mx-auto grid max-w-[1560px] gap-10 px-6 py-12 sm:px-10 lg:grid-cols-2 lg:py-16">
-      <div>
-        <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">
+    <div className="mx-auto grid max-w-[1560px] gap-10 px-5 py-12 sm:px-10 lg:grid-cols-2 lg:py-16 [&>*]:min-w-0">
+      <div className="min-w-0">
+        <p className="text-[10px] uppercase tracking-[0.32em] text-[var(--gold)] sm:tracking-[0.42em]">
           The Qureshi Circle
         </p>
-        <h1 className="mt-4 font-display text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
+        <h1 className="mt-4 font-display text-[clamp(2rem,9vw,2.25rem)] leading-[1.08] text-balance sm:text-5xl lg:text-6xl">
           Your account, orders <span className="italic">and rewards</span>
         </h1>
         <p className="mt-5 max-w-lg text-sm leading-relaxed text-muted-foreground">
