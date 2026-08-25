@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { storefrontApiRequest, type ShopifyProduct } from "@/lib/shopify";
 import { BUNDLE_DISCOUNT_CODE, isBundleEligible } from "@/lib/bundle";
+import { useAuthStore } from "@/stores/authStore";
 
 export interface CartItem {
   lineId: string | null;
@@ -71,6 +72,15 @@ const CART_DISCOUNT_CODES_UPDATE_MUTATION = `
   }
 `;
 
+const CART_BUYER_IDENTITY_UPDATE_MUTATION = `
+  mutation cartBuyerIdentityUpdate($cartId: ID!, $buyerIdentity: CartBuyerIdentityInput!) {
+    cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyerIdentity) {
+      cart { id checkoutUrl }
+      userErrors { field message }
+    }
+  }
+`;
+
 function formatCheckoutUrl(checkoutUrl: string): string {
   try {
     const url = new URL(checkoutUrl);
@@ -91,12 +101,32 @@ function isCartNotFoundError(userErrors: UserError[]): boolean {
   );
 }
 
+/**
+ * Buyer identity for the Shopify cart. When a customer is signed in with a
+ * Shopify customer access token the order is attributed to their Shopify
+ * account and checkout is pre-filled — nothing lives only on this site.
+ */
+function buyerIdentityInput(): Record<string, unknown> | undefined {
+  const { token, email, isAuthenticated } = useAuthStore.getState();
+  const signedIn = isAuthenticated();
+  if (!signedIn && !email) return undefined;
+  const identity: Record<string, unknown> = {};
+  if (signedIn && token) identity["customerAccessToken"] = token;
+  if (email) identity["email"] = email;
+  return Object.keys(identity).length > 0 ? identity : undefined;
+}
+
 async function createShopifyCart(
   item: CartItem,
 ): Promise<{ cartId: string; checkoutUrl: string; lineId: string } | null> {
+  const buyerIdentity = buyerIdentityInput();
   const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
-    input: { lines: [{ quantity: item.quantity, merchandiseId: item.variantId }] },
+    input: {
+      lines: [{ quantity: item.quantity, merchandiseId: item.variantId }],
+      ...(buyerIdentity ? { buyerIdentity } : {}),
+    },
   });
+
 
   if (data?.data?.cartCreate?.userErrors?.length > 0) {
     console.error("Cart creation failed:", data.data.cartCreate.userErrors);
@@ -184,9 +214,11 @@ function mapLineIds(edges: LineEdge[]): Record<string, string> {
 async function createShopifyCartWithLines(
   items: CartItem[],
 ): Promise<{ cartId: string; checkoutUrl: string; lineIds: Record<string, string> } | null> {
+  const buyerIdentity = buyerIdentityInput();
   const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
     input: {
       lines: items.map((item) => ({ quantity: item.quantity, merchandiseId: item.variantId })),
+      ...(buyerIdentity ? { buyerIdentity } : {}),
     },
   });
 
@@ -262,6 +294,8 @@ interface CartStore {
   clearCart: () => void;
   syncCart: () => Promise<void>;
   getCheckoutUrl: () => string | null;
+  /** Links the live Shopify cart to the signed-in Shopify customer. */
+  attachBuyerIdentity: () => Promise<void>;
   setOpen: (open: boolean) => void;
 }
 
@@ -475,6 +509,22 @@ export const useCartStore = create<CartStore>()(
       clearCart: () =>
         set({ items: [], cartId: null, checkoutUrl: null, bundleDiscountActive: false }),
       getCheckoutUrl: () => get().checkoutUrl,
+
+      attachBuyerIdentity: async () => {
+        const { cartId } = get();
+        const buyerIdentity = buyerIdentityInput();
+        if (!cartId || !buyerIdentity) return;
+        try {
+          const data = await storefrontApiRequest(CART_BUYER_IDENTITY_UPDATE_MUTATION, {
+            cartId,
+            buyerIdentity,
+          });
+          const url = data?.data?.cartBuyerIdentityUpdate?.cart?.checkoutUrl;
+          if (url) set({ checkoutUrl: formatCheckoutUrl(url) });
+        } catch (error) {
+          console.error("Failed to attach buyer identity:", error);
+        }
+      },
 
       syncCart: async () => {
         const { cartId, isSyncing, clearCart } = get();

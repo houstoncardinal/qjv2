@@ -28,8 +28,11 @@ import {
   recoverCustomer,
   registerCustomer,
   updateCustomer,
+  checkAccountsEnabled,
+  SHOPIFY_ACCOUNT_URLS,
   type CustomerProfile,
 } from "@/lib/customer";
+import { useCartStore } from "@/stores/cartStore";
 import { summarizeRewards, questsFor, TIERS, POINTS_PER_DOLLAR_CREDIT } from "@/lib/rewards";
 import { formatMoney } from "@/lib/shopify";
 import { cn } from "@/lib/utils";
@@ -66,6 +69,11 @@ function AuthPanel() {
   const [form, setForm] = useState({ email: "", password: "", firstName: "", lastName: "" });
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const { data: accountsEnabled } = useQuery({
+    queryKey: ["accounts-enabled"],
+    queryFn: checkAccountsEnabled,
+    staleTime: Infinity,
+  });
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -92,6 +100,7 @@ function AuthPanel() {
           const login = await loginCustomer(form.email, form.password);
           if (login.token) {
             setSession(login.token, login.expiresAt, form.email);
+            await useCartStore.getState().attachBuyerIdentity();
             await queryClient.invalidateQueries({ queryKey: ["customer"] });
             toast.success("Welcome to the Qureshi Circle", { position: "top-center" });
           } else {
@@ -104,6 +113,7 @@ function AuthPanel() {
           setError(login.error ?? "Incorrect email or password.");
         } else {
           setSession(login.token, login.expiresAt, form.email);
+          await useCartStore.getState().attachBuyerIdentity();
           await queryClient.invalidateQueries({ queryKey: ["customer"] });
         }
       }
@@ -148,6 +158,9 @@ function AuthPanel() {
         </ul>
       </div>
 
+      {accountsEnabled === false ? (
+        <HostedAccountPanel />
+      ) : (
       <div className="glass-panel h-fit p-7 sm:p-9">
         <div className="flex gap-1 border-b border-border pb-4">
           {(["login", "register"] as Mode[]).map((m) => (
@@ -247,6 +260,55 @@ function AuthPanel() {
           </button>
         </form>
       </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Shown when the storefront token does not carry the customer-write scope.
+ * Sign-in then happens on Shopify's own hosted account pages, so accounts,
+ * orders and addresses all stay inside the merchant's Shopify systems.
+ */
+function HostedAccountPanel() {
+  return (
+    <div className="glass-panel h-fit p-7 sm:p-9">
+      <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--gold)]">
+        Secure Shopify accounts
+      </p>
+      <h2 className="mt-4 font-display text-2xl leading-tight">
+        Sign in with your Shopify customer account
+      </h2>
+      <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+        Your account, order history and saved addresses live inside Shopify. Sign in or create an
+        account below — you will be returned to the store and every order placed here is tied to
+        that same Shopify customer profile.
+      </p>
+
+      <div className="mt-7 space-y-3">
+        <Button variant="gold" size="lg" className="w-full" asChild>
+          <a href={SHOPIFY_ACCOUNT_URLS.login} target="_blank" rel="noopener noreferrer">
+            Sign in <ArrowRight className="ml-2 h-4 w-4" />
+          </a>
+        </Button>
+        <Button variant="outline" size="lg" className="w-full" asChild>
+          <a href={SHOPIFY_ACCOUNT_URLS.register} target="_blank" rel="noopener noreferrer">
+            Create an account
+          </a>
+        </Button>
+        <Button variant="ghost" size="lg" className="w-full" asChild>
+          <a href={SHOPIFY_ACCOUNT_URLS.orders} target="_blank" rel="noopener noreferrer">
+            Track an order <ExternalLink className="ml-2 h-3.5 w-3.5" />
+          </a>
+        </Button>
+      </div>
+
+      <p className="mt-6 border-t border-border pt-5 text-[11px] leading-relaxed text-muted-foreground">
+        Want sign-in to happen fully on this site? In Shopify admin open the Headless (or custom
+        app) storefront and enable the <strong>unauthenticated_write_customers</strong> and{" "}
+        <strong>unauthenticated_read_customers</strong> scopes — this page switches to the built-in
+        experience automatically.
+      </p>
     </div>
   );
 }
