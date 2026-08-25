@@ -258,17 +258,17 @@ function Home() {
                 over solid sterling silver, inspected before it ships.
               </p>
 
-              <div className="mt-7 flex flex-wrap items-center gap-4">
+              <div className="mt-7 grid grid-cols-1 gap-3 xs:grid-cols-2 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
                 <Link
                   to="/shop"
-                  className="group flex min-h-11 items-center gap-3 bg-foreground px-8 py-3.5 text-[10px] uppercase tracking-[0.24em] text-background transition-opacity hover:opacity-85"
+                  className="group flex min-h-12 items-center justify-center gap-3 bg-foreground px-6 py-3.5 text-center text-[10px] uppercase tracking-[0.22em] text-background transition-opacity hover:opacity-85 sm:px-8 sm:tracking-[0.24em]"
                 >
                   Discover the collection{" "}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   to="/craftsmanship"
-                  className="flex min-h-11 items-center border border-foreground/25 bg-background/70 px-8 py-3.5 text-[10px] uppercase tracking-[0.24em] text-foreground backdrop-blur-sm transition-colors hover:border-foreground lg:bg-transparent lg:backdrop-blur-none"
+                  className="flex min-h-12 items-center justify-center border border-foreground/25 bg-background/70 px-6 py-3.5 text-center text-[10px] uppercase tracking-[0.22em] text-foreground backdrop-blur-sm transition-colors hover:border-foreground sm:px-8 sm:tracking-[0.24em] lg:bg-transparent lg:backdrop-blur-none"
                 >
                   Our craftsmanship
                 </Link>
