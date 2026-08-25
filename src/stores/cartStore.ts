@@ -91,12 +91,32 @@ function isCartNotFoundError(userErrors: UserError[]): boolean {
   );
 }
 
+/**
+ * Buyer identity for the Shopify cart. When a customer is signed in with a
+ * Shopify customer access token the order is attributed to their Shopify
+ * account and checkout is pre-filled — nothing lives only on this site.
+ */
+function buyerIdentityInput(): Record<string, unknown> | undefined {
+  const { token, email, isAuthenticated } = useAuthStore.getState();
+  const signedIn = isAuthenticated();
+  if (!signedIn && !email) return undefined;
+  const identity: Record<string, unknown> = {};
+  if (signedIn && token) identity["customerAccessToken"] = token;
+  if (email) identity["email"] = email;
+  return Object.keys(identity).length > 0 ? identity : undefined;
+}
+
 async function createShopifyCart(
   item: CartItem,
 ): Promise<{ cartId: string; checkoutUrl: string; lineId: string } | null> {
+  const buyerIdentity = buyerIdentityInput();
   const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
-    input: { lines: [{ quantity: item.quantity, merchandiseId: item.variantId }] },
+    input: {
+      lines: [{ quantity: item.quantity, merchandiseId: item.variantId }],
+      ...(buyerIdentity ? { buyerIdentity } : {}),
+    },
   });
+
 
   if (data?.data?.cartCreate?.userErrors?.length > 0) {
     console.error("Cart creation failed:", data.data.cartCreate.userErrors);
