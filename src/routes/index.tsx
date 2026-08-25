@@ -258,7 +258,7 @@ function Home() {
                 over solid sterling silver, inspected before it ships.
               </p>
 
-              <div className="mt-7 grid grid-cols-1 gap-3 xs:grid-cols-2 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
+              <div className="mt-7 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
                 <Link
                   to="/shop"
                   className="group flex min-h-12 items-center justify-center gap-3 bg-foreground px-6 py-3.5 text-center text-[10px] uppercase tracking-[0.22em] text-background transition-opacity hover:opacity-85 sm:px-8 sm:tracking-[0.24em]"
