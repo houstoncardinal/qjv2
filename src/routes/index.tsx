@@ -235,25 +235,24 @@ function Home() {
             <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent" />
           </div>
 
-          <div className="relative mx-auto w-full max-w-[1560px] px-6 py-12 sm:px-10 sm:py-14 lg:py-16">
+          <div className="relative mx-auto w-full max-w-[1560px] px-5 py-12 sm:px-10 sm:py-14 lg:py-16">
             <div className="max-w-xl">
-              <div className="mb-4 flex items-center gap-3">
-                <span className="text-[10px] uppercase tracking-[0.38em] text-[var(--gold)]">
+              <div className="mb-4 flex min-w-0 items-center gap-3">
+                <span className="text-[10px] uppercase tracking-[0.32em] text-[var(--gold)] sm:tracking-[0.38em]">
                   Qureshi Jewelers
                 </span>
-                <div className="h-px w-16 bg-[var(--gold)]/70" />
+                <div className="h-px w-10 shrink-0 bg-[var(--gold)]/70 sm:w-16" />
               </div>
 
               <h1
                 id="hero-heading"
-                className="font-display text-[2.15rem] leading-[1.08] text-foreground sm:text-[2.75rem] lg:text-[3.4rem]"
+                className="font-display text-[clamp(2rem,9vw,2.6rem)] leading-[1.1] text-balance hyphens-none text-foreground sm:text-[2.75rem] lg:text-[3.4rem]"
               >
-                Moissanite fine jewelry
-                <br />
-                <span className="italic font-normal text-foreground/85">in 18K gold.</span>
+                <span className="block">Moissanite fine jewelry</span>
+                <span className="block italic font-normal text-foreground/85">in 18K gold.</span>
               </h1>
 
-              <p className="mt-4 max-w-md text-sm leading-[1.75] text-muted-foreground sm:text-base">
+              <p className="mt-4 max-w-md text-pretty text-[0.9375rem] leading-[1.7] text-muted-foreground sm:text-base">
                 Engagement rings, tennis chains, bracelets and earrings — hand-set with{" "}
                 <span className="font-medium text-foreground">GRA-certified VVS1 moissanite</span>{" "}
                 over solid sterling silver, inspected before it ships.
