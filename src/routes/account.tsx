@@ -30,6 +30,7 @@ import {
   updateCustomer,
   checkAccountsEnabled,
   SHOPIFY_ACCOUNT_URLS,
+  openShopifyAccount,
   type CustomerProfile,
 } from "@/lib/customer";
 import { useCartStore } from "@/stores/cartStore";
