@@ -436,9 +436,7 @@ function ProductDetail() {
               {node.title}
             </h1>
 
-            {summary && (
-              <p className="mt-5 text-sm leading-relaxed text-muted-foreground">{summary}</p>
-            )}
+            {summary && <ProductSummary text={summary} />}
 
             <div className="mt-7 flex flex-wrap items-baseline gap-3 border-b border-border pb-7">
               <p className="font-display text-4xl sm:text-5xl">
