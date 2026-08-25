@@ -261,3 +261,24 @@ export async function checkAccountsEnabled(): Promise<boolean> {
   }
   return accountsEnabledCache;
 }
+
+/**
+ * Opens a Shopify-hosted account URL as a real top-level navigation.
+ * Shopify sends `X-Frame-Options: DENY`, so if the app is running inside a
+ * frame (Lovable preview, an embed) an in-frame load fails with
+ * ERR_BLOCKED_BY_RESPONSE. Try a new tab first, then break out of the frame.
+ */
+export function openShopifyAccount(url: string) {
+  if (typeof window === "undefined") return;
+  const win = window.open(url, "_blank", "noopener,noreferrer");
+  if (win) return;
+  try {
+    if (window.top && window.top !== window.self) {
+      window.top.location.href = url;
+      return;
+    }
+  } catch {
+    /* cross-origin parent — fall through to same-frame navigation */
+  }
+  window.location.href = url;
+}
