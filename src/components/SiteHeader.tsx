@@ -1,17 +1,20 @@
 import { Link } from "@tanstack/react-router";
-import { Layers, Menu, Search, Sparkles, User } from "lucide-react";
+import { ChevronDown, Layers, Menu, Search, Sparkles, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CartDrawer } from "@/components/CartDrawer";
 import { useAuthStore } from "@/stores/authStore";
 import { cn } from "@/lib/utils";
 
-export const navLinks: Array<{ label: string; q?: string }> = [
+const shopLinks: Array<{ label: string; q?: string }> = [
   { label: "Shop All" },
+  { label: "Rings", q: "product_type:ring" },
   { label: "Chains", q: "product_type:necklace" },
   { label: "Bracelets", q: "product_type:bracelet" },
   { label: "Earrings", q: "product_type:earring" },
-  { label: "Rings", q: "product_type:ring" },
 ];
+
+const navLinkClass =
+  "py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground transition-colors hover:text-[var(--gold)]";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -22,7 +25,6 @@ export function SiteHeader() {
   useEffect(() => {
     setSignedIn(useAuthStore.getState().isAuthenticated());
   }, [token]);
-
 
   return (
     <header className="sticky top-0 z-50">
@@ -49,59 +51,74 @@ export function SiteHeader() {
             <Menu aria-hidden="true" className="h-5 w-5" />
           </button>
 
-
-          <Link to="/" aria-label="Qureshi Jewelers — home" className="flex shrink-0 flex-col leading-none">
-            <span className="font-display text-2xl tracking-[0.02em] text-foreground">Qureshi</span>
-            <span className="mt-0.5 text-[7px] uppercase tracking-[0.5em] text-muted-foreground">
-              Jewelers
-            </span>
+          <Link to="/" aria-label="Qureshi Jewelers — home" className="flex shrink-0 items-center">
+            <img
+              src="/QURESHIJEWELERSLOGO.png"
+              alt="Qureshi Jewelers"
+              className="h-8 w-auto sm:h-9"
+            />
           </Link>
 
-          <nav aria-label="Primary" className="mx-auto hidden items-center gap-8 lg:flex">
-            {navLinks.map((l) => (
+          <nav aria-label="Primary" className="mx-auto hidden items-center gap-9 lg:flex">
+            <div className="group relative">
               <Link
-                key={l.label}
                 to="/shop"
-                search={l.q ? { q: l.q } : {}}
-                className="py-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
+                className={cn(navLinkClass, "flex items-center gap-1.5")}
+                activeProps={{ className: "text-[var(--gold)]" }}
               >
-                {l.label}
+                Shop
+                <ChevronDown
+                  aria-hidden="true"
+                  className="h-3 w-3 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180"
+                />
               </Link>
-            ))}
+              <div className="invisible absolute left-1/2 top-full z-50 w-48 -translate-x-1/2 translate-y-1 border border-border bg-card opacity-0 shadow-lg transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                {shopLinks.map((l) => (
+                  <Link
+                    key={l.label}
+                    to="/shop"
+                    search={l.q ? { q: l.q } : {}}
+                    className="block px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground transition-colors hover:bg-secondary hover:text-[var(--gold)]"
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
             <Link
               to="/craftsmanship"
-              className="py-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
+              className={navLinkClass}
+              activeProps={{ className: "text-[var(--gold)]" }}
             >
               Our Craft
             </Link>
             <Link
               to="/about"
-              className="py-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
+              className={navLinkClass}
+              activeProps={{ className: "text-[var(--gold)]" }}
             >
               About
             </Link>
             <Link
               to="/contact"
-              className="py-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
+              className={navLinkClass}
+              activeProps={{ className: "text-[var(--gold)]" }}
             >
               Contact
             </Link>
             <Link
               to="/bundle"
-              className="flex items-center gap-1.5 py-2 text-[10px] uppercase tracking-[0.22em] text-[var(--gold)] transition-opacity hover:opacity-75"
+              className="flex items-center gap-1.5 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--gold)] transition-opacity hover:opacity-75"
               activeProps={{ className: "opacity-100" }}
             >
-              <Layers aria-hidden="true" className="h-3 w-3" /> Build a Bundle
+              <Layers aria-hidden="true" className="h-3.5 w-3.5" /> Build a Bundle
             </Link>
             <Link
               to="/rewards"
-              className="flex items-center gap-1.5 py-2 text-[10px] uppercase tracking-[0.22em] text-[var(--gold)] transition-opacity hover:opacity-75"
+              className="flex items-center gap-1.5 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--gold)] transition-opacity hover:opacity-75"
               activeProps={{ className: "opacity-100" }}
             >
-              <Sparkles aria-hidden="true" className="h-3 w-3" /> Rewards
+              <Sparkles aria-hidden="true" className="h-3.5 w-3.5" /> Rewards
             </Link>
           </nav>
 
@@ -135,13 +152,16 @@ export function SiteHeader() {
           className={cn("border-t border-border lg:hidden", open ? "block" : "hidden")}
         >
           <nav aria-label="Mobile" className="mx-auto flex max-w-[1400px] flex-col px-5 py-2">
-            {navLinks.map((l) => (
+            <p className="pb-1 pt-3 text-[9px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+              Shop
+            </p>
+            {shopLinks.map((l) => (
               <Link
                 key={l.label}
                 to="/shop"
                 search={l.q ? { q: l.q } : {}}
                 onClick={() => setOpen(false)}
-                className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
+                className="border-b border-border/60 py-3.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground"
               >
                 {l.label}
               </Link>
@@ -149,48 +169,46 @@ export function SiteHeader() {
             <Link
               to="/craftsmanship"
               onClick={() => setOpen(false)}
-              className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
+              className="border-b border-border/60 py-3.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground"
             >
               Our Craft
             </Link>
             <Link
               to="/about"
               onClick={() => setOpen(false)}
-              className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
+              className="border-b border-border/60 py-3.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground"
             >
               About
             </Link>
             <Link
               to="/contact"
               onClick={() => setOpen(false)}
-              className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
+              className="border-b border-border/60 py-3.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground"
             >
               Contact
             </Link>
             <Link
               to="/bundle"
               onClick={() => setOpen(false)}
-              className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-[var(--gold)]"
+              className="border-b border-border/60 py-3.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--gold)]"
             >
               Build a Bundle
             </Link>
             <Link
               to="/rewards"
               onClick={() => setOpen(false)}
-              className="border-b border-border/60 py-3.5 text-[10px] uppercase tracking-[0.24em] text-[var(--gold)]"
+              className="border-b border-border/60 py-3.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--gold)]"
             >
               Rewards
             </Link>
             <Link
               to="/account"
               onClick={() => setOpen(false)}
-              className="py-3.5 text-[10px] uppercase tracking-[0.24em] text-muted-foreground"
+              className="py-3.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground"
             >
               {signedIn ? "My account" : "Sign in"}
             </Link>
           </nav>
-
-
         </div>
       </div>
     </header>

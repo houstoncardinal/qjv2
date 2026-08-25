@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   Award,
@@ -24,7 +25,6 @@ import { TIERS } from "@/lib/rewards";
 import { BUNDLE_SLOTS } from "@/lib/bundle";
 import { RETURN_WINDOW_DAYS, SITE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
-
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -146,7 +146,16 @@ function ProductRow({
   );
 }
 
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+  return reduced;
+}
+
 function Home() {
+  const showHeroVideo = !usePrefersReducedMotion();
   const all = useShopifyProducts("home-all", undefined, 24);
   const rings = useShopifyProducts("home-rings", "product_type:ring", 12);
   const chains = useShopifyProducts("home-chains", "product_type:necklace", 12);
@@ -171,71 +180,109 @@ function Home() {
       <SiteHeader />
 
       <main id="main-content">
-        {/* Hero — dark, premium, editorial */}
+        {/* Hero — light, editorial, full-bleed photography */}
         <section
           aria-labelledby="hero-heading"
-          className="relative isolate flex min-h-[58vh] items-center overflow-hidden bg-[oklch(0.14_0.004_60)] text-[oklch(0.99_0.002_90)] lg:min-h-[54vh]"
+          className="relative isolate flex min-h-[40vh] items-center overflow-hidden bg-background lg:min-h-[44vh]"
         >
-          {/* Subtle metallic gradient sheen */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-50"
-            style={{
-              background:
-                "radial-gradient(ellipse 70% 55% at 0% 0%, oklch(0.72 0.085 84 / 0.18), transparent 60%), radial-gradient(ellipse 50% 45% at 100% 100%, oklch(0.72 0.006 250 / 0.12), transparent 55%), linear-gradient(155deg, oklch(0.18 0.005 60) 0%, oklch(0.14 0.004 60) 55%, oklch(0.12 0.004 60) 100%)",
-            }}
-          />
+          {/* Full-width banner photography */}
+          <div aria-hidden="true" className="absolute inset-0">
+            {/* Mobile & tablet: static banner — mostly veiled anyway, no reason to ship video weight */}
+            <img
+              src="/hero-banner.jpg"
+              alt=""
+              loading="eager"
+              fetchPriority="high"
+              className="h-full w-full object-cover object-[62%_38%] lg:hidden"
+            />
+            {/* Desktop: looping ambient footage, falls back to the static banner if the OS prefers reduced motion */}
+            {showHeroVideo ? (
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                poster="/hero-banner.jpg"
+                className="hidden h-full w-full object-cover object-[65%_58%] lg:block"
+              >
+                <source src="/herobg.mp4" type="video/mp4" />
+              </video>
+            ) : (
+              <img
+                src="/hero-banner.jpg"
+                alt=""
+                loading="eager"
+                fetchPriority="high"
+                className="hidden h-full w-full object-cover object-[68%_42%] lg:block"
+              />
+            )}
+            {/* Editorial light veil — opaque behind the copy, sheer over the photography */}
+            <div
+              className="absolute inset-0 hidden lg:block"
+              style={{
+                background:
+                  "linear-gradient(102deg, var(--background) 0%, var(--background) 32%, oklch(0.985 0.002 90 / 0.93) 42%, oklch(0.985 0.002 90 / 0.6) 54%, oklch(0.985 0.002 90 / 0.18) 68%, oklch(0.985 0.002 90 / 0) 82%)",
+              }}
+            />
+            <div
+              className="absolute inset-0 lg:hidden"
+              style={{
+                background:
+                  "linear-gradient(185deg, var(--background) 0%, var(--background) 38%, oklch(0.985 0.002 90 / 0.93) 52%, oklch(0.985 0.002 90 / 0.93) 100%)",
+              }}
+            />
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent" />
+          </div>
 
-          <div className="relative mx-auto w-full max-w-[1560px] px-6 py-20 sm:px-10 sm:py-24 lg:py-28">
-            <div className="max-w-4xl lg:max-w-5xl">
-              <header className="mb-7 flex flex-col items-start gap-3">
-                <span className="text-[10px] uppercase tracking-[0.36em] text-[oklch(0.72_0.085_84)]">
+          <div className="relative mx-auto w-full max-w-[1560px] px-6 py-12 sm:px-10 sm:py-14 lg:py-16">
+            <div className="max-w-xl">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="text-[10px] uppercase tracking-[0.38em] text-[var(--gold)]">
                   Qureshi Jewelers
                 </span>
-                <div className="h-px w-16 bg-[oklch(0.72_0.085_84)]/60" />
-              </header>
+                <div className="h-px w-16 bg-[var(--gold)]/70" />
+              </div>
 
               <h1
                 id="hero-heading"
-                className="font-display text-[3rem] leading-[1] text-[oklch(1_0_0)] sm:text-[4.2rem] md:text-[5.2rem] lg:text-[6.2rem]"
+                className="font-display text-[2.15rem] leading-[1.08] text-foreground sm:text-[2.75rem] lg:text-[3.4rem]"
               >
-                Pure Elegance
+                Moissanite fine jewelry
                 <br />
-                <span className="italic font-normal text-[oklch(0.99_0.002_90)]/90">Redefined</span>
+                <span className="italic font-normal text-foreground/85">in 18K gold.</span>
               </h1>
 
-              <p className="mt-7 max-w-xl text-base leading-[1.8] text-[oklch(0.99_0.002_90)]/70 sm:text-lg lg:max-w-2xl">
-                Masterfully crafted with{" "}
-                <span className="font-medium text-[oklch(1_0_0)]">
-                  18K Gold over S925 Sterling Silver
-                </span>
-                . GRA-certified VVS1 D-colour moissanite, hand-set and inspected before it ships.
+              <p className="mt-4 max-w-md text-sm leading-[1.75] text-muted-foreground sm:text-base">
+                Engagement rings, tennis chains, bracelets and earrings — hand-set with{" "}
+                <span className="font-medium text-foreground">GRA-certified VVS1 moissanite</span>{" "}
+                over solid sterling silver, inspected before it ships.
               </p>
 
-              <div className="mt-10 flex flex-wrap items-center gap-4">
+              <div className="mt-7 flex flex-wrap items-center gap-4">
                 <Link
                   to="/shop"
-                  className="group flex min-h-12 items-center gap-3 bg-[oklch(1_0_0)] px-9 py-4 text-[10px] uppercase tracking-[0.24em] text-[oklch(0.14_0.004_60)] transition-colors hover:bg-[oklch(0.99_0.002_90)]"
+                  className="group flex min-h-11 items-center gap-3 bg-foreground px-8 py-3.5 text-[10px] uppercase tracking-[0.24em] text-background transition-opacity hover:opacity-85"
                 >
                   Discover the collection{" "}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   to="/craftsmanship"
-                  className="flex min-h-12 items-center border border-[oklch(1_0_0_/_0.22)] px-9 py-4 text-[10px] uppercase tracking-[0.24em] text-[oklch(0.99_0.002_90)]/90 transition-colors hover:border-[oklch(1_0_0)] hover:text-[oklch(1_0_0)]"
+                  className="flex min-h-11 items-center border border-foreground/25 bg-background/70 px-8 py-3.5 text-[10px] uppercase tracking-[0.24em] text-foreground backdrop-blur-sm transition-colors hover:border-foreground lg:bg-transparent lg:backdrop-blur-none"
                 >
                   Our craftsmanship
                 </Link>
               </div>
 
-              <p className="mt-7 text-[9px] uppercase tracking-[0.24em] text-[oklch(0.99_0.002_90)]/75">
+              <p className="mt-5 text-[9px] uppercase tracking-[0.24em] text-muted-foreground">
                 Complimentary express shipping on U.S. orders over $100
               </p>
             </div>
           </div>
 
-          {/* Bottom gradient fade into the next section */}
-          <div className="absolute inset-x-0 bottom-0 h-px bg-[oklch(1_0_0_/_0.12)]" />
+          {/* Bottom hairline into the next section */}
+          <div className="absolute inset-x-0 bottom-0 h-px bg-border" />
         </section>
 
         {/* Marquee assurance strip */}
@@ -374,8 +421,8 @@ function Home() {
                 Earn points, <span className="italic">unlock metal tiers</span>
               </h2>
               <p className="mt-2.5 max-w-md text-sm leading-relaxed text-muted-foreground">
-                1 point per $1, bonus points for milestones, and 20 points equals $1 of store credit.
-                Free to join — members start with 100 points.
+                1 point per $1, bonus points for milestones, and 20 points equals $1 of store
+                credit. Free to join — members start with 100 points.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <Link
@@ -607,7 +654,6 @@ function Home() {
             </ul>
           </div>
         </section>
-
       </main>
 
       <SiteFooter />

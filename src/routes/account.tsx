@@ -107,8 +107,12 @@ function AuthPanel() {
           await queryClient.invalidateQueries({ queryKey: ["customer"] });
         }
       }
-    } catch {
-      setError("We could not reach the store right now. Please try again.");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "We could not reach the store right now. Please try again.",
+      );
     } finally {
       setBusy(false);
     }
@@ -363,7 +367,11 @@ function Dashboard({ customer, token }: { customer: CustomerProfile; token: stri
                       : "border-border text-muted-foreground",
                   )}
                 >
-                  {q.complete ? <Check className="h-3.5 w-3.5" /> : <span className="text-[10px]">·</span>}
+                  {q.complete ? (
+                    <Check className="h-3.5 w-3.5" />
+                  ) : (
+                    <span className="text-[10px]">·</span>
+                  )}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-[11px] uppercase tracking-[0.18em] text-foreground">
@@ -391,7 +399,10 @@ function Dashboard({ customer, token }: { customer: CustomerProfile; token: stri
           <h2 className="font-display text-3xl">Order history</h2>
           <span className="ml-auto text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
             {summary.orderCount} order{summary.orderCount === 1 ? "" : "s"} ·{" "}
-            {formatMoney(summary.lifetimeSpend, customer.orders[0]?.totalPrice.currencyCode ?? "USD")}{" "}
+            {formatMoney(
+              summary.lifetimeSpend,
+              customer.orders[0]?.totalPrice.currencyCode ?? "USD",
+            )}{" "}
             lifetime
           </span>
         </div>
@@ -411,17 +422,19 @@ function Dashboard({ customer, token }: { customer: CustomerProfile; token: stri
             {customer.orders.map((o) => (
               <li key={o.id} className="grid gap-5 bg-card p-6 sm:grid-cols-[auto_1fr_auto]">
                 <div className="flex -space-x-3">
-                  {o.lineItems.slice(0, 3).map((l, i) =>
-                    l.imageUrl ? (
-                      <img
-                        key={`${o.id}-${i}`}
-                        src={l.imageUrl}
-                        alt={l.title}
-                        loading="lazy"
-                        className="h-16 w-16 border-2 border-card object-cover"
-                      />
-                    ) : null,
-                  )}
+                  {o.lineItems
+                    .slice(0, 3)
+                    .map((l, i) =>
+                      l.imageUrl ? (
+                        <img
+                          key={`${o.id}-${i}`}
+                          src={l.imageUrl}
+                          alt={l.title}
+                          loading="lazy"
+                          className="h-16 w-16 border-2 border-card object-cover"
+                        />
+                      ) : null,
+                    )}
                 </div>
                 <div className="min-w-0">
                   <p className="text-[11px] uppercase tracking-[0.22em] text-foreground">
