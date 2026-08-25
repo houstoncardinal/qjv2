@@ -1,12 +1,19 @@
-import { storefrontApiRequest, SHOPIFY_STORE_PERMANENT_DOMAIN } from "@/lib/shopify";
+import { storefrontApiRequest } from "@/lib/shopify";
 
-/** Shopify-hosted customer account surfaces (always in sync with the store). */
+/**
+ * Shopify-hosted customer account surfaces.
+ * The store uses Shopify's new customer accounts on its own subdomain, so every
+ * hosted link points there (passwordless login also covers registration).
+ */
+export const SHOPIFY_ACCOUNTS_ORIGIN = "https://account.qureshijewelers.com";
+
 export const SHOPIFY_ACCOUNT_URLS = {
-  login: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/account/login`,
-  register: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/account/register`,
-  account: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/account`,
-  orders: `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/account`,
+  login: SHOPIFY_ACCOUNTS_ORIGIN,
+  register: SHOPIFY_ACCOUNTS_ORIGIN,
+  account: `${SHOPIFY_ACCOUNTS_ORIGIN}/profile`,
+  orders: `${SHOPIFY_ACCOUNTS_ORIGIN}/orders`,
 } as const;
+
 
 export interface CustomerOrderLine {
   title: string;

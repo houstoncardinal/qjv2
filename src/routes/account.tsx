@@ -277,38 +277,37 @@ function HostedAccountPanel() {
         Secure Shopify accounts
       </p>
       <h2 className="mt-4 font-display text-2xl leading-tight">
-        Sign in with your Shopify customer account
+        Sign in at account.qureshijewelers.com
       </h2>
       <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-        Your account, order history and saved addresses live inside Shopify. Sign in or create an
-        account below — you will be returned to the store and every order placed here is tied to
-        that same Shopify customer profile.
+        Your account, order history and saved addresses live in your Shopify customer account.
+        Enter your email and Shopify sends a one-time code — no password needed, and new customers
+        are created automatically. Every order placed here is tied to that same profile.
       </p>
 
       <div className="mt-7 space-y-3">
         <Button variant="gold" size="lg" className="w-full" asChild>
           <a href={SHOPIFY_ACCOUNT_URLS.login} target="_blank" rel="noopener noreferrer">
-            Sign in <ArrowRight className="ml-2 h-4 w-4" />
+            Sign in or create account <ArrowRight className="ml-2 h-4 w-4" />
           </a>
         </Button>
         <Button variant="outline" size="lg" className="w-full" asChild>
-          <a href={SHOPIFY_ACCOUNT_URLS.register} target="_blank" rel="noopener noreferrer">
-            Create an account
+          <a href={SHOPIFY_ACCOUNT_URLS.orders} target="_blank" rel="noopener noreferrer">
+            Order history <ExternalLink className="ml-2 h-3.5 w-3.5" />
           </a>
         </Button>
         <Button variant="ghost" size="lg" className="w-full" asChild>
-          <a href={SHOPIFY_ACCOUNT_URLS.orders} target="_blank" rel="noopener noreferrer">
-            Track an order <ExternalLink className="ml-2 h-3.5 w-3.5" />
+          <a href={SHOPIFY_ACCOUNT_URLS.account} target="_blank" rel="noopener noreferrer">
+            Profile & addresses <ExternalLink className="ml-2 h-3.5 w-3.5" />
           </a>
         </Button>
       </div>
 
       <p className="mt-6 border-t border-border pt-5 text-[11px] leading-relaxed text-muted-foreground">
-        Want sign-in to happen fully on this site? In Shopify admin open the Headless (or custom
-        app) storefront and enable the <strong>unauthenticated_write_customers</strong> and{" "}
-        <strong>unauthenticated_read_customers</strong> scopes — this page switches to the built-in
-        experience automatically.
+        Accounts are hosted by Shopify at <strong>account.qureshijewelers.com</strong>, so profiles,
+        orders and addresses always stay in sync with your store.
       </p>
+
     </div>
   );
 }
