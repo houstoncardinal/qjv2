@@ -14,7 +14,6 @@ export const SHOPIFY_ACCOUNT_URLS = {
   orders: `${SHOPIFY_ACCOUNTS_ORIGIN}/orders`,
 } as const;
 
-
 export interface CustomerOrderLine {
   title: string;
   quantity: number;
@@ -46,6 +45,11 @@ export interface CustomerProfile {
   createdAt: string;
   defaultAddress: CustomerAddress | null;
   orders: CustomerOrder[];
+  /** Set by the rewards-sync webhook (custom.rewards_* metafields). Null until the
+   *  storefront-visible metafield definitions exist and the first order syncs. */
+  shopifyRewardsTier: string | null;
+  shopifyRewardsLifetimePoints: number | null;
+  shopifyRewardsAvailablePoints: number | null;
 }
 
 export interface ShopifyUserError {
@@ -63,6 +67,9 @@ const CUSTOMER_QUERY = `
       phone
       createdAt
       defaultAddress { id formatted }
+      shopifyRewardsTier: metafield(namespace: "custom", key: "rewards_tier") { value }
+      shopifyRewardsLifetimePoints: metafield(namespace: "custom", key: "rewards_lifetime_points") { value }
+      shopifyRewardsAvailablePoints: metafield(namespace: "custom", key: "rewards_available_points") { value }
       orders(first: 30, sortKey: PROCESSED_AT, reverse: true) {
         edges {
           node {
@@ -148,7 +155,6 @@ function firstError(errors: ShopifyUserError[] | undefined): string | null {
   return errors && errors.length > 0 ? (errors[0]?.message ?? "Something went wrong.") : null;
 }
 
-
 export async function loginCustomer(email: string, password: string) {
   const data = await customerRequest(LOGIN_MUTATION, { input: { email, password } });
   const payload = data?.data?.customerAccessTokenCreate;
@@ -209,7 +215,11 @@ export async function fetchCustomer(token: string): Promise<CustomerProfile | nu
         totalPrice: { amount: string; currencyCode: string };
         lineItems: {
           edges: Array<{
-            node: { title: string; quantity: number; variant: { image: { url: string } | null } | null };
+            node: {
+              title: string;
+              quantity: number;
+              variant: { image: { url: string } | null } | null;
+            };
           }>;
         };
       };
@@ -229,6 +239,9 @@ export async function fetchCustomer(token: string): Promise<CustomerProfile | nu
     }),
   );
 
+  const lifetimeRaw = c.shopifyRewardsLifetimePoints?.value;
+  const availableRaw = c.shopifyRewardsAvailablePoints?.value;
+
   return {
     id: c.id,
     firstName: c.firstName,
@@ -238,9 +251,11 @@ export async function fetchCustomer(token: string): Promise<CustomerProfile | nu
     createdAt: c.createdAt,
     defaultAddress: c.defaultAddress ?? null,
     orders,
+    shopifyRewardsTier: c.shopifyRewardsTier?.value ?? null,
+    shopifyRewardsLifetimePoints: lifetimeRaw ? parseInt(lifetimeRaw, 10) : null,
+    shopifyRewardsAvailablePoints: availableRaw ? parseInt(availableRaw, 10) : null,
   };
 }
-
 
 /**
  * Detects whether this storefront token is allowed to run customer mutations

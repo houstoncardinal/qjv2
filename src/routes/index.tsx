@@ -19,11 +19,12 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
 import { MetalSwatch } from "@/components/MetalSwatch";
+import { JsonLd } from "@/components/JsonLd";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
 import { TIERS } from "@/lib/rewards";
 import { BUNDLE_SLOTS } from "@/lib/bundle";
-import { RETURN_WINDOW_DAYS, SITE_URL } from "@/lib/site";
+import { RETURN_WINDOW_DAYS, SITE_URL, itemListLd } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -656,6 +657,7 @@ function Home() {
       </main>
 
       <SiteFooter />
+      {allProducts.length > 0 && <JsonLd data={itemListLd(allProducts.slice(0, 24))} />}
     </div>
   );
 }

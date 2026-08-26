@@ -1,3 +1,5 @@
+import type { ShopifyProduct } from "@/lib/shopify";
+
 /**
  * Single source of truth for brand, policy and SEO facts.
  * Policy numbers live here so page copy, structured data and the cart
@@ -19,8 +21,11 @@ export const SITE_DESCRIPTION =
 export const SITE_OG_IMAGE =
   "https://cdn.shopify.com/s/files/1/0729/6385/0319/files/H94a9b18aa5c14616b6bd0e4e358b4e76h-1781937290160-ku8jna.png?v=1786995060";
 
+/** Wordmark used for the Organization's structured-data `logo` (Google Knowledge Panel, etc). */
+export const SITE_LOGO = `${SITE_URL}/QURESHIJEWELERSLOGO.png`;
+
 export const SUPPORT_EMAIL = "care@qureshijewelers.com";
-export const SUPPORT_PHONE = "+1 (312) 555-0184";
+export const SUPPORT_PHONE = "+1 (281) 901-7016";
 export const SUPPORT_HOURS = "Monday–Friday, 9am–6pm CT";
 
 /** Free standard shipping across the United States above this order subtotal (USD). */
@@ -44,6 +49,8 @@ export const ORGANIZATION_LD = {
   name: SITE_NAME,
   description: SITE_DESCRIPTION,
   url: SITE_URL,
+  logo: SITE_LOGO,
+  image: SITE_OG_IMAGE,
   email: SUPPORT_EMAIL,
   telephone: SUPPORT_PHONE,
   priceRange: "$$-$$$",
@@ -54,8 +61,16 @@ export const ORGANIZATION_LD = {
   address: {
     "@type": "PostalAddress",
     addressCountry: "US",
-    addressRegion: "IL",
-    addressLocality: "Chicago",
+    addressRegion: "TX",
+    addressLocality: "Houston",
+  },
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "customer service",
+    email: SUPPORT_EMAIL,
+    telephone: SUPPORT_PHONE,
+    areaServed: "US",
+    availableLanguage: "English",
   },
   makesOffer: {
     "@type": "Offer",
@@ -103,6 +118,43 @@ export function faqLd(items: Array<{ q: string; a: string }>) {
       "@type": "Question",
       name: i.q,
       acceptedAnswer: { "@type": "Answer", text: i.a },
+    })),
+  };
+}
+
+/** A crawlable, ranked list of products for a listing/grid page (shop, home category rows). */
+export function itemListLd(products: ShopifyProduct[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: products.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${SITE_URL}/product/${p.node.handle}`,
+      name: p.node.title,
+      image: p.node.images.edges[0]?.node.url,
+    })),
+  };
+}
+
+/** A sequential process or set of steps — the bundle builder flow, the craftsmanship process. */
+export function howToLd(input: {
+  name: string;
+  description: string;
+  steps: Array<{ name: string; text: string; url?: string; image?: string }>;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: input.name,
+    description: input.description,
+    step: input.steps.map((s, i) => ({
+      "@type": "HowToStep",
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+      ...(s.url ? { url: s.url } : {}),
+      ...(s.image ? { image: s.image } : {}),
     })),
   };
 }

@@ -7,6 +7,32 @@ import { MetalSwatch } from "@/components/MetalSwatch";
 import { TIERS, POINTS_PER_DOLLAR_CREDIT } from "@/lib/rewards";
 import { SITE_URL, breadcrumbLd } from "@/lib/site";
 
+/**
+ * Google's loyalty-program structured data (schema.org MemberProgram / MemberProgramTier) —
+ * newer and less common than Product/FAQPage markup, so validate with the Rich Results Test
+ * after launch. Tier requirements are points-based, matching how membership actually works here
+ * (no paid membership fee).
+ */
+function memberProgramLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "MemberProgram",
+    name: "The Qureshi Circle",
+    description:
+      "Free loyalty program: earn points on every order and unlock metal-tier benefits — faster shipping, complimentary resizing and store credit.",
+    hasTiers: TIERS.map((t) => ({
+      "@type": "MemberProgramTier",
+      name: t.name,
+      description: `${t.perks.join(" ")} Redeemable at ${POINTS_PER_DOLLAR_CREDIT} points = $1 credit.`,
+      hasTierBenefit: [
+        "TierBenefitLoyaltyPoints",
+        ...(t.key !== "silver" ? ["TierBenefitLoyaltyShipping"] : []),
+      ],
+      hasTierRequirement: `${t.threshold}+ lifetime points (${t.multiplier}× earning rate)`,
+    })),
+  };
+}
+
 export const Route = createFileRoute("/rewards")({
   head: () => ({
     meta: [
@@ -93,7 +119,10 @@ function RewardsPage() {
                   </p>
                   <ul className="mt-5 space-y-2.5">
                     {t.perks.map((p) => (
-                      <li key={p} className="flex items-start gap-2 text-[11px] text-muted-foreground">
+                      <li
+                        key={p}
+                        className="flex items-start gap-2 text-[11px] text-muted-foreground"
+                      >
                         <Ticket className="mt-0.5 h-3 w-3 shrink-0 text-[var(--gold)]" /> {p}
                       </li>
                     ))}
@@ -109,6 +138,7 @@ function RewardsPage() {
         </section>
       </main>
       <SiteFooter />
+      <JsonLd data={memberProgramLd()} />
       <JsonLd
         data={breadcrumbLd([
           { name: "Home", url: "/" },

@@ -34,7 +34,13 @@ import {
   type CustomerProfile,
 } from "@/lib/customer";
 import { useCartStore } from "@/stores/cartStore";
-import { summarizeRewards, questsFor, TIERS, POINTS_PER_DOLLAR_CREDIT } from "@/lib/rewards";
+import {
+  summarizeRewards,
+  withShopifySync,
+  questsFor,
+  TIERS,
+  POINTS_PER_DOLLAR_CREDIT,
+} from "@/lib/rewards";
 import { formatMoney } from "@/lib/shopify";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -162,105 +168,105 @@ function AuthPanel() {
       {accountsEnabled === false ? (
         <HostedAccountPanel />
       ) : (
-      <div className="glass-panel h-fit p-7 sm:p-9">
-        <div className="flex gap-1 border-b border-border pb-4">
-          {(["login", "register"] as Mode[]).map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => {
-                setMode(m);
-                setError(null);
-              }}
-              className={cn(
-                "min-h-11 px-5 text-[10px] uppercase tracking-[0.24em] transition-colors",
-                mode === m ? "text-foreground" : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {m === "login" ? "Sign in" : "Create account"}
-            </button>
-          ))}
-        </div>
-
-        <form onSubmit={submit} className="mt-6 space-y-5">
-          {mode === "register" && (
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="firstName" className="text-[9px] uppercase tracking-[0.24em]">
-                  First name
-                </Label>
-                <Input id="firstName" value={form.firstName} onChange={set("firstName")} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName" className="text-[9px] uppercase tracking-[0.24em]">
-                  Last name
-                </Label>
-                <Input id="lastName" value={form.lastName} onChange={set("lastName")} />
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-[9px] uppercase tracking-[0.24em]">
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              required
-              autoComplete="email"
-              value={form.email}
-              onChange={set("email")}
-            />
+        <div className="glass-panel h-fit p-7 sm:p-9">
+          <div className="flex gap-1 border-b border-border pb-4">
+            {(["login", "register"] as Mode[]).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => {
+                  setMode(m);
+                  setError(null);
+                }}
+                className={cn(
+                  "min-h-11 px-5 text-[10px] uppercase tracking-[0.24em] transition-colors",
+                  mode === m ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {m === "login" ? "Sign in" : "Create account"}
+              </button>
+            ))}
           </div>
 
-          {mode !== "recover" && (
+          <form onSubmit={submit} className="mt-6 space-y-5">
+            {mode === "register" && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName" className="text-[9px] uppercase tracking-[0.24em]">
+                    First name
+                  </Label>
+                  <Input id="firstName" value={form.firstName} onChange={set("firstName")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName" className="text-[9px] uppercase tracking-[0.24em]">
+                    Last name
+                  </Label>
+                  <Input id="lastName" value={form.lastName} onChange={set("lastName")} />
+                </div>
+              </div>
+            )}
+
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-[9px] uppercase tracking-[0.24em]">
-                Password
+              <Label htmlFor="email" className="text-[9px] uppercase tracking-[0.24em]">
+                Email
               </Label>
               <Input
-                id="password"
-                type="password"
+                id="email"
+                type="email"
                 required
-                minLength={5}
-                autoComplete={mode === "login" ? "current-password" : "new-password"}
-                value={form.password}
-                onChange={set("password")}
+                autoComplete="email"
+                value={form.email}
+                onChange={set("email")}
               />
             </div>
-          )}
 
-          {error && (
-            <p role="alert" className="text-[11px] text-destructive">
-              {error}
-            </p>
-          )}
-
-          <Button type="submit" variant="gold" size="lg" className="w-full" disabled={busy}>
-            {busy ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : mode === "login" ? (
-              "Sign in"
-            ) : mode === "register" ? (
-              "Create account · +100 pts"
-            ) : (
-              "Send reset link"
+            {mode !== "recover" && (
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-[9px] uppercase tracking-[0.24em]">
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  minLength={5}
+                  autoComplete={mode === "login" ? "current-password" : "new-password"}
+                  value={form.password}
+                  onChange={set("password")}
+                />
+              </div>
             )}
-          </Button>
 
-          <button
-            type="button"
-            onClick={() => {
-              setMode(mode === "recover" ? "login" : "recover");
-              setError(null);
-            }}
-            className="w-full text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-foreground"
-          >
-            {mode === "recover" ? "Back to sign in" : "Forgot your password?"}
-          </button>
-        </form>
-      </div>
+            {error && (
+              <p role="alert" className="text-[11px] text-destructive">
+                {error}
+              </p>
+            )}
+
+            <Button type="submit" variant="gold" size="lg" className="w-full" disabled={busy}>
+              {busy ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : mode === "login" ? (
+                "Sign in"
+              ) : mode === "register" ? (
+                "Create account · +100 pts"
+              ) : (
+                "Send reset link"
+              )}
+            </Button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setMode(mode === "recover" ? "login" : "recover");
+                setError(null);
+              }}
+              className="w-full text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {mode === "recover" ? "Back to sign in" : "Forgot your password?"}
+            </button>
+          </form>
+        </div>
       )}
     </div>
   );
@@ -281,9 +287,9 @@ function HostedAccountPanel() {
         Sign in at account.qureshijewelers.com
       </h2>
       <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-        Your account, order history and saved addresses live in your Shopify customer account.
-        Enter your email and Shopify sends a one-time code — no password needed, and new customers
-        are created automatically. Every order placed here is tied to that same profile.
+        Your account, order history and saved addresses live in your Shopify customer account. Enter
+        your email and Shopify sends a one-time code — no password needed, and new customers are
+        created automatically. Every order placed here is tied to that same profile.
       </p>
 
       <div className="mt-7 space-y-3">
@@ -313,12 +319,10 @@ function HostedAccountPanel() {
         </Button>
       </div>
 
-
       <p className="mt-6 border-t border-border pt-5 text-[11px] leading-relaxed text-muted-foreground">
         Accounts are hosted by Shopify at <strong>account.qureshijewelers.com</strong>, so profiles,
         orders and addresses always stay in sync with your store.
       </p>
-
     </div>
   );
 }
@@ -326,7 +330,19 @@ function HostedAccountPanel() {
 function Dashboard({ customer, token }: { customer: CustomerProfile; token: string }) {
   const clearSession = useAuthStore((s) => s.clearSession);
   const queryClient = useQueryClient();
-  const summary = summarizeRewards(customer.orders);
+  const computedSummary = summarizeRewards(customer.orders);
+  const summary =
+    customer.shopifyRewardsLifetimePoints !== null &&
+    customer.shopifyRewardsAvailablePoints !== null
+      ? withShopifySync(
+          computedSummary,
+          customer.shopifyRewardsLifetimePoints,
+          customer.shopifyRewardsAvailablePoints,
+        )
+      : computedSummary;
+  const shopifySynced =
+    customer.shopifyRewardsLifetimePoints !== null &&
+    customer.shopifyRewardsAvailablePoints !== null;
   const quests = questsFor(summary, true);
   const [profile, setProfile] = useState({
     firstName: customer.firstName ?? "",
@@ -350,6 +366,43 @@ function Dashboard({ customer, token }: { customer: CustomerProfile; token: stri
     clearSession();
     queryClient.removeQueries({ queryKey: ["customer"] });
     toast.success("Signed out", { position: "top-center" });
+  };
+
+  const applyRewardsCode = useCartStore((s) => s.applyRewardsCode);
+  const [redeeming, setRedeeming] = useState(false);
+  const [redeemResult, setRedeemResult] = useState<{ code: string; dollarsOff: number } | null>(
+    null,
+  );
+
+  const redeemPoints = async () => {
+    setRedeeming(true);
+    try {
+      const res = await fetch("/api/rewards/redeem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customerAccessToken: token }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error ?? "Could not redeem points right now.", {
+          position: "top-center",
+        });
+        return;
+      }
+      setRedeemResult({ code: data.code, dollarsOff: data.dollarsOff });
+      const applied = await applyRewardsCode(data.code);
+      toast.success(
+        applied.success
+          ? `$${data.dollarsOff} credit applied to your cart`
+          : `Code ${data.code} is ready — enter it at checkout for $${data.dollarsOff} off`,
+        { position: "top-center" },
+      );
+      await queryClient.invalidateQueries({ queryKey: ["customer"] });
+    } catch {
+      toast.error("Could not redeem points right now.", { position: "top-center" });
+    } finally {
+      setRedeeming(false);
+    }
   };
 
   return (
@@ -382,7 +435,7 @@ function Dashboard({ customer, token }: { customer: CustomerProfile; token: stri
             {summary.lifetimePoints.toLocaleString()}
           </p>
           <p className="mt-2 text-[11px] uppercase tracking-[0.22em] text-background/60">
-            Worth ${summary.creditValue} in store credit · {POINTS_PER_DOLLAR_CREDIT} pts = $1
+            Lifetime points earned · {POINTS_PER_DOLLAR_CREDIT} pts = $1 credit
           </p>
 
           <div className="mt-8">
@@ -413,6 +466,53 @@ function Dashboard({ customer, token }: { customer: CustomerProfile; token: stri
               </li>
             ))}
           </ul>
+
+          <div className="mt-8 border-t border-background/15 pt-6">
+            {redeemResult ? (
+              <div className="bg-background/10 p-4">
+                <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--gold)]">
+                  Redeemed
+                </p>
+                <p className="mt-2 text-sm text-background">
+                  ${redeemResult.dollarsOff} credit — code{" "}
+                  <span className="font-mono">{redeemResult.code}</span>
+                </p>
+                <p className="mt-1.5 text-[11px] text-background/60">
+                  Applied to your cart automatically — it also works entered manually at checkout.
+                </p>
+              </div>
+            ) : shopifySynced ? (
+              <>
+                <div className="flex items-baseline justify-between text-[10px] uppercase tracking-[0.22em] text-background/70">
+                  <span>Available to redeem</span>
+                  <span className="text-background">${summary.creditValue} credit</span>
+                </div>
+                <Button
+                  variant="gold"
+                  className="mt-3 w-full"
+                  disabled={summary.availablePoints < POINTS_PER_DOLLAR_CREDIT || redeeming}
+                  onClick={redeemPoints}
+                >
+                  {redeeming ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    `Redeem ${summary.availablePoints} pts for $${summary.creditValue}`
+                  )}
+                </Button>
+                {summary.availablePoints < POINTS_PER_DOLLAR_CREDIT && (
+                  <p className="mt-2 text-[11px] text-background/50">
+                    Earn {POINTS_PER_DOLLAR_CREDIT - summary.availablePoints} more point
+                    {POINTS_PER_DOLLAR_CREDIT - summary.availablePoints === 1 ? "" : "s"} to redeem
+                    your first $1.
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="text-[11px] text-background/50">
+                Redemption unlocks once your rewards balance finishes syncing with Shopify.
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="bg-card p-8 sm:p-10">

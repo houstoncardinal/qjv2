@@ -5,8 +5,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
 import { JsonLd } from "@/components/JsonLd";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
-import { SITE_URL, breadcrumbLd } from "@/lib/site";
+import { fetchProducts } from "@/lib/shopify";
+import { SITE_URL, breadcrumbLd, itemListLd } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 type ShopSearch = { q?: string | undefined };
@@ -64,20 +64,6 @@ export const Route = createFileRoute("/shop")({
   component: Shop,
 });
 
-function itemListLd(products: ShopifyProduct[]) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    itemListElement: products.map((p, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      url: `${SITE_URL}/product/${p.node.handle}`,
-      name: p.node.title,
-      image: p.node.images.edges[0]?.node.url,
-    })),
-  };
-}
-
 function Shop() {
   const { q } = Route.useSearch();
   const navigate = useNavigate({ from: "/shop" });
@@ -125,7 +111,6 @@ function Shop() {
         </div>
 
         <div className="mt-6 hairline" />
-
 
         <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {isLoading &&

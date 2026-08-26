@@ -71,26 +71,25 @@ export const POINTS_PER_DOLLAR = 1;
 export const POINTS_PER_DOLLAR_CREDIT = 20;
 
 export interface RewardsSummary {
+  /** Cumulative points ever earned — never decreases on redemption, drives tier standing. */
   lifetimePoints: number;
+  /** Spendable balance — lifetime points minus whatever has already been redeemed for credit. */
+  availablePoints: number;
   lifetimeSpend: number;
   orderCount: number;
   tier: RewardTier;
   nextTier: RewardTier | null;
   pointsToNextTier: number;
   tierProgress: number; // 0..1
-  creditValue: number; // redeemable USD
+  creditValue: number; // availablePoints converted to redeemable USD
 }
 
 export function tierForPoints(points: number): RewardTier {
   return [...TIERS].reverse().find((t) => points >= t.threshold) ?? (TIERS[0] as RewardTier);
 }
 
-export function summarizeRewards(orders: CustomerOrder[]): RewardsSummary {
-  const paid = orders.filter((o) => (o.financialStatus ?? "").toUpperCase() !== "REFUNDED");
-  const lifetimeSpend = paid.reduce((sum, o) => sum + parseFloat(o.totalPrice.amount || "0"), 0);
-  const basePoints = Math.floor(lifetimeSpend * POINTS_PER_DOLLAR);
-  const tier = tierForPoints(basePoints);
-  const lifetimePoints = Math.floor(basePoints * tier.multiplier);
+/** Derives tier + next-tier progress from a final lifetime-points balance. */
+function progressFromPoints(lifetimePoints: number) {
   const currentTier = tierForPoints(lifetimePoints);
   const idx = TIERS.findIndex((t) => t.key === currentTier.key);
   const nextTier = TIERS[idx + 1] ?? null;
@@ -98,9 +97,36 @@ export function summarizeRewards(orders: CustomerOrder[]): RewardsSummary {
   const tierProgress = nextTier
     ? Math.min(1, Math.max(0, (lifetimePoints - currentTier.threshold) / span))
     : 1;
+  return { tier: currentTier, nextTier, tierProgress };
+}
+
+/**
+ * The single source of truth for turning lifetime spend into a tier + points balance.
+ * Used both client-side (from the customer's Storefront order history) and server-side
+ * (from Shopify's authoritative `Customer.amountSpent`, in the rewards-sync webhook), so
+ * the two can never drift apart.
+ */
+export function computeTierAndPoints(lifetimeSpend: number) {
+  const basePoints = Math.floor(lifetimeSpend * POINTS_PER_DOLLAR);
+  const provisionalTier = tierForPoints(basePoints);
+  const lifetimePoints = Math.floor(basePoints * provisionalTier.multiplier);
+  return { lifetimePoints, ...progressFromPoints(lifetimePoints) };
+}
+
+export function summarizeRewards(orders: CustomerOrder[]): RewardsSummary {
+  const paid = orders.filter((o) => (o.financialStatus ?? "").toUpperCase() !== "REFUNDED");
+  const lifetimeSpend = paid.reduce((sum, o) => sum + parseFloat(o.totalPrice.amount || "0"), 0);
+  const {
+    lifetimePoints,
+    tier: currentTier,
+    nextTier,
+    tierProgress,
+  } = computeTierAndPoints(lifetimeSpend);
 
   return {
     lifetimePoints,
+    // No redemption history to subtract before Shopify sync exists — assume nothing spent yet.
+    availablePoints: lifetimePoints,
     lifetimeSpend,
     orderCount: paid.length,
     tier: currentTier,
@@ -108,6 +134,31 @@ export function summarizeRewards(orders: CustomerOrder[]): RewardsSummary {
     pointsToNextTier: nextTier ? Math.max(0, nextTier.threshold - lifetimePoints) : 0,
     tierProgress,
     creditValue: Math.floor(lifetimePoints / POINTS_PER_DOLLAR_CREDIT),
+  };
+}
+
+/**
+ * Overlays Shopify's own synced points (from the rewards-sync webhook's customer metafields)
+ * onto a client-computed summary, once available — Shopify's figures become authoritative since
+ * they reflect `Customer.amountSpent` plus any redemptions already spent toward past orders.
+ * Tier standing is driven by lifetime points (never decreases); the redeemable dollar value is
+ * driven by available points (decreases as credit is redeemed).
+ */
+export function withShopifySync(
+  summary: RewardsSummary,
+  shopifyLifetimePoints: number,
+  shopifyAvailablePoints: number,
+): RewardsSummary {
+  const { tier, nextTier, tierProgress } = progressFromPoints(shopifyLifetimePoints);
+  return {
+    ...summary,
+    lifetimePoints: shopifyLifetimePoints,
+    availablePoints: shopifyAvailablePoints,
+    tier,
+    nextTier,
+    pointsToNextTier: nextTier ? Math.max(0, nextTier.threshold - shopifyLifetimePoints) : 0,
+    tierProgress,
+    creditValue: Math.floor(shopifyAvailablePoints / POINTS_PER_DOLLAR_CREDIT),
   };
 }
 

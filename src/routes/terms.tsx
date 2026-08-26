@@ -112,7 +112,7 @@ const sections: Array<{ heading: string; body: string[] }> = [
   {
     heading: "10. Liability and governing law",
     body: [
-      "To the fullest extent permitted by law, our liability for any claim relating to a product or order is limited to the amount you paid for it. These terms are governed by the laws of the State of Illinois, United States, without regard to conflict of law rules.",
+      "To the fullest extent permitted by law, our liability for any claim relating to a product or order is limited to the amount you paid for it. These terms are governed by the laws of the State of Texas, United States, without regard to conflict of law rules.",
     ],
   },
 ];
@@ -136,7 +136,9 @@ function TermsPage() {
             <div className="mt-8 grid gap-px border border-border bg-border sm:grid-cols-2">
               <div className="bg-card p-6">
                 <Truck aria-hidden="true" className="h-5 w-5 text-[var(--gold)]" />
-                <h2 className="mt-3 font-display text-xl">Free U.S. shipping over ${FREE_SHIPPING_MINIMUM}</h2>
+                <h2 className="mt-3 font-display text-xl">
+                  Free U.S. shipping over ${FREE_SHIPPING_MINIMUM}
+                </h2>
                 <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
                   Insured and tracked on every order, dispatched within one business day.
                 </p>
@@ -155,10 +157,16 @@ function TermsPage() {
 
         <article className="mx-auto max-w-[900px] px-6 py-14 sm:px-10">
           {sections.map((s) => (
-            <section key={s.heading} className="mb-10 border-t border-border pt-7 first:border-0 first:pt-0">
+            <section
+              key={s.heading}
+              className="mb-10 border-t border-border pt-7 first:border-0 first:pt-0"
+            >
               <h2 className="font-display text-2xl">{s.heading}</h2>
               {s.body.map((p) => (
-                <p key={p.slice(0, 30)} className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                <p
+                  key={p.slice(0, 30)}
+                  className="mt-4 text-sm leading-relaxed text-muted-foreground"
+                >
                   {p}
                 </p>
               ))}

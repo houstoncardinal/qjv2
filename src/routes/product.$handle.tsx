@@ -154,8 +154,6 @@ function ProductSummary({ text }: { text: string }) {
   );
 }
 
-
-
 function joinWithOr(items: string[]): string {
   if (items.length <= 1) return items[0] ?? "";
   if (items.length === 2) return `${items[0]} or ${items[1]}`;

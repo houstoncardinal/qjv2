@@ -127,7 +127,6 @@ async function createShopifyCart(
     },
   });
 
-
   if (data?.data?.cartCreate?.userErrors?.length > 0) {
     console.error("Cart creation failed:", data.data.cartCreate.userErrors);
     return null;
@@ -284,8 +283,12 @@ interface CartStore {
   isOpen: boolean;
   /** Whether the "Build Your Own Bundle" 10% discount code is currently applied to the cart. */
   bundleDiscountActive: boolean;
+  /** A redeemed Qureshi Circle rewards code currently applied to the cart, if any. */
+  redeemedDiscountCode: string | null;
   /** Applies or removes the bundle discount code to match the cart's current eligibility. */
   syncBundleDiscount: () => Promise<void>;
+  /** Applies a redeemed rewards discount code to the live cart, alongside any bundle discount. */
+  applyRewardsCode: (code: string) => Promise<{ success: boolean }>;
   addItem: (item: Omit<CartItem, "lineId">) => Promise<{ success: boolean }>;
   /** Adds several new lines (e.g. a completed bundle) in as few Shopify round-trips as possible. */
   addBundleItems: (items: Array<Omit<CartItem, "lineId">>) => Promise<{ success: boolean }>;
@@ -309,25 +312,44 @@ export const useCartStore = create<CartStore>()(
       isSyncing: false,
       isOpen: false,
       bundleDiscountActive: false,
+      redeemedDiscountCode: null,
 
       setOpen: (open) => set({ isOpen: open }),
 
       /** Applies or removes the bundle discount code to match the cart's current eligibility. */
       syncBundleDiscount: async () => {
-        const { items, cartId, bundleDiscountActive } = get();
+        const { items, cartId, bundleDiscountActive, redeemedDiscountCode } = get();
         if (!cartId) return;
 
         const eligible = isBundleEligible(items);
         if (eligible === bundleDiscountActive) return;
 
+        const codes = [
+          ...(eligible ? [BUNDLE_DISCOUNT_CODE] : []),
+          ...(redeemedDiscountCode ? [redeemedDiscountCode] : []),
+        ];
+
         try {
-          const result = await updateShopifyCartDiscount(
-            cartId,
-            eligible ? [BUNDLE_DISCOUNT_CODE] : [],
-          );
+          const result = await updateShopifyCartDiscount(cartId, codes);
           if (result.success) set({ bundleDiscountActive: eligible });
         } catch (error) {
           console.error("Failed to sync bundle discount:", error);
+        }
+      },
+
+      applyRewardsCode: async (code) => {
+        const { cartId, bundleDiscountActive } = get();
+        if (!cartId) return { success: false };
+
+        const codes = [...(bundleDiscountActive ? [BUNDLE_DISCOUNT_CODE] : []), code];
+
+        try {
+          const result = await updateShopifyCartDiscount(cartId, codes);
+          if (result.success) set({ redeemedDiscountCode: code });
+          return { success: result.success };
+        } catch (error) {
+          console.error("Failed to apply rewards code:", error);
+          return { success: false };
         }
       },
 
@@ -507,7 +529,13 @@ export const useCartStore = create<CartStore>()(
       },
 
       clearCart: () =>
-        set({ items: [], cartId: null, checkoutUrl: null, bundleDiscountActive: false }),
+        set({
+          items: [],
+          cartId: null,
+          checkoutUrl: null,
+          bundleDiscountActive: false,
+          redeemedDiscountCode: null,
+        }),
       getCheckoutUrl: () => get().checkoutUrl,
 
       attachBuyerIdentity: async () => {

@@ -24,6 +24,8 @@ import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ProductHandleRouteImport } from './routes/product.$handle'
+import { Route as ApiRewardsRedeemRouteImport } from './routes/api.rewards.redeem'
+import { Route as ApiWebhooksOrdersPaidRouteImport } from './routes/api.webhooks.orders-paid'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -100,6 +102,16 @@ const ProductHandleRoute = ProductHandleRouteImport.update({
   path: '/product/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRewardsRedeemRoute = ApiRewardsRedeemRouteImport.update({
+  id: '/api/rewards/redeem',
+  path: '/api/rewards/redeem',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWebhooksOrdersPaidRoute = ApiWebhooksOrdersPaidRouteImport.update({
+  id: '/api/webhooks/orders-paid',
+  path: '/api/webhooks/orders-paid',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,6 +129,8 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/product/$handle': typeof ProductHandleRoute
+  '/api/rewards/redeem': typeof ApiRewardsRedeemRoute
+  '/api/webhooks/orders-paid': typeof ApiWebhooksOrdersPaidRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -134,6 +148,8 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/product/$handle': typeof ProductHandleRoute
+  '/api/rewards/redeem': typeof ApiRewardsRedeemRoute
+  '/api/webhooks/orders-paid': typeof ApiWebhooksOrdersPaidRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,6 +168,8 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/product/$handle': typeof ProductHandleRoute
+  '/api/rewards/redeem': typeof ApiRewardsRedeemRoute
+  '/api/webhooks/orders-paid': typeof ApiWebhooksOrdersPaidRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,6 +189,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/product/$handle'
+    | '/api/rewards/redeem'
+    | '/api/webhooks/orders-paid'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -188,6 +208,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/product/$handle'
+    | '/api/rewards/redeem'
+    | '/api/webhooks/orders-paid'
   id:
     | '__root__'
     | '/'
@@ -205,6 +227,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/product/$handle'
+    | '/api/rewards/redeem'
+    | '/api/webhooks/orders-paid'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -223,6 +247,8 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   ProductHandleRoute: typeof ProductHandleRoute
+  ApiRewardsRedeemRoute: typeof ApiRewardsRedeemRoute
+  ApiWebhooksOrdersPaidRoute: typeof ApiWebhooksOrdersPaidRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -332,6 +358,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/rewards/redeem': {
+      id: '/api/rewards/redeem'
+      path: '/api/rewards/redeem'
+      fullPath: '/api/rewards/redeem'
+      preLoaderRoute: typeof ApiRewardsRedeemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/webhooks/orders-paid': {
+      id: '/api/webhooks/orders-paid'
+      path: '/api/webhooks/orders-paid'
+      fullPath: '/api/webhooks/orders-paid'
+      preLoaderRoute: typeof ApiWebhooksOrdersPaidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -351,6 +391,8 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   ProductHandleRoute: ProductHandleRoute,
+  ApiRewardsRedeemRoute: ApiRewardsRedeemRoute,
+  ApiWebhooksOrdersPaidRoute: ApiWebhooksOrdersPaidRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

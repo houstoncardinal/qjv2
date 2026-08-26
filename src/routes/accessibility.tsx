@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Contrast, Ear, Keyboard, MousePointer2, ScanEye, Type } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { SITE_URL } from "@/lib/site";
+import { JsonLd } from "@/components/JsonLd";
+import { SITE_URL, SUPPORT_EMAIL, breadcrumbLd } from "@/lib/site";
 
 export const Route = createFileRoute("/accessibility")({
   head: () => ({
@@ -107,7 +108,7 @@ function Accessibility() {
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <a
-                href="mailto:care@qureshijewelers.com?subject=Accessibility%20assistance"
+                href={`mailto:${SUPPORT_EMAIL}?subject=Accessibility%20assistance`}
                 className="flex min-h-11 items-center bg-background px-8 py-4 text-[10px] uppercase tracking-[0.26em] text-foreground transition-opacity hover:opacity-85"
               >
                 Email client care
@@ -127,13 +128,19 @@ function Accessibility() {
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             We audit the storefront regularly with automated tooling and keyboard and screen reader
             testing. Accessibility is never finished — if you encounter a barrier, please report it
-            to care@qureshijewelers.com with the page address and what happened. We aim to respond
-            within two business days.
+            to {SUPPORT_EMAIL} with the page address and what happened. We aim to respond within two
+            business days.
           </p>
         </section>
       </main>
 
       <SiteFooter />
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Home", url: "/" },
+          { name: "Accessibility", url: "/accessibility" },
+        ])}
+      />
     </div>
   );
 }

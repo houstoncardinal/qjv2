@@ -17,7 +17,7 @@ import {
   type BundleSlot,
   type BundleSlotKey,
 } from "@/lib/bundle";
-import { SITE_URL, breadcrumbLd } from "@/lib/site";
+import { SITE_URL, breadcrumbLd, howToLd } from "@/lib/site";
 import { useCartStore } from "@/stores/cartStore";
 import { cn } from "@/lib/utils";
 
@@ -240,6 +240,17 @@ function BundlePage() {
       </main>
 
       <SiteFooter />
+      <JsonLd
+        data={howToLd({
+          name: "How to build your own moissanite bundle",
+          description: `Pick one piece from each of the four categories below and ${BUNDLE_DISCOUNT_PERCENT}% off is applied automatically at checkout — no code needed.`,
+          steps: BUNDLE_SLOTS.map((slot) => ({
+            name: `Choose your ${slot.label.toLowerCase()}`,
+            text: `Select your ${slot.label.toLowerCase()} — ${slot.sub}.`,
+            url: `${SITE_URL}/bundle`,
+          })),
+        })}
+      />
       <JsonLd
         data={breadcrumbLd([
           { name: "Home", url: "/" },

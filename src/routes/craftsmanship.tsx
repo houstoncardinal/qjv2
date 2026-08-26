@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Gem, Hammer, ShieldCheck, Sparkles } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { JsonLd } from "@/components/JsonLd";
 import { Button } from "@/components/ui/button";
-import { RETURN_WINDOW_DAYS, SITE_URL } from "@/lib/site";
+import { RETURN_WINDOW_DAYS, SITE_URL, breadcrumbLd, howToLd } from "@/lib/site";
 
 export const Route = createFileRoute("/craftsmanship")({
   head: () => ({
@@ -63,8 +64,8 @@ function Craftsmanship() {
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             Qureshi Jewelers exists for the moments worth marking. Each piece is produced in small
-            runs by a team of bench jewelers who have spent decades setting stones by hand — no
-            mass casting, no shortcuts, no compromise on the details you only notice up close.
+            runs by a team of bench jewelers who have spent decades setting stones by hand — no mass
+            casting, no shortcuts, no compromise on the details you only notice up close.
           </p>
         </section>
 
@@ -91,6 +92,20 @@ function Craftsmanship() {
         </section>
       </main>
       <SiteFooter />
+      <JsonLd
+        data={howToLd({
+          name: "How a Qureshi Jewelers piece is made",
+          description:
+            "From certified stone to finished piece: how every Qureshi Jewelers order is hand-set, plated and inspected.",
+          steps: pillars.slice(0, 3).map((p) => ({ name: p.title, text: p.body })),
+        })}
+      />
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Home", url: "/" },
+          { name: "Craftsmanship", url: "/craftsmanship" },
+        ])}
+      />
     </div>
   );
 }

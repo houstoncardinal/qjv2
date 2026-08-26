@@ -3,11 +3,18 @@ import { Award, Gem, Globe2, HeartHandshake, ShieldCheck, Sparkles } from "lucid
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { JsonLd } from "@/components/JsonLd";
-import { RETURN_POLICY_SHORT, SHIPPING_POLICY_SHORT, SITE_URL, breadcrumbLd } from "@/lib/site";
+import {
+  ORGANIZATION_LD,
+  RETURN_POLICY_SHORT,
+  SHIPPING_POLICY_SHORT,
+  SITE_URL,
+  breadcrumbLd,
+  faqLd,
+} from "@/lib/site";
 
-const title = "About Qureshi Jewelers | Ethical Moissanite Fine Jewelry";
+const title = "About Qureshi Jewelers | Moissanite Engagement Rings & Fine Jewelry";
 const description =
-  "Qureshi Jewelers hand-sets GRA-certified VVS1 D colour moissanite in 18K gold plated S925 sterling silver — lab-grown brilliance, conflict-free sourcing and a lifetime warranty.";
+  "The story behind Qureshi Jewelers: GRA-certified VVS1 D colour moissanite engagement rings and fine jewelry, hand-set in 18K gold plated S925 sterling silver — lab-grown brilliance, conflict-free sourcing and a lifetime warranty.";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -29,7 +36,7 @@ const pillars = [
   {
     icon: Gem,
     title: "Stones that outperform",
-    body: "Every stone is GRA certified at VVS1 clarity and D colour, cut to ideal proportions. Moissanite refracts more fire than diamond — at a fraction of the cost, with none of the mining.",
+    body: "Every stone — engagement centerpiece or everyday stud — is GRA certified at VVS1 clarity and D colour, cut to ideal proportions. Moissanite refracts more fire than diamond, at a fraction of the cost and none of the mining.",
   },
   {
     icon: ShieldCheck,
@@ -70,6 +77,29 @@ const timeline = [
   },
 ];
 
+const aboutFaqs = [
+  {
+    q: "Is moissanite a good choice for an engagement ring?",
+    a: "Yes. At 9.25 on the Mohs hardness scale, moissanite is second only to diamond and easily withstands daily wear. Its refractive index of 2.65–2.69 is higher than diamond's 2.42, so a Qureshi Jewelers engagement ring shows more fire and sparkle in person than an equivalent mined diamond, at a fraction of the price.",
+  },
+  {
+    q: "What does GRA certified mean?",
+    a: "GRA (Gemological Research Analysis) independently grades every stone we set for cut, clarity and colour before it ships, so the D colour and VVS1 clarity on the product page is verified, not just claimed. Your certificate ships with the piece.",
+  },
+  {
+    q: "Why moissanite instead of a lab-grown diamond?",
+    a: "Both are lab-created and conflict-free, but moissanite's higher refractive index gives it noticeably more brilliance and fire than diamond of comparable size, at a lower cost — which is why our engagement rings and tennis chains are priced well below diamond equivalents without compromising on fire.",
+  },
+  {
+    q: "Will the 18K gold plating wear off?",
+    a: "Our plating is applied at a thickness built for daily wear over solid S925 sterling silver, not hollow or brass-cored. Normal wear is covered by our lifetime craftsmanship warranty, and Qureshi Circle members receive complimentary re-plating.",
+  },
+  {
+    q: "Can I get a piece resized or customized?",
+    a: "Yes. Contact client care with your order number for resizing — complimentary for Gold Circle members and above — and we can discuss custom requests such as alternate metal finishes or stone sizes.",
+  },
+];
+
 function AboutPage() {
   return (
     <div className="min-h-screen bg-card">
@@ -78,17 +108,16 @@ function AboutPage() {
       <main id="main-content">
         <section className="border-b border-border bg-foreground text-background">
           <div className="mx-auto max-w-[1100px] px-6 py-16 sm:px-10">
-            <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">
-              Our story
-            </p>
+            <p className="text-[10px] uppercase tracking-[0.42em] text-[var(--gold)]">Our story</p>
             <h1 className="mt-4 max-w-3xl font-display text-4xl leading-[1.05] sm:text-6xl">
               Brilliance, engineered. <span className="italic">Never mined.</span>
             </h1>
             <p className="mt-6 max-w-2xl text-sm leading-relaxed text-background/70">
               Qureshi Jewelers exists for the person who wants the fire of a flawless stone and the
-              integrity of knowing exactly where it came from. We hand-set GRA-certified VVS1
-              moissanite into solid sterling silver, plate it in 18K gold, and stand behind it for
-              life.
+              integrity of knowing exactly where it came from — whether that's an engagement ring
+              built to be worn for life, or a tennis chain worn every day. We hand-set GRA-certified
+              VVS1 moissanite into solid sterling silver, plate it in 18K gold, and stand behind it
+              for life.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <Link
@@ -175,9 +204,37 @@ function AboutPage() {
             </div>
           </div>
         </section>
+
+        <section className="border-t border-border bg-background py-14 sm:px-10">
+          <div className="mx-auto max-w-[900px] px-6">
+            <h2 className="font-display text-3xl sm:text-4xl">Common questions</h2>
+            <dl className="mt-8 space-y-8">
+              {aboutFaqs.map((f) => (
+                <div key={f.q}>
+                  <dt className="font-display text-lg">{f.q}</dt>
+                  <dd className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.a}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
       </main>
 
       <SiteFooter />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "@id": `${SITE_URL}/about#webpage`,
+          url: `${SITE_URL}/about`,
+          name: title,
+          description,
+          isPartOf: { "@id": `${SITE_URL}/#website` },
+          about: { "@id": ORGANIZATION_LD["@id"] },
+          mainEntity: { "@id": ORGANIZATION_LD["@id"] },
+        }}
+      />
+      <JsonLd data={faqLd(aboutFaqs)} />
       <JsonLd
         data={breadcrumbLd([
           { name: "Home", url: "/" },
