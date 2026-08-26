@@ -16,7 +16,7 @@ export interface CartItem {
 
 const CART_QUERY = `
   query cart($id: ID!) {
-    cart(id: $id) { id totalQuantity }
+    cart(id: $id) { id totalQuantity checkoutUrl }
   }
 `;
 
@@ -555,7 +555,7 @@ export const useCartStore = create<CartStore>()(
       },
 
       syncCart: async () => {
-        const { cartId, isSyncing, clearCart } = get();
+        const { cartId, isSyncing, checkoutUrl, clearCart } = get();
         if (!cartId || isSyncing) return;
 
         set({ isSyncing: true });
@@ -563,7 +563,14 @@ export const useCartStore = create<CartStore>()(
           const data = await storefrontApiRequest(CART_QUERY, { id: cartId });
           if (!data) return;
           const cart = data?.data?.cart;
-          if (!cart || cart.totalQuantity === 0) clearCart();
+          if (!cart || cart.totalQuantity === 0) {
+            clearCart();
+            return;
+          }
+          // Re-adopt Shopify's live checkout URL — a locally cached one can go stale if the
+          // store's domain or checkout configuration changes after the cart was created.
+          const freshUrl = cart.checkoutUrl ? formatCheckoutUrl(cart.checkoutUrl) : null;
+          if (freshUrl && freshUrl !== checkoutUrl) set({ checkoutUrl: freshUrl });
         } catch (error) {
           console.error("Failed to sync cart with Shopify:", error);
         } finally {

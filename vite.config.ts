@@ -8,7 +8,8 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 // On Netlify (or any CI that sets NITRO_PRESET) build for that platform instead
 // of the default Cloudflare target. Locally/in Lovable this stays undefined.
-const deployPreset = process.env.NITRO_PRESET ?? (process.env.NETLIFY ? "netlify" : undefined);
+const deployPreset =
+  process.env["NITRO_PRESET"] ?? (process.env["NETLIFY"] ? "netlify" : undefined);
 
 export default defineConfig({
   ...(deployPreset ? { nitro: { preset: deployPreset } } : {}),
